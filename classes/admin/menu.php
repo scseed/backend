@@ -7,6 +7,12 @@
  */
 class Admin_Menu {
 
+	/**
+	 * Building main admin menu
+	 * By defaults generate two sections: main and users
+	 *
+	 * @return string view
+	 */
 	public function main()
 	{
 		$config = Kohana::config('admin');
@@ -87,8 +93,10 @@ class Admin_Menu {
 			$menu[$request->controller]['class'] = 'active';
 		}
 
-		$A2 = A2::instance();
+		// @TODO: прикрутить ACL.
 
+//		$A2 = A2::instance();
+//
 //		foreach($menu as $key => $item)
 //		{
 //			if ( ! empty($item['resource']))
@@ -121,6 +129,14 @@ class Admin_Menu {
 						->bind('menu', $menu);
 	}
 
+	/**
+	 * Forming menu section based on $name of section and parameters array
+	 *
+	 * @param strind $name
+	 * @param array $info
+	 * @param string $level
+	 * @return array / FALSE
+	 */
 	protected function _form_menu($name, $info, $level = 'main')
 	{
 		if($level === 'submenu')

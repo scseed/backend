@@ -2,7 +2,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru">
 <head>
-	<title><?php echo $title?> - <?php echo $company_name?> Controll System</title>
+	<title><?php echo $title?> :: <?php echo $company_name?> Controll System</title>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <meta http-equiv="Content-Language" content="ru-ru" />
 	<meta name="keywords" content="" />

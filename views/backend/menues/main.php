@@ -4,9 +4,9 @@
 		<li class="<?php echo $item['class'] ?>">
 			<?php
 				echo Html::anchor(
-								$item['href'],
-								$item['title'],
-								array('title' => $item['title'])
+					$item['href'],
+					$item['title'],
+					array('title' => $item['title'])
 				);
 			?>
 			<?php if (count($item['submenu'])): ?>
@@ -15,9 +15,9 @@
 					<li>
 						<?php
 							echo Html::anchor(
-											$sub_item['href'],
-											$sub_item['title'],
-											array('title' => $sub_item['title'])
+								$sub_item['href'],
+								$sub_item['title'],
+								array('title' => $sub_item['title'])
 							);
 						?>
 					</li>

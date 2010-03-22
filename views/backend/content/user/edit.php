@@ -26,14 +26,14 @@
 												'controller' => 'user',
 												'action' => 'list',
 								)),
-								 __('Cancel'),
+								 __('Отмена'),
 								array('class' => 'button', 'title' => __('Cancel'))
 				);
 			?>
 		<?php
 			echo Form::button(
 							'save',
-							__('Save'),
+							__('Сохранить'),
 							array ('type' => 'submit')
 			);
 		?>

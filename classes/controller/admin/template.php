@@ -10,7 +10,7 @@ class Controller_Admin_Template extends Controller_Template {
 	public $template = 'backend/template/main';
 
 	public $_auth_required = TRUE;
-	protected $_resource = '';
+	protected $_resource;
 	protected $_privelege = array('read');
 
 	public function before()
