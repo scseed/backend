@@ -146,7 +146,7 @@ class Log {
 				'name' => $result
 			))->save();
 
-		Log::$_log_result[$log_result->name] = $log_result->id;
+		Log::$_log_results[$log_result->name] = $log_result->id;
 
 		Kohana::cache('log_results', NULL);
 	}
