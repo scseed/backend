@@ -28,8 +28,6 @@ class Controller_Admin_Auth extends Controller_Admin_Template {
 		}
 		$user = Jelly::meta('user');
 
-		$log = Jelly::factory('log');
-
 		$post = Validate::factory($_POST)
 							->rules('email', $user->fields('email')->rules)
 							->rules('password', $user->fields('password')->rules);
@@ -87,7 +85,6 @@ class Controller_Admin_Auth extends Controller_Admin_Template {
 		if(A1::instance()->logged_in())
 		{
 			$user_id = A1::instance()->get_user()->id;
-			$log = Jelly::factory('log');
 
 			A1::instance()->logout();
 
