@@ -24,6 +24,8 @@ class Controller_Admin_User extends Controller_Admin_Template {
 
 	/**
 	 * Creating new user
+	 *
+	 * @TODO: отпарвлять письмо новому пользователю с его данными для входа.
 	 */
 	public function action_new ()
 	{
@@ -62,6 +64,7 @@ class Controller_Admin_User extends Controller_Admin_Template {
 	/**
 	 * Editing user
 	 *
+	 * @TODO: отправлять email пользователю при смене его пароля.
 	 * @param integer $id
 	 */
 	public function action_edit($id)
