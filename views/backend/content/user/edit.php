@@ -38,6 +38,5 @@
 			);
 		?>
 	</div>
-	<?php //echo Form::hidden('edit', $edit) ?>
 <?php  echo Form::close(); ?>
 </div>

@@ -28,6 +28,7 @@ class Controller_Admin_Template extends Controller_Template {
 			Request::instance()->redirect('admin/auth/login');
 		}
 
+		$this->_resource = $this->request->controller;
 		$this->template->user = A2::instance()->get_user();
 	}
 

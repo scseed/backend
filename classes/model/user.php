@@ -87,11 +87,7 @@ class Model_User extends Jelly_Model {
 	 */
 	public static function _check_password_matches(Validate $array, $field)
 	{
-		if(!isset($array[$field]))
-		{
-			$array->error($field, 'matches', array('param1' => 'password'));
-		}
-		if ($array['password'] !== $array[$field])
+		if (!isset($array[$field]) OR ($array['password'] !== $array[$field]))
 		{
 			// Re-use the error messge from the 'matches' rule in Validate
 			$array->error($field, 'matches', array('param1' => 'password'));

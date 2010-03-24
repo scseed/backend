@@ -109,5 +109,6 @@
 	<div id="footer">
 		&copy; Система управления сатом  разработан в студии <a href="http://enerdesign.ru/">EnerDesign</a>
 	</div>
+<?php echo (!IN_PRODUCTION) ? View::factory('profiler/stats') : ''?>
 </body>
 </html>

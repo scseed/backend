@@ -7,6 +7,9 @@
  */
 class Controller_Admin_User extends Controller_Admin_Template {
 
+	/**
+	 * List of users
+	 */
 	public function action_list ()
 	{
 		$this->template->page_title = 'Список пользователей';
@@ -19,6 +22,9 @@ class Controller_Admin_User extends Controller_Admin_Template {
 			->bind('users_meta', $users_meta);
 	}
 
+	/**
+	 * Creating new user
+	 */
 	public function action_new ()
 	{
 		$this->template->page_title = 'Новый пользователь';
@@ -31,6 +37,12 @@ class Controller_Admin_User extends Controller_Admin_Template {
 			{
 				if($user->set($_POST)->save())
 				{
+					Log::instance()->write(
+						'user_add',
+						'success',
+						A1::instance()->get_user()->id,
+						'Создан новый пользователь'
+					);
 					$this->request->redirect('admin/user/list');
 				}
 
@@ -47,9 +59,14 @@ class Controller_Admin_User extends Controller_Admin_Template {
 			->set('errors', $errors);
 	}
 
+	/**
+	 * Editing user
+	 *
+	 * @param integer $id
+	 */
 	public function action_edit($id)
 	{
-		$user = Jelly::select('user', $id);
+		$user = Jelly::select('user', (int) $id);
 
 		if( ! $user->loaded()) Request::factory('error/404')->execute();
 
@@ -65,6 +82,12 @@ class Controller_Admin_User extends Controller_Admin_Template {
 				}
 				if($user->set($_POST)->save())
 				{
+					Log::instance()->write(
+						'user_edit',
+						'success',
+						A1::instance()->get_user()->id,
+						'Данные пользователя изменены (id: '.$user->id.'; email: '.$user->email.', )'
+					);
 					$this->request->redirect('admin/user/list');
 				}
 			}
@@ -82,11 +105,28 @@ class Controller_Admin_User extends Controller_Admin_Template {
 		$this->template->page_title = 'Правка данных пользователя ' . $user->name;
 	}
 
+	/**
+	 * Deleting user
+	 * 
+	 * @param integer $id
+	 */
 	public function action_delete ($id)
 	{
-		Jelly::factory('user')->delete($id);
+		$user = Jelly::select('user')->load( (int) $id);
+		
+		$user_data = array('id' => $user->id, 'email' => $user->email);
 
-		$this->request->redirect('admin/user/list');
+		if($user->delete())
+		{
+			Log::instance()->write(
+				'user_delete',
+				'success',
+				A1::instance()->get_user()->id,
+				'Удалён пользователь (id: '.$user_data['id'].'; email: '.$user_data['email'].', )'
+			);
+
+			$this->request->redirect('admin/user/list');
+		}
 	}
 
 } // End Template Controller user

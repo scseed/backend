@@ -15,7 +15,20 @@ class Controller_Admin_Auth extends Controller_Admin_Template {
 	 */
 	public function action_login ()
 	{
+		if(A1::instance()->logged_in())
+		{
+			if($url = Session::instance()->get('url'))
+			{
+				Request::instance()->redirect($url);
+			}
+			else
+			{
+				Request::instance()->redirect('admin');
+			}
+		}
 		$user = Jelly::meta('user');
+
+		$log = Jelly::factory('log');
 
 		$post = Validate::factory($_POST)
 							->rules('email', $user->fields('email')->rules)
@@ -27,18 +40,32 @@ class Controller_Admin_Auth extends Controller_Admin_Template {
 				$post['password'],
 				!isset($post['remember']) ? TRUE : FALSE))
 			{
+				Log::instance()->write(
+					'login',
+					'success',
+					A1::instance()->get_user()->id,
+					'Пользователь успешно вошёл в систему'
+				);
+
 				if($url = Session::instance()->get('url'))
 				{
 					Request::instance()->redirect($url);
 				}
 				else
 				{
-					Request::instance()->redirect('');
+					Request::instance()->redirect('admin');
 				}
 
 			}
 			else
 			{
+				Log::instance()->write(
+					'login',
+					'fail',
+					NULL,
+					'Неудачная попытка входа в систему.<br />Неверный логин или пароль ('.$post['email'].').'
+				);
+				
 				$this->template->content = View::factory('backend/user/login')
 					->set('userdata', $post->as_array())
 					->set('errors', array('common' => __('Неверный логин или пароль')));
@@ -57,7 +84,21 @@ class Controller_Admin_Auth extends Controller_Admin_Template {
 	 */
 	public function action_logout()
 	{
-		A1::instance()->logout();
+		if(A1::instance()->logged_in())
+		{
+			$user_id = A1::instance()->get_user()->id;
+			$log = Jelly::factory('log');
+
+			A1::instance()->logout();
+
+			Log::instance()->write(
+				'logout',
+				'success',
+				$user_id,
+				'Пользователь вышел из системы'
+			);
+		}
+
 		Request::instance()->redirect('admin');
 	}
 
