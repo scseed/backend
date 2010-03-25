@@ -38,7 +38,7 @@ class Controller_Admin_Auth extends Controller_Admin_Template {
 				$post['password'],
 				!isset($post['remember']) ? TRUE : FALSE))
 			{
-				Log::instance()->write(
+				Logapp::instance()->write(
 					'login',
 					'success',
 					A1::instance()->get_user()->id,
@@ -57,7 +57,7 @@ class Controller_Admin_Auth extends Controller_Admin_Template {
 			}
 			else
 			{
-				Log::instance()->write(
+				Logapp::instance()->write(
 					'login',
 					'fail',
 					NULL,
@@ -88,7 +88,7 @@ class Controller_Admin_Auth extends Controller_Admin_Template {
 
 			A1::instance()->logout();
 
-			Log::instance()->write(
+			Logapp::instance()->write(
 				'logout',
 				'success',
 				$user_id,

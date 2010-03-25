@@ -9,8 +9,8 @@ class Controller_Admin_Home extends Controller_Admin_Template {
 
 	public function action_index ()
 	{
-		$logs = Log::instance()->watch(10);
-		$logs_meta = Jelly::factory('log');
+		$logs = Logapp::instance()->watch(10);
+		$logs_meta = Jelly::factory('log_jelly');
 
 		$this->template->page_title = $this->template->title = __('Главная');
 		$this->template->content = View::factory('backend/content/home')

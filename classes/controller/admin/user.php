@@ -39,7 +39,7 @@ class Controller_Admin_User extends Controller_Admin_Template {
 			{
 				if($user->set($_POST)->save())
 				{
-					Log::instance()->write(
+					Logapp::instance()->write(
 						'user_add',
 						'success',
 						A1::instance()->get_user()->id,
@@ -85,7 +85,7 @@ class Controller_Admin_User extends Controller_Admin_Template {
 				}
 				if($user->set($_POST)->save())
 				{
-					Log::instance()->write(
+					Logapp::instance()->write(
 						'user_edit',
 						'success',
 						A1::instance()->get_user()->id,
@@ -121,7 +121,7 @@ class Controller_Admin_User extends Controller_Admin_Template {
 
 		if($user->delete())
 		{
-			Log::instance()->write(
+			Logapp::instance()->write(
 				'user_delete',
 				'success',
 				A1::instance()->get_user()->id,

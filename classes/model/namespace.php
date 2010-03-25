@@ -7,10 +7,10 @@
  */
 class Model_Namespace extends Jelly_Model {
 
-	protected $aliases = array('parent','type','result');
 	/**
 	 * Initializating model meta information
 	 *
+	 * @TODO: сделать возможность join'ить parent
 	 * @param Jelly_Meta $meta
 	 */
     public static function initialize(Jelly_Meta $meta)
@@ -20,14 +20,14 @@ class Model_Namespace extends Jelly_Model {
                  'id' => new Field_Primary,
                  'parent' => new Field_BelongsTo(array(
 					 'model' => 'namespace',
-					 'foreign' => 'namespace.id',
+					 'foreign' => 'namespace',
 					 'column' => 'parent_id'
 				 )),
 
                  'name' => new Field_String,
 				 'description' => new Field_String(array(
 					 'column' => 'value'
-				 ))
+				 )),
              ))
 //			->load_with(array(
 //				'parent'
