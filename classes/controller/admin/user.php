@@ -4,6 +4,7 @@
  * Template Controller user
  *
  * @author avis <smgladkovskiy@gmail.com>
+ * @copyright (c) 2010 EnerDesign <http://enerdesign.ru>
  */
 class Controller_Admin_User extends Controller_Admin_Template {
 

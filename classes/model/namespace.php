@@ -4,6 +4,7 @@
  * Jelly Model namespace
  *
  * @author avis <smgladkovskiy@gmail.com>
+ * @copyright (c) 2010 EnerDesign <http://enerdesign.ru>
  */
 class Model_Namespace extends Jelly_Model {
 

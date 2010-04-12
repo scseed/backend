@@ -4,6 +4,7 @@
  * Class Admin Menu
  *
  * @author avis <smgladkovskiy@gmail.com>
+ * @copyright (c) 2010 EnerDesign <http://enerdesign.ru>
  */
 class Admin_Menu {
 

@@ -4,6 +4,7 @@
  * Jelly Model user
  *
  * @author avis <smgladkovskiy@gmail.com>
+ * @copyright (c) 2010 EnerDesign <http://enerdesign.ru>
  */
 class Model_User extends Jelly_Model {
 
@@ -17,7 +18,6 @@ class Model_User extends Jelly_Model {
 		$meta->table('users')
 			->fields(array(
 			'id' => new Field_Primary(array(
-				'in_table' => TRUE,
 				'in_form' => FALSE,
 			)),
 			'email' => new Field_Email(array(
@@ -26,13 +26,9 @@ class Model_User extends Jelly_Model {
 					'not_empty' => array(TRUE),
 					'email' => NULL
 				),
-				'in_table' => TRUE,
-				'in_form' => TRUE,
 			)),
 			'name' => new Field_String(array(
-				'in_table' => TRUE,
 				'label' => __('Имя'),
-				'in_form' => TRUE,
 			)),
 			'password' => new Field_Password(array(
 				'label' => __('Пароль'),
@@ -43,7 +39,6 @@ class Model_User extends Jelly_Model {
 					'min_length' => array(4)
 				),
 				'in_table' => FALSE,
-				'in_form' => TRUE,
 			)),
 			'password_confirm' => new Field_Password(array(
 				'label' => __('Подтверждение пароля'),
@@ -57,7 +52,6 @@ class Model_User extends Jelly_Model {
 					'min_length' => array(4),
 				),
 				'in_table' => FALSE,
-				'in_form' => TRUE,
 			)),
 			'token' => new Field_String(array(
 				'in_table' => FALSE,
@@ -70,7 +64,6 @@ class Model_User extends Jelly_Model {
 				'label' => __('Количество входов')
 			)),
 			'last_login' => new Field_Timestamp(array(
-				'in_table' => TRUE,
 				'in_form' => FALSE,
 				'pretty_format' => 'd.m.Y',
 				'label' => __('Последний вход')

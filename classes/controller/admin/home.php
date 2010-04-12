@@ -4,6 +4,7 @@
  * Template Controller home
  *
  * @author avis <smgladkovskiy@gmail.com>
+ * @copyright (c) 2010 EnerDesign <http://enerdesign.ru>
  */
 class Controller_Admin_Home extends Controller_Admin_Template {
 
