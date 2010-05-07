@@ -7,10 +7,8 @@
     <meta http-equiv="Content-Language" content="ru-ru" />
 	<meta name="keywords" content="" />
 	<meta name="description" content="" />
-	<?php echo Html::style('css/admin.css', array('media' => 'screen, projector')); ?>
-	<?php echo Html::script('js/jquery-1.4.2.min.js'); ?>
-	<?php echo Html::script('js/admin_effects.js'); ?>
-
+	<?php foreach ($styles as $file => $type) echo HTML::style($file, array('media' => $type)), "\n" ?>
+	<?php foreach ($scripts as $file) echo HTML::script($file), "\n" ?>
 	<!--[if lte IE 6]>
 		<?php echo Html::script('js/DD_belatedPNG.js'); ?>
 		<script type="text/javascript">
@@ -109,6 +107,6 @@
 	<div id="footer">
 		&copy; Система управления сатом  разработан в студии <a href="http://enerdesign.ru/">EnerDesign</a>
 	</div>
-<?php echo (!IN_PRODUCTION) ? View::factory('profiler/stats') : ''?>
+<?php echo /*(!IN_PRODUCTION) ?*/ View::factory('profiler/stats') //: ''?>
 </body>
 </html>
