@@ -8,178 +8,122 @@
  */
 class Admin_Menu {
 
+	// хранилище инстанса
+	protected static $instance;
+
+	/**
+	 * Инстанс класса Menu
+	 *
+	 * @return object Menu
+	 */
+	public static function instance()
+	{
+		if( ! is_object(self::$instance))
+		{
+			self::$instance = new Admin_Menu();
+		}
+
+		return self::$instance;
+	}
+
 	/**
 	 * Building main admin menu
 	 * By defaults generate two sections: main and users
 	 *
-	 * @return string view
+	 * @return string View
 	 */
-	public function main()
+	public function main($active_menu, $additional_menu = array())
 	{
 		$config = Kohana::config('admin');
 		$menu = array();
 
-		$menu['home'] = array(
-			'title'   => __('Главная'),
-			'href'    => Route::get('admin')
-				->uri(array(
-					'controller' => '',
-					'action' => ''
-					)),
-			'class'   => '',
-			'submenu' => array(
-				'site' => array(
-					'title' => __('На главную'),
-					'href' => Route::get('admin')
-						->uri(array(
-							'controller' => '',
-							'action' => ''
-						)),
-					'class' => 'new_window'
-				),
-				'home' => array(
-					'title' => __('Предпросмотр сайта'),
-					'href' => Route::get('default')
-						->uri(array(
-							'controller' => '',
-							'action' => ''
-						)),
-					'class' => 'new_window'
-				)
-			),
-			'resource' => NULL
-		);
+		// Формирование меню из массива, что дан был в конфиге
+		$menu = $this->_gen_menu($config['menu']);
 
-		foreach ($config['menu'] as $name => $info)
-		{
-			$menu[$name] = $this->_form_menu($name, $info);
-		}
-
-		$menu['user'] = array(
-			'title'   => __('Пользователи'),
-			'href'    => Route::get('admin')
-				->uri(array(
-					'controller' => 'user',
-					'action' => ''
-				 )),
-			'class'   => '',
-			'submenu' => array(
-				'list' => array(
-					'title'   => __('Список пользователей'),
-					'href'    => Route::get('admin')
-						->uri(array(
-							'controller' => 'user',
-							'action' => 'list',
-						 )),
-					'class'   => '',
-					'resource' => array('user' => 'read')
-				),
-				'add_user' => array(
-					'title'   => __('Добавить пользователя'),
-					'href'    => Route::get('admin')
-						->uri(array(
-							'controller' => 'user',
-							'action' => 'new',
-						 )),
-					'class'   => '',
-					'resource' => array('user' => 'add')
-				)
-			),
-			'resource' => array('user' => 'read')
-		);
-
-		$request = Request::instance();
-		if (isset($menu[$request->controller]))
-		{
-			$menu[$request->controller]['class'] = 'active';
-		}
-
-		// @TODO: прикрутить ACL.
-
-//		$A2 = A2::instance();
-//
-//		foreach($menu as $key => $item)
-//		{
-//			if ( ! empty($item['resource']))
-//			{
-//				$orm = ORM::factory(current(array_keys($item['resource'])));
-//
-//				if ( ! $A2->allowed($orm, current($item['resource'])))
-//				{
-//					unset($menu[$key]);
-//					continue;
-//				}
-//			}
-//
-//			foreach ($item['submenu'] as $inner_key => $inner_item)
-//			{
-//				if ( ! empty($inner_item['resource']))
-//				{
-//					$orm = ORM::factory(current(array_keys($inner_item['resource'])));
-//
-//					if ( ! $A2->allowed($orm, current($inner_item['resource'])))
-//					{
-//						unset($menu[$key]['submenu'][$inner_key]);
-//						continue;
-//					}
-//				}
-//			}
-//		}
+		// Поиск активного уровня меню
+		$menu[$this->_find_parent($menu, $active_menu)]['class'] = 'active';
 
 		return View::factory('backend/menues/main')
 						->bind('menu', $menu);
 	}
 
 	/**
-	 * Forming menu section based on $name of section and parameters array
+	 * Генерация массива меню для вывода в представление.
+	 * Обрабатывает отсутствующие значения для избежания ошибок.
 	 *
-	 * @param strind $name
-	 * @param array $info
-	 * @param string $level
-	 * @return array / FALSE
+	 * @param  array  $menu_array
+	 * @param  string $parent
+	 * @return array  $menu
 	 */
-	protected function _form_menu($name, $info, $level = 'main')
+	private function _gen_menu(array $menu_array, $parent = NULL)
 	{
-		if($level === 'submenu')
+		$menu = array();
+		foreach($menu_array as $item_name => $menu_item)
 		{
-			$menu[$name] = array(
-				'title'   => __($info['title']),
-				'href'    => Route::get('admin')
+			if($parent === NULL)
+			{
+				$parent_name = $item_name;
+			}
+			else
+			{
+				$parent_name = $parent;
+			}
+
+			$menu[$item_name] = array(
+				'parent' => $parent_name,
+				'title'   => __($menu_item['title']),
+				'href'    => Route::get('default')
 					->uri(array(
-						'controller' => $info['controller'],
-						'action' => $info['action']
+						'controller' => arr::get($menu_item, 'controller', 'home'),
+						'action' =>  arr::get($menu_item, 'action', NULL),
 						)),
-				'class'   => $info['class'],
-				'resource' => NULL
+				'class'   => arr::get($menu_item, 'class', NULL),
+				'resource' => NULL,
+				'visible' => arr::get($menu_item, 'visible', TRUE),
+				'submenu' => ( ! empty($menu_item['submenu']))
+					? $this->_gen_menu($menu_item['submenu'], $parent_name)
+					: array(),
 
 			);
-			return $menu[$name];
 		}
-		elseif ($level == 'main')
+
+		return $menu;
+	}
+
+	/**
+	 * Поиск родительского элемента для присвоения ему статуса активности
+	 *
+	 * @param  array  $menu_array
+	 * @param  string $active_menu
+	 * @return string $parent
+	 */
+	private function _find_parent(array $menu_array, $active_menu)
+	{
+		$parent = NULL;
+		foreach($menu_array as $name => $item)
 		{
-			$submenu = array();
-			if( isset($info['submenu']))
+			if ($name == $active_menu)
 			{
-				foreach($info['submenu'] as $_name => $_info)
+				$parent = $item['parent'];
+			}
+
+			if ($parent)
+				return $parent;
+
+			foreach($item['submenu'] as $subname => $subitem)
+			{
+				if ($subname == $active_menu)
 				{
-					$submenu[$_name] = $this->_form_menu($_name, $_info, 'submenu');
+					$parent = $subitem['parent'];
 				}
 			}
 
-			$menu[$name] = array(
-				'title'   => __($info['title']),
-				'href'    => Route::get('admin')
-					->uri(array(
-						'controller' => $info['controller'],
-						'action' => $info['action']
-						)),
-				'class'   => $info['class'],
-				'submenu' => $submenu,
-				'resource' => NULL
-			);
-			return $menu[$name];
+			if ($parent)
+				return $parent;
 		}
-		return FALSE;
-	}
 
-} // End Admin_Menu
+		$parent = ($parent != NULL) ? $parent : 'home';
+
+		return $parent;
+	}
+} // End Menu

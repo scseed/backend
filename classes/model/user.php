@@ -1,125 +1,86 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
 /**
- * Jelly Model user
+ * User Model for Jelly ORM
  *
  * @author avis <smgladkovskiy@gmail.com>
  * @copyright (c) 2010 EnerDesign <http://enerdesign.ru>
  */
-class Model_User extends Jelly_Model {
+class Model_User extends Jelly_Model implements Acl_Role_Interface {
 
 	/**
 	 * Initializating model meta information
 	 *
 	 * @param Jelly_Meta $meta
 	 */
-    public static function initialize(Jelly_Meta $meta)
-    {
+	public static function initialize(Jelly_Meta $meta)
+	{
 		$meta->table('users')
 			->fields(array(
-			'id' => new Field_Primary(array(
-				'in_form' => FALSE,
-			)),
-			'email' => new Field_Email(array(
-				'unique' => TRUE,
-				'rules' => array(
-					'not_empty' => array(TRUE),
-					'email' => NULL
-				),
-			)),
-			'name' => new Field_String(array(
-				'label' => __('Имя'),
-			)),
-			'password' => new Field_Password(array(
-				'label' => __('Пароль'),
-				'hash_with' => array(A1::instance(), 'hash_password'),
-				'rules' => array(
-					'not_empty' => array(TRUE),
-					'max_length' => array(50),
-					'min_length' => array(4)
-				),
-				'in_table' => FALSE,
-			)),
-			'password_confirm' => new Field_Password(array(
-				'label' => __('Подтверждение пароля'),
-				'in_db' => FALSE,
-				'callbacks' => array(
-					'matches' => array('Model_User', '_check_password_matches')
-				),
-				'rules' => array(
-					'not_empty' => array(TRUE),
-					'max_length' => array(50),
-					'min_length' => array(4),
-				),
-				'in_table' => FALSE,
-			)),
-			'token' => new Field_String(array(
-				'in_table' => FALSE,
-				'in_form' => FALSE,
-			)),
-			'logins' => new Field_Integer(array(
-				'default' => 0,
-				'in_table' => FALSE,
-				'in_form' => FALSE,
-				'label' => __('Количество входов')
-			)),
-			'last_login' => new Field_Timestamp(array(
-				'in_form' => FALSE,
-				'pretty_format' => 'd.m.Y',
-				'label' => __('Последний вход')
-			)),
-//			'roles' => new Field_ManyToMany
-		));
-    }
-
-	/**
-	 * Validate callback wrapper for checking password match
-	 * @param Validate $array
-	 * @param string   $field
-	 * @return void
-	 */
-	public static function _check_password_matches(Validate $array, $field)
-	{
-		if (!isset($array[$field]) OR ($array['password'] !== $array[$field]))
-		{
-			// Re-use the error messge from the 'matches' rule in Validate
-			$array->error($field, 'matches', array('param1' => 'password'));
-		}
+				'id' => Jelly::field('Primary', array(
+					'in_form' => FALSE,
+				)),
+				'user_data' => new Field_BelongsTo(array(
+					'null' => true,
+					'label' => 'ФИО пользователя',
+					'in_form' => FALSE,
+					'in_table' => FALSE,
+				)),
+				'email' => new Field_Email(array(
+					'empty'  => FALSE,
+					'unique' => TRUE,
+					'rules' => array(
+						'not_empty' => array(TRUE),
+					),
+					'label' => 'Email',
+				)),
+				'password' => new Field_Password(array(
+					'in_grid' => FALSE,
+					'in_table' => FALSE,
+					'hash_with' => array(A1::instance(), 'hash_password'),
+					'rules' => array(
+						'not_empty' => array(TRUE),
+						'max_length' => array(50),
+						'min_length' => array(4)
+					),
+					'label' => 'Пароль'
+				)),
+				'password_confirm' => new Field_Password(array(
+					'in_grid' => FALSE,
+					'in_form' => FALSE,
+					'in_table' => FALSE,
+					'empty' => TRUE,
+					'in_db' => FALSE,
+					'rules' => array(
+						'matches' => array('password'),
+					),
+					'label' => 'Подтверждение пароля'
+				)),
+				'token' => new Field_String(array(
+					'in_grid' => FALSE,
+					'in_form' => FALSE,
+					'in_table' => FALSE,
+				)),
+				'is_active' => Jelly::field('Boolean', array(
+					'label' => 'Статус',
+					'label_true' => 'Активен',
+					'label_false' => 'Отключён'
+				)),
+				'roles' => Jelly::field('ManyToMany', array(
+					'label' => 'Роли пользователя',
+				)),
+			));
 	}
 
-	/**
-	 * Check if user has a particular role
-	 * @param mixed $role 	Role to test for, can be Model_Role object, string role name of integer role id
-	 * @return bool			Whether or not the user has the requested role
-	 */
-	public function has_role($role)
+	public function get_role_id()
 	{
-		// Check what sort of argument we have been passed
-		if ($role instanceof Model_Role)
+		$roles = array();
+		
+		foreach($this->roles as $role)
 		{
-			$key = 'id';
-			$val = $role->id;
-		}
-		elseif (is_string($role))
-		{
-			$key = 'name';
-			$val = $role;
-		}
-		else
-		{
-			$key = 'id';
-			$val = (int) $role;
+			$roles[$role->id] = $role->name;
 		}
 
-		foreach ($this->roles as $user_role)
-		{
-			if ($user_role->{$key} === $val)
-			{
-				return TRUE;
-			}
-		}
-
-		return FALSE;
+		return $roles;
 	}
-
-} // End Jelly Model user
+} // End Model_User

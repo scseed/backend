@@ -8,6 +8,10 @@
  */
 class Controller_Admin_User extends Controller_Admin_Template {
 
+	public function action_index()
+	{
+		return $this->action_list();
+	}
 	/**
 	 * List of users
 	 */
@@ -20,7 +24,7 @@ class Controller_Admin_User extends Controller_Admin_Template {
 
 		$this->template->content = View::factory('backend/content/user/list')
 			->bind('users', $users)
-			->bind('users_meta', $users_meta);
+			->bind('meta', $users_meta);
 	}
 
 	/**

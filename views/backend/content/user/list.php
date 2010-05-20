@@ -3,20 +3,41 @@
 <table cellspacing="0">
 	<tr>
 <?php
-foreach($users_meta->fields() as $meta):
-	if($meta->in_table):
+foreach($meta->fields() as $field):
+	if($field->in_table):
 ?>
-		<th><?php echo $meta->label ?></th>
+		<th><?php echo $field->label ?></th>
 <?php endif; endforeach;?>
 		<th>Операции</th>
 	</tr>
 <?php foreach($users as $user):?>
 	<tr>
-		<td><?php echo $user->id?></td>
-		<td><?php echo $user->email?></td>
-		<td><?php echo $user->name?></td>
-
-		<td><?php echo ($user->last_login) ? date('H:i l d M Y', $user->last_login) : 'никогда'?></td>
+<?php foreach($meta->fields() as $field): if($field->in_table):?>
+		<td>
+<?php
+switch($field)
+{
+	case $field instanceof Jelly_Field_Boolean:
+		$label = ($user->{$field->name}) ? 'label_true' : 'label_false';
+		echo $field->$label;
+		break;
+	case $field instanceof Jelly_Field_ManyToMany:
+		$i = 0; $coma = '';
+		$count = count($user->{$field->name});
+		foreach ($user->{$field->name} as $param)
+		{
+			if(++$i < $count)
+				$coma = ', ';
+			echo $param->name . $coma;
+		}
+		break;
+	default:
+		echo $user->{$field->name};
+		break;
+		
+}?>
+		</td>
+<?php endif; endforeach;?>
 		<td>
 			<?php
 				echo html::image('admin_i/icons/edit.png', array('class'=>'ico 16x16'));
