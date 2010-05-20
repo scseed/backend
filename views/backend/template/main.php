@@ -91,6 +91,7 @@
 						</div>
 					</div>
 				</div>
+				<?php echo $right_content;?>
 			</div>
 
 			<div id="left-side">

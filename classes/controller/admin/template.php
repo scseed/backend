@@ -18,14 +18,15 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 	{
 		parent::before();
 
-		$config = Kohana::config('admin');
-		$this->template->title      = 'Bluefish';
-		$this->template->content    = '';
-		$this->template->company_name = $config['company_name'];
-		$this->template->menu = new Admin_Menu;
-		$this->template->debug = View::factory('profiler/stats');
-		$this->template->styles = array();
-  		$this->template->scripts = array();
+		$config                           = Kohana::config('admin');
+		$this->template->title            = $config['company_name'];
+		$this->template->content          = '';
+		$this->template->right_content    = '';
+		$this->template->company_name     = $config['company_name'];
+		$this->template->menu             = new Admin_Menu;
+		$this->template->debug            = View::factory('profiler/stats');
+		$this->template->styles           = array();
+  		$this->template->scripts          = array();
 
 		
 		if ($this->_auth_required AND ! A2::instance()->logged_in())
