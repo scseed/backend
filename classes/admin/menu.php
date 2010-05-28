@@ -36,9 +36,9 @@ class Admin_Menu {
 	{
 		$config = Kohana::config('admin');
 		$menu = array();
-
+		
 		// Формирование меню из массива, что дан был в конфиге
-		$menu = $this->_gen_menu($config['menu']);
+		$menu = $this->_gen_menu($config['menu'], $config['menu_group']);
 
 		// Поиск активного уровня меню
 		$menu[$this->_find_parent($menu, $active_menu)]['class'] = 'active';
@@ -55,7 +55,7 @@ class Admin_Menu {
 	 * @param  string $parent
 	 * @return array  $menu
 	 */
-	private function _gen_menu(array $menu_array, $parent = NULL)
+	private function _gen_menu(array $menu_array, $menu_group, $parent = NULL)
 	{
 		$menu = array();
 		foreach($menu_array as $item_name => $menu_item)
@@ -68,11 +68,11 @@ class Admin_Menu {
 			{
 				$parent_name = $parent;
 			}
-
+			$route_group = arr::get($menu_item, 'menu_group', $menu_group);
 			$menu[$item_name] = array(
 				'parent' => $parent_name,
-				'title'   => __($menu_item['title']),
-				'href'    => Route::get('default')
+				'title'   => __(arr::get($menu_item, 'title', '')),
+				'href'    => Route::get( $route_group )
 					->uri(array(
 						'controller' => arr::get($menu_item, 'controller', 'home'),
 						'action' =>  arr::get($menu_item, 'action', NULL),
@@ -81,7 +81,7 @@ class Admin_Menu {
 				'resource' => NULL,
 				'visible' => arr::get($menu_item, 'visible', TRUE),
 				'submenu' => ( ! empty($menu_item['submenu']))
-					? $this->_gen_menu($menu_item['submenu'], $parent_name)
+					? $this->_gen_menu($menu_item['submenu'], $route_group, $parent_name)
 					: array(),
 
 			);
@@ -97,33 +97,23 @@ class Admin_Menu {
 	 * @param  string $active_menu
 	 * @return string $parent
 	 */
-	private function _find_parent(array $menu_array, $active_menu)
+	private function _find_parent(array & $menu_array, $active_menu)
 	{
-		$parent = NULL;
+		static $parent;
+
 		foreach($menu_array as $name => $item)
 		{
 			if ($name == $active_menu)
 			{
 				$parent = $item['parent'];
 			}
-
-			if ($parent)
-				return $parent;
-
-			foreach($item['submenu'] as $subname => $subitem)
+			
+			if(! empty($item['submenu']))
 			{
-				if ($subname == $active_menu)
-				{
-					$parent = $subitem['parent'];
-				}
+				$parent = $this->_find_parent($item['submenu'], $active_menu);
 			}
-
-			if ($parent)
-				return $parent;
 		}
-
-		$parent = ($parent != NULL) ? $parent : 'home';
-
-		return $parent;
+		
+		if($parent) return $parent;
 	}
 } // End Menu
