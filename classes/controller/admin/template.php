@@ -55,6 +55,7 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 		{
 		
 			$this->template->title            = $config['company_name'];
+			$this->template->page_title       = '';
 			$this->template->content          = '';
 			$this->template->right_content    = '';
 			$this->template->company_name     = $config['company_name'];
@@ -71,6 +72,8 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 	{
 		if ($this->auto_render)
 		{
+			$this->template->content->controller = $this->request->controller;
+			
 			$styles = array(
 				'css/admin.css' => 'screen, projection',
 			);
