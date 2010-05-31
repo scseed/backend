@@ -37,32 +37,39 @@ class Controller_Admin_User extends Controller_Admin_Template {
 		$this->template->page_title = 'Новый пользователь';
 
 		$user = Jelly::factory('user');
-		$errors = array();
+		$errors = NULL;
 		if ($_POST)
 		{
+			foreach($user->meta()->fields() as $field)
+			{
+				if($field->in_form)
+					$post_fields[] = $field->name;
+			}
+			$post = arr::extract($_POST, $post_fields, NULL);
+
+			$user->set($post);
+
 			try
 			{
-				if($user->set($_POST)->save())
-				{
-					Logapp::instance()->write(
-						'user_add',
-						'success',
-						A1::instance()->get_user()->id,
-						'Создан новый пользователь'
-					);
-					$this->request->redirect('admin/user/list');
-				}
+				$user->save();
 
+//				Logapp::instance()->write(
+//					'user_add',
+//					'success',
+//					A1::instance()->get_user()->id,
+//					'Создан новый пользователь'
+//				);
+
+				$this->request->redirect('admin/user/list');
 			}
 			catch (Validate_Exception $e)
 			{
-				$errors =  $e->array->errors('user/add');
+				$errors =  $e->array->errors('user');
 			}
 		}
 
-		$this->template-> content = View::factory('backend/content/user/new')
-			->set('user', $user)
-			->set('fields', $user->meta()->fields())
+		$this->template->content = View::factory('backend/content/_crud/add')
+			->set('item', $user)
 			->set('errors', $errors);
 	}
 
@@ -78,36 +85,44 @@ class Controller_Admin_User extends Controller_Admin_Template {
 
 		if( ! $user->loaded()) Request::factory('error/404')->execute();
 
-		$errors = array();
+		$errors = NULL;
 
 		if ($_POST)
 		{
+			foreach($user->meta()->fields() as $field)
+			{
+				if($field->in_form)
+					$post_fields[] = $field->name;
+			}
+			$post = arr::extract($_POST, $post_fields, NULL);
+			if($post['password'] == '' AND $post['password_confirm'] == '')
+			{
+				unset($post['password'], $post['password_confirm']);
+			}
+
+			$user->set($post);
+			
 			try
 			{
-				if($_POST['password'] === '' AND $_POST['password_confirm'] === '')
-				{
-					unset ($_POST['password'], $_POST['password_confirm']);
-				}
-				if($user->set($_POST)->save())
-				{
-					Logapp::instance()->write(
-						'user_edit',
-						'success',
-						A1::instance()->get_user()->id,
-						'Данные пользователя изменены (id: '.$user->id.'; email: '.$user->email.', )'
-					);
-					$this->request->redirect('admin/user/list');
-				}
+				$user->save();
+//				Logapp::instance()->write(
+//					'user_edit',
+//					'success',
+//					A1::instance()->get_user()->id,
+//					'Данные пользователя изменены (id: '.$user->id.'; email: '.$user->email.', )'
+//				);
+				$this->request->redirect('admin/user/list');
+
 			}
 			catch (Validate_Exception $e)
 			{
-				$errors =  $e->array->errors('user/add');
+				$errors =  $e->array->errors('user');
 			}
 		}
 
-		$this->template->content = View::factory('backend/content/user/edit')
-			->set('user', $user)
-			->set('fields', $user->meta()->fields())
+		$this->template->content = View::factory('backend/content/_crud/edit')
+			->set('item', $user)
+			->set('meta', $user->meta())
 			->set('errors', $errors);
 
 		$this->template->page_title = 'Правка данных пользователя ' . $user->name;
