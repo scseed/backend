@@ -7,6 +7,8 @@ return array(
 	 */
 	'company_name' => 'SomeShit Ltd.',
 
+	'menu_group' => 'admin',
+	
 	/**
 	 * Menu array example
 	 */
@@ -32,5 +34,7 @@ return array(
 		 * ),
 		 */
 	),
+	
+	'ed_copy' => TRUE,
 	
 );

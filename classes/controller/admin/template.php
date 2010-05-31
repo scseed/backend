@@ -59,6 +59,7 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 			$this->template->content          = '';
 			$this->template->right_content    = '';
 			$this->template->company_name     = $config['company_name'];
+			$this->template->ed_copy          = $config['ed_copy'];
 			$this->template->menu             = Admin_Menu::instance();
 			$this->template->debug            = View::factory('profiler/stats');
 			$this->template->styles           = array();

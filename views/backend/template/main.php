@@ -30,7 +30,7 @@
 					))
 				)?>
 				<?php echo $company_name?>
-				<div id="ed-panel">
+				<div id="ed-panel" <?php echo ($ed_copy === FALSE) ? 'class="nologo"' : ''?>>
 					<ul>
 						<li class="profile"><?php echo html::anchor(
 							Route::get('admin')
@@ -106,7 +106,7 @@
 		<div id="main-wrapper"></div>
 	</div>
 	<div id="footer">
-		&copy; Система управления сатом  разработан в студии <a href="http://enerdesign.ru/">EnerDesign</a>
+		<?php echo ($ed_copy === TRUE) ? '&copy; Система управления сатйом разработана в студии <a href="http://enerdesign.ru/">EnerDesign</a>' : ''?>
 	</div>
 <?php echo /*(!IN_PRODUCTION) ?*/ View::factory('profiler/stats') //: ''?>
 </body>
