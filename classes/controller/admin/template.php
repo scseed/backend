@@ -8,11 +8,11 @@
  */
 class Controller_Admin_Template extends Kohana_Controller_Template {
 
-	public $template = 'backend/template/main';
-
-	public $_auth_required = TRUE;
-	protected $_resource = '';
+	public $template           = 'backend/template/main';
+	public $_auth_required     = TRUE;
 	public $actions_privileges = array();
+	
+	protected $_resource         = '';
 	protected $_active_menu_item = '';
 
 	public function before()
@@ -42,14 +42,6 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 //				throw new Kohana_Exception403();
 //			};
 //		}
-
-		//вычисляем ключ активного пункта меню по умолчанию
-		$this->_active_menu_item = $this->request->controller;
-
-		if ($this->request->action != 'index')
-		{
-			$this->_active_menu_item .= '_'.$this->request->action;
-		}
 		
 		if ($this->auto_render === TRUE)
 		{
@@ -73,7 +65,18 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 	{
 		if ($this->auto_render)
 		{
-			$this->template->content->controller = $this->request->controller;
+			//вычисляем ключ активного пункта меню по умолчанию
+			$this->_active_menu_item = $this->request->controller;
+
+			if ($this->request->action != 'index')
+			{
+				$this->_active_menu_item .= '_'.$this->request->action;
+			}
+			
+			if(is_object($this->template->content))
+			{
+				$this->template->content->controller = $this->request->controller;
+			}
 			
 			$styles = array(
 				'css/admin.css' => 'screen, projection',
