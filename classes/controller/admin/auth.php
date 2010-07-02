@@ -16,7 +16,7 @@ class Controller_Admin_Auth extends Controller_Admin_Template {
 	 */
 	public function action_login ()
 	{
-		if(A1::instance()->logged_in())
+		if(Auth::instance()->logged_in())
 		{
 			if($url = Session::instance()->get('url'))
 			{
@@ -34,7 +34,7 @@ class Controller_Admin_Auth extends Controller_Admin_Template {
 							->rules('password', $user->fields('password')->rules);
 		if ($post->check())
 		{
-			if (A1::instance()->login(
+			if (Auth::instance()->login(
 				$post['email'],
 				$post['password'],
 				!isset($post['remember']) ? TRUE : FALSE))
@@ -42,7 +42,7 @@ class Controller_Admin_Auth extends Controller_Admin_Template {
 				Logapp::instance()->write(
 					'login',
 					'success',
-					A1::instance()->get_user()->id,
+					Auth::instance()->get_user()->id,
 					'Пользователь успешно вошёл в систему'
 				);
 
@@ -83,11 +83,11 @@ class Controller_Admin_Auth extends Controller_Admin_Template {
 	 */
 	public function action_logout()
 	{
-		if(A1::instance()->logged_in())
+		if(Auth::instance()->logged_in())
 		{
-			$user_id = A1::instance()->get_user()->id;
+			$user_id = Auth::instance()->get_user()->id;
 
-			A1::instance()->logout();
+			Auth::instance()->logout();
 
 			Logapp::instance()->write(
 				'logout',

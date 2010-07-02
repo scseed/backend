@@ -4,7 +4,6 @@
  * Role Model for Jelly ORM
  *
  * @author avis <smgladkovskiy@gmail.com>
- * @copyright (c) 2010 EnerDesign <http://enerdesign.ru>
  */
 class Model_Role extends Jelly_Model {
 
@@ -17,10 +16,10 @@ class Model_Role extends Jelly_Model {
 	{
 		$meta->table('roles')
 			->fields(array(
-				'id' => new Field_Primary(array(
+				'id' => Jelly::field('Primary', array(
 					'in_form' => FALSE,
 				)),
-				'parent' => new Field_BelongsTo(array(
+				'parent' => Jelly::field('BelongsTo', array(
 					'null' => TRUE,
 					'editable' => FALSE,
 					'foreign' => 'role',
@@ -31,7 +30,7 @@ class Model_Role extends Jelly_Model {
 					),
 					'label' => 'Родительская роль',
 				)),
-				'name' => new Field_String(array(
+				'name' => Jelly::field('String', array(
 					'empty' => FALSE,
 					'default' => '',
 					'rules' => array(
@@ -39,16 +38,10 @@ class Model_Role extends Jelly_Model {
 					),
 					'label' => 'Название роли',
 				)),
-				'description' => Jelly::field('String'),
-				'rules' => new Field_ManyToMany(array(
-					'in_db' => FALSE,
-					'in_form' => FALSE,
+				'description' => Jelly::field('String', array(
+					'label' => 'Описание',
 				)),
-				'label' => 'Описание',
 			))
-			->load_with(array(
-				//'parent'
-			))
-		;
+			->load_with(array('parent'));
 	}
 } // End Model_Role

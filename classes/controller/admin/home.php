@@ -8,6 +8,12 @@
  */
 class Controller_Admin_Home extends Controller_Admin_Template {
 
+	public $_actions = array(
+		'index' => array(
+			'read'
+			)
+		);
+
 	public function action_index ()
 	{
 		$logs = Logapp::instance()->watch(10);

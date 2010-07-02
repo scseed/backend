@@ -6,7 +6,7 @@
  * @author avis <smgladkovskiy@gmail.com>
  * @copyright (c) 2010 EnerDesign <http://enerdesign.ru>
  */
-class Model_User extends Jelly_Model implements Acl_Role_Interface {
+class Model_User extends Jelly_Model {
 
 	/**
 	 * Initializating model meta information
@@ -16,6 +16,7 @@ class Model_User extends Jelly_Model implements Acl_Role_Interface {
 	public static function initialize(Jelly_Meta $meta)
 	{
 		$meta->table('users')
+			->name_key('email')
 			->fields(array(
 				'id' => Jelly::field('Primary'),
 				'user_data' => new Field_BelongsTo(array(
@@ -31,10 +32,11 @@ class Model_User extends Jelly_Model implements Acl_Role_Interface {
 						'not_empty' => NULL,
 					),
 					'label' => 'Email',
+
 				)),
 				'password' => new Field_Password(array(
 					'in_table' => FALSE,
-					'hash_with' => array(A1::instance(), 'hash_password'),
+					'hash_with' => array(Auth::instance(), 'hash_password'),
 					'rules' => array(
 						'not_empty' => NULL,
 						'max_length' => array(50),

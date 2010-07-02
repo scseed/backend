@@ -4,7 +4,6 @@
  * Resource Model for Jelly ORM
  *
  * @author avis <smgladkovskiy@gmail.com>
- * @copyright (c) 2010 EnerDesign <http://enerdesign.ru>
  */
 class Model_Resource extends Jelly_Model {
 
@@ -17,9 +16,15 @@ class Model_Resource extends Jelly_Model {
 	{
 		$meta->table('resources')
 			->fields(array(
-				'id' => new Field_Primary,
-				'parent' => new Field_BelongsTo(array(
-					'foreign' => 'resource',
+				'id' => Jelly::field('Primary'),
+				'parent' => Jelly::field('BelongsTo', array(
+					'foreign' => 'resource.parent_id',
+					'column' => 'parent_id',
+					'model' => 'resource'
+				)),
+				'childs' => Jelly::field('HasMany', array(
+					'in_bd' => FALSE,
+					'foreign' => 'resource.parent_id',
 					'column' => 'parent_id',
 					'model' => 'resource'
 				)),
