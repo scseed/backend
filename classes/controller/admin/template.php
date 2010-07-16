@@ -21,7 +21,7 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 	{
 		parent::before();
 
-		$this->_actions = array(
+		$default_actions = array(
 			'index' => array(
 				'read'
 				),
@@ -41,6 +41,15 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 				'delete'
 			)
 		);
+
+		if(empty($this->_actions))
+		{
+			$this->_actions = $default_actions;
+		}
+		else
+		{
+			$this->_actions = Arr::merge($this->_actions, $default_actions);
+		}
 
 		$config = Kohana::config('admin');
 		
