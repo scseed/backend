@@ -39,6 +39,9 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 			),
 			'delete' => array(
 				'delete'
+			),
+			'status' => array(
+				'update', 'delete'
 			)
 		);
 
