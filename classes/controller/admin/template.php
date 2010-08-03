@@ -57,7 +57,7 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 		$config = Kohana::config('admin');
 		
 		//Если требуется авторизация отправлям позователя на форму логина
-		if ($this->_auth_required AND ! Auth::instance()->logged_in())
+		if ($this->_auth_required AND ! Auth::instance('admin')->logged_in())
 		{
 			Session::instance()->set('url', $_SERVER['REQUEST_URI']);
 			Request::instance()->redirect('admin/auth/login');
@@ -74,7 +74,7 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 		{
 			if (isset($this->_actions[$this->request->action]))
 			{
-				if ( ! ACL::instance()->is_allowed(Auth::instance()->get_user()->roles->as_array('id', 'name'), $this->_resource, $this->_actions[$this->request->action]))
+				if ( ! ACL::instance()->is_allowed(Auth::instance('admin')->get_user()->roles->as_array('id', 'name'), $this->_resource, $this->_actions[$this->request->action]))
 				{
 //					throw new Kohana_Exception403();
 					die('Not allowed');
@@ -109,7 +109,7 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 			$this->template->scripts          = array();
 		}
 
-		$this->template->user = Auth::instance()->get_user();
+		$this->template->user = Auth::instance('admin')->get_user();
 	}
 
 	public function after()

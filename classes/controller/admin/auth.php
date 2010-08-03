@@ -16,7 +16,7 @@ class Controller_Admin_Auth extends Controller_Admin_Template {
 	 */
 	public function action_login ()
 	{
-		if(Auth::instance()->logged_in())
+		if(Auth::instance('admin')->logged_in())
 		{
 			if($url = Session::instance()->get('url'))
 			{
@@ -34,7 +34,7 @@ class Controller_Admin_Auth extends Controller_Admin_Template {
 							->rules('password', $user->fields('password')->rules);
 		if ($post->check())
 		{
-			if (Auth::instance()->login(
+			if (Auth::instance('admin')->login(
 				$post['email'],
 				$post['password'],
 				!isset($post['remember']) ? TRUE : FALSE))
