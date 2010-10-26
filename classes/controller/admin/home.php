@@ -16,14 +16,51 @@ class Controller_Admin_Home extends Controller_Admin_Template {
 
 	public function action_index ()
 	{
-		$logs = Logapp::instance()->watch(10);
-		$logs_meta = Jelly::factory('log_jelly');
-
+		$logs_meta = array();
 		$this->template->page_title = $this->template->title = __('Главная');
 		$this->template->content = View::factory('backend/content/home')
-			->set('company_name', $this->template->company_name)
-			->set('logs_meta', $logs_meta->meta())
-			->bind('logs', $logs);
+			->set('company_name', $this->template->company_name);
+//			->bind('logs_meta', $logs_meta)
+//			->bind('logs', $logs);
+
+//		if(class_exists('Logapp'))
+//		{
+//			$logs = Logapp::instance()->watch(10);
+//			$logs_meta = Jelly::meta('log_jelly');
+//		}
 	}
 
-} // End Template Controller home
+	/**
+	 * Media files rendering
+	 *
+	 * @return void
+	 */
+	public function action_media()
+	{
+		// Generate and check the ETag for this file
+		$this->request->check_cache(sha1($this->request->uri));
+
+		// Get the file path from the request
+		$file = $this->request->param('file');
+
+		// Find the file extension
+		$ext = pathinfo($file, PATHINFO_EXTENSION);
+
+		// Remove the extension from the filename
+		$file = substr($file, 0, -(strlen($ext) + 1));
+		if($file = Kohana::find_file('media', $file, $ext)) {
+			// Send the file content as the response
+			$this->request->response = file_get_contents($file);
+		}
+		else
+		{
+			// Return a 404 status
+			$this->request->status = 404;
+		}
+		// Set the proper headers to allow caching
+		$this->request->headers['Content-Type'] = File::mime_by_ext($ext);
+		$this->request->headers['Content-Length'] = filesize($file);
+		$this->request->headers['Last-Modified'] = date('r', filemtime($file));
+	}
+
+} // End Template Controller Home

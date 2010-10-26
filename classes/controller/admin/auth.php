@@ -1,12 +1,12 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
-
 /**
  * Template Controller User
  *
  * @author avis <smgladkovskiy@gmail.com>
  * @copyright (c) 2010 EnerDesign <http://enerdesign.ru>
  */
-class Controller_Admin_Auth extends Controller_Admin_Template {
+class Controller_Admin_Auth extends Controller_Admin_Template
+{
 
 	public $template = 'backend/template/login';
 	public $_auth_required = FALSE;
@@ -14,12 +14,10 @@ class Controller_Admin_Auth extends Controller_Admin_Template {
 	/**
 	 * Login action
 	 */
-	public function action_login ()
+	public function action_login()
 	{
-		if(Auth::instance('admin')->logged_in())
-		{
-			if($url = Session::instance()->get('url'))
-			{
+		if(Auth::instance('admin')->logged_in()) {
+			if($url = Session::instance()->get('url')) {
 				Request::instance()->redirect($url);
 			}
 			else
@@ -27,55 +25,43 @@ class Controller_Admin_Auth extends Controller_Admin_Template {
 				Request::instance()->redirect('admin');
 			}
 		}
-		$user = Jelly::meta('user');
 
-		$post = Validate::factory($_POST)
-							->rules('email', $user->fields('email')->rules)
-							->rules('password', $user->fields('password')->rules);
-		if ($post->check())
-		{
-			if (Auth::instance('admin')->login(
-				$post['email'],
-				$post['password'],
-				!isset($post['remember']) ? TRUE : FALSE))
+		$post = array(
+			'email' => NULL,
+			'password' => NULL
+		);
+		$errors = array();
+		$user = Jelly::factory('user');
+		if($_POST) {
+			$user = Jelly::meta('user');
+			$post = Validate::factory(Arr::extract($_POST, array('email', 'password')))
+				->rules('email', $user->fields('email')->rules)
+				->rules('password', $user->fields('password')->rules);
+
+			if($post->check())
 			{
-				Logapp::instance()->write(
-					'login',
-					'success',
-					Auth::instance()->get_user()->id,
-					'Пользователь успешно вошёл в систему'
-				);
-
-				if($url = Session::instance()->get('url'))
+				if(Auth::instance('admin')->login(
+					$post['email'],
+					$post['password'],
+					! isset($post['remember']) ? TRUE : FALSE))
 				{
-					Request::instance()->redirect($url);
+					if($url = Session::instance()->get('url')) {
+						Request::instance()->redirect($url);
+					}
+					else
+					{
+						Request::instance()->redirect('admin');
+					}
 				}
 				else
 				{
-					Request::instance()->redirect('admin');
+					$errors = array('common' => 'Неверное имя пользователя или пароль');
 				}
-
-			}
-			else
-			{
-				Logapp::instance()->write(
-					'login',
-					'fail',
-					NULL,
-					'Неудачная попытка входа в систему.<br />Неверный логин или пароль ('.$post['email'].').'
-				);
-				
-				$this->template->content = View::factory('backend/user/login')
-					->set('userdata', $post->as_array())
-					->set('errors', array('common' => __('Неверный логин или пароль')));
 			}
 		}
-		else
-		{
-			$this->template->content = View::factory('backend/user/login')
-				->set('userdata', $post->as_array())
-				->set('errors', $post->errors('common_validation', TRUE));
-		}
+		$this->template->content = View::factory('backend/user/login')
+			->bind('userdata', $post)
+			->set('errors', $errors);
 	}
 
 	/**
@@ -83,21 +69,54 @@ class Controller_Admin_Auth extends Controller_Admin_Template {
 	 */
 	public function action_logout()
 	{
-		if(Auth::instance()->logged_in())
-		{
+		if(Auth::instance()->logged_in()) {
 			$user_id = Auth::instance()->get_user()->id;
-
 			Auth::instance()->logout();
-
-			Logapp::instance()->write(
-				'logout',
-				'success',
-				$user_id,
-				'Пользователь вышел из системы'
-			);
 		}
-
 		Request::instance()->redirect('admin');
 	}
 
+	public function action_register()
+	{
+		$count_users = Jelly::query('user')->count();
+
+	    if(! $count_users)
+	    {
+		    $errors = array();
+		    $user = Jelly::factory('user');
+
+		    if($_POST)
+		    {
+			    $post = Arr::extract($_POST, array('email', 'password', 'password_confirm', 'remember'));
+
+		        $user->set($post);
+
+		        try
+		        {
+			        $user->save();
+			        $user->add('role', array('login', 'admin'));
+
+		            Auth::instance('admin')->login(
+			            $post['email'],
+			            $post['password'],
+			            !isset($post['remember']) ? TRUE : FALSE);
+		            $this->request->redirect('admin');
+
+		        }
+		        catch(Validate_Exception $e)
+		        {
+			        $errors = $e->array->messages('common_validation');
+		        }
+		    }
+
+		    $this->template->title = 'Регистрация администратора';
+			$this->template->content = View::factory('backend/user/register')
+				->bind('userdata', $user)
+				->bind('errors', $errors);
+	    }
+	    else
+	    {
+		    Request::instance()->redirect('admin/auth/login');
+	    }
+	}
 } // End Template Controller User

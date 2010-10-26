@@ -1,10 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');?>
 <div id="login-form">
-	<h1 class="title"><?php echo __('Вход в систему') ?></h1>
+	<h1 class="title"><?php echo __('Регистрация администратора') ?></h1>
 		<?php echo Form::open(); ?>
-			<?php if (!empty($errors['common'])): ?>
-				<h4 class="title"><div class="form-error"><?php echo $errors['common'] ?></div></h4>
-			<?php endif ?>
 			<div class="form-item">
 				<?php
 					echo Form::label('email', __('Эл. адрес'));
@@ -15,7 +12,7 @@
 				<?php
 					echo Form::input(
 									'email',
-									$userdata['email'],
+									$userdata->email,
 									array('type' => 'text', 'id' => 'email')
 					);
 				?>
@@ -24,7 +21,7 @@
 				<?php
 					echo Form::label('password', __('Пароль'));
 				?>
-				<?php if ( ! empty($userdata['password']) AND ! empty($errors['password'])): ?>
+				<?php if ( ! empty($userdata->password) AND ! empty($errors['password'])): ?>
 					<div class="form-error"><?php echo $errors['password'] ?></div>
 				<?php endif ?>
 				<?php
@@ -32,6 +29,20 @@
 									'password',
 									'',
 									array('type' => 'password', 'id' => 'password')
+					);
+				?>
+			</div><div class="form-item">
+				<?php
+					echo Form::label('password_confirm', __('Подтверждение пароля'));
+				?>
+				<?php if ( ! empty($userdata->password_confirm) AND ! empty($errors['password_confirm'])): ?>
+					<div class="form-error"><?php echo $errors['password_confirm'] ?></div>
+				<?php endif ?>
+				<?php
+					echo Form::input(
+									'password_confirm',
+									'',
+									array('type' => 'password', 'id' => 'password_confirm')
 					);
 				?>
 			</div>

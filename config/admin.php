@@ -7,15 +7,20 @@ return array(
 	 */
 	'company_name' => 'SomeShit Ltd.',
 
+	/**
+	 * Media folder for admin views
+	 */
+	'media_folder' => MODPATH . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'media',
+
 	'menu_group' => 'admin',
-	
+
 	/**
 	 * Menu array example
 	 */
 	'menu' => array(
 		/**
 		 * Example of the menu structure
-		 * 
+		 *
 		 * 'somepage' => array(
 		 *	'title' => 'somepage',
 		 *	'controller' => 'some',
@@ -34,7 +39,7 @@ return array(
 		 * ),
 		 */
 	),
-	
+
 	'ed_copy' => TRUE,
-	
+
 );

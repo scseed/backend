@@ -4,7 +4,7 @@
  * User Model for Jelly ORM
  *
  * @author avis <smgladkovskiy@gmail.com>
- * @copyright (c) 2010 EnerDesign <http://enerdesign.ru>
+ * @copyright
  */
 class Model_User extends Jelly_Model {
 
@@ -19,23 +19,24 @@ class Model_User extends Jelly_Model {
 			->name_key('email')
 			->fields(array(
 				'id' => Jelly::field('Primary'),
-				'user_data' => new Field_BelongsTo(array(
+				'user_data' => Jelly::field('BelongsTo', array(
 					'null' => true,
+					'default' => NULL,
 					'label' => 'ФИО пользователя',
 					'in_form' => FALSE,
 					'in_table' => FALSE,
 				)),
 				'email' => Jelly::field('Email', array(
-					'empty'  => FALSE,
-					'unique' => TRUE,
+//					'unique' => TRUE,
 					'rules' => array(
 						'not_empty' => NULL,
 					),
 					'label' => 'Email',
 
 				)),
-				'password' => new Field_Password(array(
+				'password' => Jelly::field('Password', array(
 					'in_table' => FALSE,
+					//'default' => $pass,
 					'hash_with' => array(Auth::instance(), 'hash_password'),
 					'rules' => array(
 						'not_empty' => NULL,
@@ -44,16 +45,19 @@ class Model_User extends Jelly_Model {
 					),
 					'label' => 'Пароль'
 				)),
-				'password_confirm' => new Field_Password(array(
+				'password_confirm' => Jelly::field('Password', array(
 					'in_form' => TRUE,
 					'in_table' => FALSE,
 					'in_db' => FALSE,
 					'rules' => array(
-						'matches' => array('password'),
+						'matches' => NULL,
+						'not_empty' => NULL,
+						'max_length' => array(50),
+						'min_length' => array(4)
 					),
 					'label' => 'Подтверждение пароля'
 				)),
-				'token' => new Field_String(array(
+				'tokens' => Jelly::field('HasMany', array(
 					'in_form' => FALSE,
 					'in_table' => FALSE,
 				)),
@@ -69,15 +73,20 @@ class Model_User extends Jelly_Model {
 			));
 	}
 
-	public function get_role_id()
+	/**
+	 * Validate callback wrapper for checking password match
+	 * @param Validate $array
+	 * @param string $field
+	 * @return void
+	 */
+	public static function _check_password_matches(Validate $array, $field)
 	{
-		$roles = array();
-		
-		foreach($this->roles as $role)
+		$auth = Auth::instance();
+		if($array['password'] !== $array[$field])
 		{
-			$roles[$role->id] = $role->name;
+			// Re-use the error messge from the 'matches' rule in Validate
+			$array->error($field, 'matches', array('param1' => 'password'));
 		}
-
-		return $roles;
 	}
+
 } // End Model_User

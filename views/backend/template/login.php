@@ -3,14 +3,13 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru">
 <head>
-	<title>Вход в систему :: <?php echo $company_name?></title>
+	<title><?php echo $title?> :: <?php echo $company_name?> Controll System</title>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <meta http-equiv="Content-Language" content="ru-ru" />
 	<meta name="keywords" content="" />
 	<meta name="description" content="" />
-	<?php echo Html::style('css/admin.css', array('media' => 'screen, projector')); ?>
-	<?php echo Html::script('js/jquery-1.4.2.min.js'); ?>
-	<?php echo Html::script('js/admin_effects.js'); ?>
+	<?php foreach($styles as $file => $type) echo HTML::style($file, array('media' => $type), TRUE), "\n" ?>
+	<?php foreach($scripts as $file) echo HTML::script($file), "\n" ?>
 
 	<!--[if lte IE 6]>
 		<?php echo Html::script('js/DD_belatedPNG.js'); ?>
@@ -34,5 +33,6 @@
 	<div id="footer">
 		&copy; Система управления сайтом  разработана в студии <a href="http://enerdesign.ru/">EnerDesign</a>
 	</div>
+	<?php echo $debug?>
 </body>
 </html>

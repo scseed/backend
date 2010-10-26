@@ -7,10 +7,10 @@
     <meta http-equiv="Content-Language" content="ru-ru" />
 	<meta name="keywords" content="" />
 	<meta name="description" content="" />
-	<?php foreach ($styles as $file => $type) echo HTML::style($file, array('media' => $type)), "\n" ?>
+	<?php foreach ($styles as $file => $type) echo HTML::style($file, array('media' => $type), TRUE), "\n" ?>
 	<?php foreach ($scripts as $file) echo HTML::script($file), "\n" ?>
 	<!--[if lte IE 6]>
-		<?php echo Html::script('js/DD_belatedPNG.js'); ?>
+		<?php echo Html::script('media/js/DD_belatedPNG.js'); ?>
 		<script type="text/javascript">
 			DD_belatedPNG.fix('#menu, #ed-panel, #ed-panel *, img');
 		</script>
@@ -24,7 +24,7 @@
 			<div id="header-wrapper">
 				<?php echo html::anchor(
 					'admin',
-					html::image('admin_i/logo.png', array(
+					html::image('admin/media/i/logo.png', array(
 						'id' => 'logo',
 						'alt' => $company_name
 					))
@@ -70,19 +70,19 @@
 				<div class="info-block">
 					<div class="info-block-wrapper">
 						<p>
-							<img src="/admin_i/icons/user.png" alt="" class="ico 16x16" /> <span class="big"><?php echo $user->name?></span>
+							<img src="/admin/media/i/icons/user.png" alt="" class="ico 16x16" /> <span class="big"><?php echo $user->name?></span>
 						</p>
 						<p>
-							<img src="/admin_i/icons/acl-admin.png" alt="" class="ico 16x16" /> <span class="acl-role admin-role">Администратор</span>
+							<img src="/admin/media/i/icons/acl-admin.png" alt="" class="ico 16x16" /> <span class="acl-role admin-role">Администратор</span>
 						</p>
 						<!--<p>
-							<img src="/admin_i/icons/acl-manager.png" alt="" class="ico 16x16" /> <span class="acl-role manager-role">Менеджер</span>
+							<img src="/admin/media/i/icons/acl-manager.png" alt="" class="ico 16x16" /> <span class="acl-role manager-role">Менеджер</span>
 						</p>
 						<p>
-							<img src="/admin_i/icons/acl-content.png" alt="" class="ico 16x16" /> <span class="acl-role content-role">Контентер</span>
+							<img src="/admin/media/i/icons/acl-content.png" alt="" class="ico 16x16" /> <span class="acl-role content-role">Контентер</span>
 						</p>--->
 						<p>
-							<img src="/admin_i/icons/mail.png" alt="" class="ico 16x16" /> <?php echo html::mailto($user->email, $user->email, array('class' => 'orange'))?>
+							<img src="/admin/media/i/icons/mail.png" alt="" class="ico 16x16" /> <?php echo html::mailto($user->email, $user->email, array('class' => 'orange'))?>
 						</p>
 					</div>
 					<div class="info-block-status">
@@ -108,6 +108,6 @@
 	<div id="footer">
 		<?php echo ($ed_copy === TRUE) ? '&copy; Система управления сатйом разработана в студии <a href="http://enerdesign.ru/">EnerDesign</a>' : ''?>
 	</div>
-<?php echo /*(!IN_PRODUCTION) ?*/ View::factory('profiler/stats') //: ''?>
+<?php echo $debug?>
 </body>
 </html>

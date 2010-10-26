@@ -34,21 +34,21 @@ switch($field)
 	default:
 		echo $user->{$field->name};
 		break;
-		
+
 }?>
 		</td>
 <?php endif; endforeach;?>
 		<td>
 			<?php
-				echo html::image('admin_i/icons/edit.png', array('class'=>'ico 16x16'));
+				echo html::image('admin/media/i/icons/edit.png', array('class'=>'ico 16x16'));
 				echo html::anchor('admin/user/edit/'.$user->id, 'Править');
 				echo '&nbsp;&nbsp;';
-//				echo html::image('admin_i/icons/user.png', array('class'=>'ico 16x16'));
+//				echo html::image('admin/media/i/icons/user.png', array('class'=>'ico 16x16'));
 //				echo html::anchor('admin/user/roles/'.$user->id, 'Роли');
 //				echo '&nbsp;&nbsp;';
-				echo html::image('admin_i/icons/trash.png', array('class'=>'ico 16x16'));
+				echo html::image('admin/media/i/icons/trash.png', array('class'=>'ico 16x16'));
 				echo html::anchor('admin/user/delete/'.$user->id, 'Удалить',
-					array('onclick'=>"return window.confirm('Уверены в этом?')")); 
+					array('onclick'=>"return window.confirm('Уверены в этом?')"));
 			?>
 		</td>
 	</tr>

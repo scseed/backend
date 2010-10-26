@@ -26,21 +26,21 @@
 		<td class="edit">
 			<?php echo HTML::anchor(
 				'admin/' . $meta->model() . '/edit/' . $item->id,
-				HTML::image('admin_i/icons/edit.png', array('class' => 'ico')),
+				HTML::image('admin/media/i/icons/edit.png', array('class' => 'ico')),
 				array(
 					'title' => 'Редактировать'
 				))?>
 			<?php echo HTML::anchor(
 				'admin/' . $meta->model() . '/status/' . $item->id,
 				($item->is_active)
-					? HTML::image('admin_i/icons/cross.png', array('class' => 'ico'))
-					: HTML::image('admin_i/icons/tick.png', array('class' => 'ico')),
+					? HTML::image('admin/media/i/icons/cross.png', array('class' => 'ico'))
+					: HTML::image('admin/media/i/icons/tick.png', array('class' => 'ico')),
 				array(
 					'title' => 'Сменить статус'
 				))?>
 			<?php echo HTML::anchor(
 				'admin/' . $meta->model() . '/delete/' . $item->id,
-				HTML::image('admin_i/icons/trash.png', array('class' => 'ico')),
+				HTML::image('admin/media/i/icons/trash.png', array('class' => 'ico')),
 				array(
 					'title' => 'Удалить'
 				))?>

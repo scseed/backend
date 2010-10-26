@@ -16,10 +16,17 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 	protected $_active_menu_item = '';
 
 	public $_actions = array();
+	protected $media;
 
 	public function before()
 	{
+
 		parent::before();
+		if($this->request->action === 'media') {
+			// Do not template media files
+			$this->auto_render = FALSE;
+		    $this->_auth_required = FALSE;
+		}
 
 		$default_actions = array(
 			'index' => array(
@@ -55,7 +62,7 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 		}
 
 		$config = Kohana::config('admin');
-		
+
 		//Если требуется авторизация отправлям позователя на форму логина
 		if ($this->_auth_required AND ! Auth::instance('admin')->logged_in())
 		{
@@ -93,10 +100,12 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 		{
 			$this->_active_menu_item .= '_'.$this->request->action;
 		}
-		
+
 		if ($this->auto_render === TRUE)
 		{
-		
+			// Grab the necessary routes
+			$this->media = Route::get('docs/media');
+
 			$this->template->title            = $config['company_name'];
 			$this->template->page_title       = '';
 			$this->template->content          = '';
@@ -107,6 +116,9 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 			$this->template->debug            = View::factory('profiler/stats');
 			$this->template->styles           = array();
 			$this->template->scripts          = array();
+			$this->template->debug = (Kohana::$environment == 'development'
+			                          OR Kohana::$environment == 'test')
+										? View::factory('profiler/stats') : '';
 		}
 
 		$this->template->user = Auth::instance('admin')->get_user();
@@ -114,17 +126,19 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 
 	public function after()
 	{
-		if ($this->auto_render)
+		if ($this->auto_render === TRUE)
 		{
+			$media = Route::get('docs/media');
+
 			$this->template->content->controller = $this->request->controller;
-			
+
 			$styles = array(
-				'css/admin.css' => 'screen, projection',
+				$media->uri(array('file' => 'css/admin.css')) => 'screen, projection',
 			);
 
 			$scripts = array(
-				'js/jquery-1.4.2.min.js',
-				'js/admin_effects.js',
+				$media->uri(array('file' => 'js/jquery.js')),
+				$media->uri(array('file' => 'js/admin_effects.js')),
 			);
 
 			$this->template->active_menu_item = $this->_active_menu_item;
