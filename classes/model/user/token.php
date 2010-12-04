@@ -47,7 +47,7 @@ class Model_User_Token extends Jelly_Model {
 			$token = Text::random('alnum', 32);
 
 			// Make sure the token does not already exist
-			$count = Jelly::select('user_token')
+			$count = Jelly::query('user_token')
 				->where('token', '=', $token)
 				->count();
 

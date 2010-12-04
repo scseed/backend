@@ -38,7 +38,7 @@ class Auth_Jelly extends Auth
 					foreach($role as $_role)
 					{
 						if(!is_object($_role)) {
-							$_role = Jelly::select('role', array('name' => $_role))->limit(1)->execute();
+							$_role = Jelly::query('role', array('name' => $_role))->limit(1)->select();
 						}
 						// If the user doesn't have the role
 						if(!$user->has('roles', $_role)) {
@@ -53,7 +53,7 @@ class Auth_Jelly extends Auth
 				{
 					if(!is_object($role)) {
 						// Load the role
-						$role = Jelly::select('role', array('name' => $role))->limit(1)->execute();
+						$role = Jelly::query('role', array('name' => $role))->limit(1)->select();
 					}
 					// Check that the user has the given role
 					$status = $user->has('roles', $role);
@@ -79,13 +79,13 @@ class Auth_Jelly extends Auth
 			$username = $user;
 			$meta = Jelly::meta('user');
 			// Load the user
-			$user = Jelly::select('user')
+			$user = Jelly::query('user')
 				->where($meta->name_key(), '=', $username)
 				->limit(1)
 				->execute();
 		}
 		// If the passwords match, perform a login
-		if($user->has('roles', Jelly::select('role')->where('name', '=', $role)->limit(1)->execute())
+		if($user->has('roles', Jelly::query('role')->where('name', '=', $role)->limit(1)->select())
 			AND $user->password === $password)
 		{
 			if($remember === TRUE)
@@ -137,7 +137,7 @@ class Auth_Jelly extends Auth
 		if(!is_object($user)) {
 			$username = $user;
 			// Load the user
-			$user = Jelly::select('user')->where($user->unique_key($username), '=', $username)->execute();
+			$user = Jelly::query('user')->where($user->unique_key($username), '=', $username)->select();
 		}
 		// Mark the session as forced, to prevent users from changing account information
 		$this->_session->set('auth_forced', TRUE);
@@ -154,7 +154,7 @@ class Auth_Jelly extends Auth
 	{
 		if($token = Cookie::get('authautologin')) {
 			// Load the token and user
-			$token = Jelly::select('user_token')->where('token', '=', $token)->limit(1)->execute();
+			$token = Jelly::query('user_token')->where('token', '=', $token)->limit(1)->select();
 			if($token->loaded() AND $token->user->loaded()) {
 				if($token->user_agent === sha1(Request::$user_agent)) {
 					// Save the token to create a new unique token
@@ -204,9 +204,9 @@ class Auth_Jelly extends Auth
 			// Delete the autologin cookie to prevent re-login
 			Cookie::delete('authautologin');
 			// Clear the autologin token from the database
-			$token = Jelly::select('user_token')->where('token', '=', $token)->limit(1)->execute();
+			$token = Jelly::query('user_token')->where('token', '=', $token)->limit(1)->select();
 			if($token->loaded() AND $logout_all) {
-				Jelly::select('user_token')->where('user_id', '=', $token->user_id)->delete();
+				Jelly::query('user_token')->where('user_id', '=', $token->user_id)->delete();
 			}
 			elseif($token->loaded())
 			{
@@ -238,7 +238,7 @@ class Auth_Jelly extends Auth
 			$username = $user;
 			$meta = Jelly::meta('user');
 			// Load the user
-			$user = Jelly::select('user')
+			$user = Jelly::query('user')
 			->where($meta->name_key(), '=', $username)
 			->limit(1)
 			->execute();

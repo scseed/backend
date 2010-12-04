@@ -35,8 +35,8 @@ class Controller_Admin_Auth extends Controller_Admin_Template
 		if($_POST) {
 			$user = Jelly::meta('user');
 			$post = Validate::factory(Arr::extract($_POST, array('email', 'password')))
-				->rules('email', $user->fields('email')->rules)
-				->rules('password', $user->fields('password')->rules);
+				->rules('email', $user->field('email')->rules)
+				->rules('password', $user->field('password')->rules);
 
 			if($post->check())
 			{

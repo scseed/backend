@@ -28,7 +28,7 @@ class Model_Resource extends Jelly_Model {
 					'column' => 'parent_id',
 					'model' => 'resource'
 				)),
-				'name' => new Field_String
+				'name' => Jelly::field('String'),
 			));
 	}
 } // End Model_Resource
