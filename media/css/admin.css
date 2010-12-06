@@ -589,3 +589,36 @@ html, body {
 	height: 28px;
 }
 /* end sticky footer */
+
+.filter_item {
+	border: 1px solid #ccc;
+	float:left;
+	margin: 0 0.5em 1em;
+	padding: 0.5em
+}
+
+.filter_item ul {
+	list-style:none;
+	padding: 0;
+	margin: 0;
+}
+
+.filter_item li {
+	display: none;
+}
+
+.filter_item li.active,
+.filter_item ul.open li {
+	display: block!important;
+}
+
+.filter_item p {
+	margin: 0 0 0.5em;
+}
+
+.filter_item a {
+	text-decoration:none
+}
+.filter_item li.active a, .filter_item a:hover {
+	text-decoration:underline
+}

@@ -17,11 +17,26 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 
 	public $_actions = array();
 	protected $media;
+	/**
+	 * Признак ajax-like запроса
+	 *
+	 * @var boolean
+	 */
+	protected $_ajax = FALSE;
+
 
 	public function before()
 	{
 
 		parent::before();
+
+		// Проверка на запрос AJAX-типа
+		if (Request::$is_ajax OR $this->request !== Request::instance())
+		{
+			$this->_ajax = TRUE;
+		}
+
+
 		if($this->request->action === 'media') {
 			// Do not template media files
 			$this->auto_render = FALSE;
@@ -130,7 +145,10 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 		{
 			$media = Route::get('docs/media');
 
-			$this->template->content->controller = $this->request->controller;
+			if(is_object($this->template->content))
+			{
+				$this->template->content->controller = $this->request->controller;
+			}
 
 			$styles = array(
 				$media->uri(array('file' => 'css/admin.css')) => 'screen, projection',
@@ -146,7 +164,16 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 			$this->template->scripts = array_merge( $this->template->scripts, $scripts );
 		}
 
-		parent::after();
+		// При ajax запросе как ответ используется контент шаблона
+		if ($this->_ajax === TRUE)
+		{
+			$this->request->response = $this->template->content;
+		}
+		else
+		{
+			parent::after();
+		}
+
 	}
 
 } // End Controller_Admin_Template

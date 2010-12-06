@@ -20,7 +20,9 @@ class Model_Resource extends Jelly_Model {
 				'parent' => Jelly::field('BelongsTo', array(
 					'foreign' => 'resource.parent_id',
 					'column' => 'parent_id',
-					'model' => 'resource'
+					'model' => 'resource',
+					'allow_null' => TRUE,
+					'default' => NULL,
 				)),
 				'childs' => Jelly::field('HasMany', array(
 					'in_bd' => FALSE,

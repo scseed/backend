@@ -47,4 +47,13 @@ $(document).ready(function(){
 	$('.delete_answer').click(function(){
 		$(this).closest('.form-item').remove();
 	});
+
+	$('.filter_item ul').hover(
+		function(){
+			$(this).addClass('open').show(200);
+		},
+		function () {
+			$(this).slideUp(200, function() {$(this).show(); $(this).removeClass('open')});
+		}
+	)
 });
