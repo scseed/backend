@@ -15,7 +15,7 @@
 			DD_belatedPNG.fix('#menu, #ed-panel, #ed-panel *, img');
 		</script>
 	<![endif]-->
-
+<script type="text/javascript">var frontend = false;</script>
 </head>
 
 <body>
