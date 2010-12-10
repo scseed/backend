@@ -18,7 +18,7 @@
 			echo Form::select($field->name, $$collection_name, $value->id, array('id' => 'filter_'.$field->name));
 	        break;
 		case $field instanceof Jelly_Field_ManyToMany:
-			echo Form::select($field->name, ${$field->name}, $value->as_array('id'), array('id' => 'filter_'.$field->name));
+			echo Form::select($field->name, ${$field->name}, array_keys($value->as_array('id')), array('id' => 'filter_'.$field->name));
 	        break;
 	    case $field instanceof Jelly_Field_Text:
 	        echo Form::textarea($field->name, $value);
