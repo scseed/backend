@@ -20,7 +20,7 @@ class Model_User extends Jelly_Model {
 			->fields(array(
 				'id' => Jelly::field('Primary'),
 				'user_data' => Jelly::field('BelongsTo', array(
-					'null' => true,
+					'allow_null' => true,
 					'default' => NULL,
 					'label' => 'ФИО пользователя',
 					'in_form' => FALSE,
@@ -50,7 +50,7 @@ class Model_User extends Jelly_Model {
 					'in_table' => FALSE,
 					'in_db' => FALSE,
 					'rules' => array(
-						'matches' => NULL,
+//						'matches' => NULL,
 						'not_empty' => NULL,
 						'max_length' => array(50),
 						'min_length' => array(4)

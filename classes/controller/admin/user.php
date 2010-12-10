@@ -19,7 +19,7 @@ class Controller_Admin_User extends Controller_Admin_Template {
 	{
 		$this->template->page_title = 'Список пользователей';
 
-		$users = Jelly::select('user')->execute();
+		$users = Jelly::query('user')->select();
 		$users_meta = Jelly::meta('user');
 
 		$this->template->content = View::factory('backend/content/user/list')
@@ -52,14 +52,6 @@ class Controller_Admin_User extends Controller_Admin_Template {
 			try
 			{
 				$user->save();
-
-//				Logapp::instance()->write(
-//					'user_add',
-//					'success',
-//					A1::instance()->get_user()->id,
-//					'Создан новый пользователь'
-//				);
-
 				$this->request->redirect('admin/user/list');
 			}
 			catch (Validate_Exception $e)
@@ -81,7 +73,8 @@ class Controller_Admin_User extends Controller_Admin_Template {
 	 */
 	public function action_edit($id)
 	{
-		$user = Jelly::select('user', (int) $id);
+		$roles = Jelly::query('role')->select()->as_array('id', 'name');
+		$user = Jelly::factory('user', (int) $id);
 
 		if( ! $user->loaded()) Request::factory('error/404')->execute();
 
@@ -101,18 +94,11 @@ class Controller_Admin_User extends Controller_Admin_Template {
 			}
 
 			$user->set($post);
-			
+
 			try
 			{
 				$user->save();
-//				Logapp::instance()->write(
-//					'user_edit',
-//					'success',
-//					A1::instance()->get_user()->id,
-//					'Данные пользователя изменены (id: '.$user->id.'; email: '.$user->email.', )'
-//				);
 				$this->request->redirect('admin/user/list');
-
 			}
 			catch (Validate_Exception $e)
 			{
@@ -121,6 +107,7 @@ class Controller_Admin_User extends Controller_Admin_Template {
 		}
 
 		$this->template->content = View::factory('backend/content/_crud/edit')
+			->set('roles', $roles)
 			->set('item', $user)
 			->set('meta', $user->meta())
 			->set('errors', $errors);
@@ -130,13 +117,13 @@ class Controller_Admin_User extends Controller_Admin_Template {
 
 	/**
 	 * Deleting user
-	 * 
+	 *
 	 * @param integer $id
 	 */
 	public function action_delete ($id)
 	{
 		$user = Jelly::select('user')->load( (int) $id);
-		
+
 		$user_data = array('id' => $user->id, 'email' => $user->email);
 
 		if($user->delete())
