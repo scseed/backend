@@ -128,13 +128,6 @@ class Controller_Admin_User extends Controller_Admin_Template {
 
 		if($user->delete())
 		{
-			Logapp::instance()->write(
-				'user_delete',
-				'success',
-				A1::instance()->get_user()->id,
-				'Удалён пользователь (id: '.$user_data['id'].'; email: '.$user_data['email'].', )'
-			);
-
 			$this->request->redirect('admin/user/list');
 		}
 	}
