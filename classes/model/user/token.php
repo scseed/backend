@@ -23,7 +23,7 @@ class Model_User_Token extends Jelly_Model {
 					'default' => sha1(Request::$user_agent),
 				)),
 				'token' => Jelly::field('String', array(
-					'default' => self::create_token(),
+//					'default' => self::create_token(),
 				)),
 				'created' => Jelly::field('Timestamp', array(
 					'default' => time(),

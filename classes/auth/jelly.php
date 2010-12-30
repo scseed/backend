@@ -94,6 +94,7 @@ class Auth_Jelly extends Auth
 				$token = Jelly::factory('user_token');
 				// Set token data
 				$token->user = $user->id;
+				$token->token = Text::random('alnum', 32);
 				$token->expires = time() + $this->_config['lifetime'];
 
 				try
@@ -114,12 +115,12 @@ class Auth_Jelly extends Auth
 
 		if($this->_logging === TRUE)
 		{
-			Logapp::instance()->write(
-				'login',
-				'fail',
-				NULL,
-				'Неудачная попытка входа в систему.<br />Неверный логин или пароль (' . $post['email'] . ').'
-			);
+//			Logapp::instance()->write(
+//				'login',
+//				'fail',
+//				NULL,
+//				'Неудачная попытка входа в систему.<br />Неверный логин или пароль (' . $post['email'] . ').'
+//			);
 		}
 
 		// Login failed
@@ -215,12 +216,12 @@ class Auth_Jelly extends Auth
 		}
 		if($this->_logging === TRUE)
 		{
-			Logapp::instance()->write(
-				'logout',
-				'success',
-				$token->user_id,
-				'Пользователь вышел из системы'
-			);
+//			Logapp::instance()->write(
+//				'logout',
+//				'success',
+//				$token->user_id,
+//				'Пользователь вышел из системы'
+//			);
 		}
 
 		return parent::logout($destroy);
@@ -271,12 +272,12 @@ class Auth_Jelly extends Auth
 			$user->save();
 			if($this->_logging === TRUE)
 			{
-				Logapp::instance()->write(
-					'login',
-					'success',
-					Auth::instance()->get_user()->id,
-					'Пользователь успешно вошёл в систему'
-				);
+//				Logapp::instance()->write(
+//					'login',
+//					'success',
+//					Auth::instance()->get_user()->id,
+//					'Пользователь успешно вошёл в систему'
+//				);
 			}
 
 			return parent::complete_login($user);
