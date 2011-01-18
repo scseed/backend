@@ -36,6 +36,15 @@ class Controller_Admin_User extends Controller_Admin_Template {
 	{
 		$this->template->page_title = 'Новый пользователь';
 
+		$roles = Jelly::query('role')->select()->as_array('id', 'name');
+		$_user_datas = Jelly::query('user_data')->select();
+		$user_datas = array(NULL => '');
+		foreach($_user_datas as $user_data)
+		{
+			$user_datas += array($user_data->id => $user_data->last_name . ' '
+				. $user_data->first_name . ' '
+				. $user_data->patronymic);
+		}
 		$user = Jelly::factory('user');
 		$errors = NULL;
 		if ($_POST)
@@ -61,6 +70,8 @@ class Controller_Admin_User extends Controller_Admin_Template {
 		}
 
 		$this->template->content = View::factory('backend/content/_crud/add')
+			->set('user_datas', $user_datas)
+			->set('roles', $roles)
 			->set('item', $user)
 			->set('errors', $errors);
 	}

@@ -31,32 +31,25 @@ class Controller_Admin_Auth extends Controller_Admin_Template
 			'password' => NULL
 		);
 		$errors = array();
-		$user = Jelly::factory('user');
 		if($_POST) {
-			$user = Jelly::meta('user');
-			$post = Validate::factory(Arr::extract($_POST, array('email', 'password')))
-				->rules('email', $user->field('email')->rules)
-				->rules('password', $user->field('password')->rules);
+			$post = Arr::extract($_POST, array('email', 'password', 'remember'));
 
-			if($post->check())
+			if(Auth::instance('admin')->login(
+				$post['email'],
+				$post['password'],
+				! isset($post['remember']) ? TRUE : FALSE))
 			{
-				if(Auth::instance('admin')->login(
-					$post['email'],
-					$post['password'],
-					! isset($post['remember']) ? TRUE : FALSE))
-				{
-					if($url = Session::instance()->get('url')) {
-						Request::instance()->redirect($url);
-					}
-					else
-					{
-						Request::instance()->redirect('admin');
-					}
+				if($url = Session::instance()->get('url')) {
+					Request::instance()->redirect($url);
 				}
 				else
 				{
-					$errors = array('common' => 'Неверное имя пользователя или пароль');
+					Request::instance()->redirect('admin');
 				}
+			}
+			else
+			{
+				$errors = array('common' => 'Неверное имя пользователя или пароль');
 			}
 		}
 		$this->template->content = View::factory('backend/user/login')

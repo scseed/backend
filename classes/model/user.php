@@ -29,7 +29,7 @@ class Model_User extends Jelly_Model {
 				'email' => Jelly::field('Email', array(
 //					'unique' => TRUE,
 					'rules' => array(
-						'not_empty' => NULL,
+						'not_empty' => array(NULL),
 					),
 					'label' => 'Email',
 
@@ -39,7 +39,7 @@ class Model_User extends Jelly_Model {
 					//'default' => $pass,
 					'hash_with' => array(Auth::instance(), 'hash_password'),
 					'rules' => array(
-						'not_empty' => NULL,
+						'not_empty' => array(NULL),
 						'max_length' => array(50),
 						'min_length' => array(4)
 					),
@@ -50,8 +50,8 @@ class Model_User extends Jelly_Model {
 					'in_table' => FALSE,
 					'in_db' => FALSE,
 					'rules' => array(
-//						'matches' => NULL,
-						'not_empty' => NULL,
+						'matches' => array('password'),
+						'not_empty' => array(NULL),
 						'max_length' => array(50),
 						'min_length' => array(4)
 					),

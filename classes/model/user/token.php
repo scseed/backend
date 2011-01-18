@@ -23,10 +23,10 @@ class Model_User_Token extends Jelly_Model {
 					'default' => sha1(Request::$user_agent),
 				)),
 				'token' => Jelly::field('String', array(
-//					'default' => self::create_token(),
+					'default' => self::create_token(),
 				)),
 				'created' => Jelly::field('Timestamp', array(
-					'default' => time(),
+					'auto_now_create' => TRUE,
 				)),
 				'expires' => Jelly::field('Timestamp'),
 			));
@@ -47,11 +47,14 @@ class Model_User_Token extends Jelly_Model {
 			$token = Text::random('alnum', 32);
 
 			// Make sure the token does not already exist
-			$count = Jelly::query('user_token')
+			$query = DB::select(array(DB::expr('COUNT(*)'), 'total'))
+				->from('user_tokens')
 				->where('token', '=', $token)
-				->count();
+				->as_object()
+				->execute();
+			$tokens_in_db = $query[0];
 
-			if ($count === 0)
+			if ($tokens_in_db->total == 0)
 			{
 				// A unique token has been found
 				return $token;

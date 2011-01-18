@@ -17,37 +17,37 @@ class Model_User_Data extends Jelly_Model {
 	{
 		$meta->table('user_data')
 			->fields(array(
-				'id' =>Jelly::field('Primary', array(
+				'id' => Jelly::field('Primary', array(
 					'in_form' => FALSE,
 				)),
-				'last_name' => new Field_String(array(
+				'last_name' => Jelly::field('String', array(
 					'empty' => FAlSE,
 					'rules' => array(
 						'not_empty' => array(TRUE)
 					),
 					'label' => 'Фамилия',
 				)),
-				'first_name' => new Field_String(array(
+				'first_name' => Jelly::field('String', array(
 					'empty' => FAlSE,
 					'rules' => array(
 						'not_empty' => array(TRUE)
 					),
 					'label' => 'Имя',
 				)),
-				'patronymic' => new Field_String(array(
-					'null' => TRUE,
+				'patronymic' => Jelly::field('String', array(
+					'allow_null' => TRUE,
 					'label' => 'Отчество',
 				)),
-				'phone' => new Field_String(array(
-					'null' => TRUE,
+				'phone' => Jelly::field('String', array(
+					'allow_null' => TRUE,
 					'label' => 'Телефон',
 				)),
-				'company' => new Field_String(array(
-					'null' => TRUE,
+				'company' => Jelly::field('String', array(
+					'allow_null' => TRUE,
 					'label' => 'Компания',
 				)),
-				'position' => new Field_String(array(
-					'null' => TRUE,
+				'position' => Jelly::field('String', array(
+					'allow_null' => TRUE,
 					'label' => 'Должность',
 				)),
 			));
