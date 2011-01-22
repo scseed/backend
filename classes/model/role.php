@@ -42,7 +42,6 @@ class Model_Role extends Jelly_Model {
 					'label' => 'Описание',
 				)),
 			))
-//			->load_with(array('parent'))
-		;
+			->load_with(array('parent'));
 	}
 } // End Model_Role

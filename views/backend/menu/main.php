@@ -13,7 +13,6 @@
 			<?php if ($item['class'] == 'active'): ?>
 				<?php $active = $name ?>
 			<?php endif ?>
-			<?php //$active = ($active === NULL) ? array_pop($menu) : $menu[$active] ?>
 			<?php if (count($item['submenu'])): ?>
 				<ul>
 				<?php foreach($item['submenu'] as $sub_item): if($sub_item['visible']):?>

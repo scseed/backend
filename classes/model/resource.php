@@ -18,17 +18,11 @@ class Model_Resource extends Jelly_Model {
 			->fields(array(
 				'id' => Jelly::field('Primary'),
 				'parent' => Jelly::field('BelongsTo', array(
-					'foreign' => 'resource.parent_id',
+					'foreign' => 'resource',
 					'column' => 'parent_id',
 					'model' => 'resource',
 					'allow_null' => TRUE,
 					'default' => NULL,
-				)),
-				'childs' => Jelly::field('HasMany', array(
-					'in_bd' => FALSE,
-					'foreign' => 'resource.parent_id',
-					'column' => 'parent_id',
-					'model' => 'resource'
 				)),
 				'route_name' => Jelly::field('String'),
 				'directory' => Jelly::field('String', array(
@@ -49,6 +43,7 @@ class Model_Resource extends Jelly_Model {
 				)),
 				'acl' => Jelly::field('HasOne')
 			))
-			->load_with(array('parent', 'acl'));
+			->load_with(array('parent', 'acl'))
+			;
 	}
 } // End Model_Resource
