@@ -68,59 +68,36 @@ class Auth_Jelly extends Auth
 	 *
 	 * @param   string   username
 	 * @param   string   password
-	 * @param   boolean  enable autologin
+	 * @param   boolean  enable auto-login
 	 * @return  boolean
 	 */
-	protected function _login($user, $password, $remember)
+	public function _login($user, $password, $remember)
 	{
-		$role = self::$_type;
-		if(!is_object($user))
-		{
-			$username = $user;
-			$meta = Jelly::meta('user');
-			// Load the user
-			$user = Jelly::query('user')
-				->where($meta->name_key(), '=', $username)
-				->limit(1)
-				->execute();
-		}
+		// Make sure we have a user object
+		$user = $this->_get_object($user);
+
 		// If the passwords match, perform a login
-		if($user->has('roles', Jelly::query('role')->where('name', '=', $role)->limit(1)->select())
-			AND $user->password === $password)
+		if ($user->has_role('login') AND $user->password === $password)
 		{
-			if($remember === TRUE)
+			if ($remember === TRUE)
 			{
 				// Create a new autologin token
-				$token = Jelly::factory('user_token');
+				$token = Model::factory('user_token');
+
 				// Set token data
 				$token->user = $user->id;
-				$token->token = Text::random('alnum', 32);
 				$token->expires = time() + $this->_config['lifetime'];
 
-				try
-				{
-					$token->save();
-				}
-				catch(Validate_Exception $e)
-				{
-					return FALSE;
-				}
-				// Set the autologin cookie
+				$token->create();
+
+				// Set the autologin Cookie
 				Cookie::set('authautologin', $token->token, $this->_config['lifetime']);
 			}
+
 			// Finish the login
 			$this->complete_login($user);
-			return TRUE;
-		}
 
-		if($this->_logging === TRUE)
-		{
-//			Logapp::instance()->write(
-//				'login',
-//				'fail',
-//				NULL,
-//				'Неудачная попытка входа в систему.<br />Неверный логин или пароль (' . $post['email'] . ').'
-//			);
+			return TRUE;
 		}
 
 		// Login failed
@@ -214,15 +191,6 @@ class Auth_Jelly extends Auth
 				$token->delete();
 			}
 		}
-		if($this->_logging === TRUE)
-		{
-//			Logapp::instance()->write(
-//				'logout',
-//				'success',
-//				$token->user_id,
-//				'Пользователь вышел из системы'
-//			);
-		}
 
 		return parent::logout($destroy);
 	}
@@ -237,12 +205,12 @@ class Auth_Jelly extends Auth
 	{
 		if(!is_object($user)) {
 			$username = $user;
-			$meta = Jelly::meta('user');
+
 			// Load the user
 			$user = Jelly::query('user')
-			->where($meta->name_key(), '=', $username)
+			->where(':name_key', '=', $username)
 			->limit(1)
-			->execute();
+			->select();
 		}
 		return $user->password;
 	}
@@ -270,16 +238,6 @@ class Auth_Jelly extends Auth
 		try
 		{
 			$user->save();
-			if($this->_logging === TRUE)
-			{
-//				Logapp::instance()->write(
-//					'login',
-//					'success',
-//					Auth::instance()->get_user()->id,
-//					'Пользователь успешно вошёл в систему'
-//				);
-			}
-
 			return parent::complete_login($user);
 		}
 		catch(Validate_Exception $e)
@@ -303,5 +261,30 @@ class Auth_Jelly extends Auth
 		}
 		$hash = $this->hash_password($password, $this->find_salt($user->password));
 		return $hash == $user->password;
+	}
+
+	/**
+	 * Convert a unique identifier string to a user object
+	 *
+	 * @param mixed $user
+	 * @return Model_User
+	 */
+	protected function _get_object($user)
+	{
+		static $current;
+
+		//make sure the user is loaded only once.
+		if ( ! is_object($current) AND is_string($user))
+		{
+			// Load the user
+			$current = Jelly::query('user')->where(':name_key', '=', $user)->limit(1)->select();
+		}
+
+		if ($user instanceof Model_User AND $user->loaded())
+		{
+			$current = $user;
+		}
+
+		return $current;
 	}
 } // End Auth ORM

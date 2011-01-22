@@ -30,7 +30,25 @@ class Model_Resource extends Jelly_Model {
 					'column' => 'parent_id',
 					'model' => 'resource'
 				)),
-				'name' => Jelly::field('String'),
-			));
+				'route_name' => Jelly::field('String'),
+				'directory' => Jelly::field('String', array(
+					'allow_null' => TRUE,
+					'default' => NULL,
+				)),
+				'controller' => Jelly::field('String', array(
+					'allow_null' => TRUE,
+					'default' => NULL,
+				)),
+				'action' => Jelly::field('String', array(
+					'allow_null' => TRUE,
+					'default' => NULL,
+				)),
+				'object_id' => Jelly::field('String', array(
+					'allow_null' => TRUE,
+					'default' => NULL,
+				)),
+				'acl' => Jelly::field('HasOne')
+			))
+			->load_with(array('parent', 'acl'));
 	}
 } // End Model_Resource

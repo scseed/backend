@@ -88,7 +88,15 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 		//Так как контроллеры являются ресурсами, имени ресурса присваивается имя контроллера
 		if (empty($this->_resource))
 		{
-			$this->_resource = $this->request->controller;
+			$this->_resource = array(
+				'route_name' => Route::name($this->request->route),
+				'directory' => $this->request->directory,
+				'controller' => $this->request->controller,
+				'action' => $this->request->action,
+				'object_id' => (Route::name($this->request->route) == 'page')
+				                ? $this->request->param('page_alias')
+				                : $this->request->param('id'),
+			);
 		}
 
 		//Если карта методов была иницилизирована, то проверяем контроллер на возможность запуска
@@ -96,7 +104,10 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 		{
 			if (isset($this->_actions[$this->request->action]))
 			{
-				if ( ! ACL::instance()->is_allowed(Auth::instance('admin')->get_user()->roles->as_array('id', 'name'), $this->_resource, $this->_actions[$this->request->action]))
+				if ( ! ACL::instance()->is_allowed(
+					Auth::instance('admin')->get_user()->roles->as_array('id', 'name'),
+					$this->_resource,
+					$this->_actions[$this->request->action]))
 				{
 //					throw new Kohana_Exception403();
 					die('Not allowed');
