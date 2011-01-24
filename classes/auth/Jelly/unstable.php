@@ -5,7 +5,7 @@
  * @author avis <smgladkovskiy@gmail.com>
  * @copyright (c) 2010 BlueFish <http://bluefish.ru>
  */
-class Auth_Jelly extends Auth
+class Auth_Jelly_Unstable extends Auth
 {
 	protected $_logging = FALSE;
 

@@ -119,14 +119,6 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 			}
 		}
 
-		//вычисляем ключ активного пункта меню по умолчанию
-		$this->_active_menu_item = $this->request->controller;
-
-		if ($this->request->action != 'index')
-		{
-			$this->_active_menu_item .= '_'.$this->request->action;
-		}
-
 		if ($this->auto_render === TRUE)
 		{
 			// Grab the necessary routes
@@ -138,7 +130,7 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 			$this->template->right_content    = '';
 			$this->template->company_name     = $config['company_name'];
 			$this->template->ed_copy          = $config['ed_copy'];
-			$this->template->menu             = Admin_Menu::instance();
+			$this->template->menu             = Menu::factory('admin');
 			$this->template->debug            = View::factory('profiler/stats');
 			$this->template->styles           = array();
 			$this->template->scripts          = array();
@@ -170,7 +162,6 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 				$media->uri(array('file' => 'js/admin_effects.js')),
 			);
 
-			$this->template->active_menu_item = $this->_active_menu_item;
 			$this->template->styles = array_merge( $this->template->styles, $styles );
 			$this->template->scripts = array_merge( $this->template->scripts, $scripts );
 		}
