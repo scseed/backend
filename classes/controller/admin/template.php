@@ -31,13 +31,13 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 		parent::before();
 
 		// Проверка на запрос AJAX-типа
-		if (Request::$is_ajax OR $this->request !== Request::instance())
+		if (Request::current()->is_ajax() OR Request::initial() !== Request::current())
 		{
 			$this->_ajax = TRUE;
 		}
 
 
-		if($this->request->action === 'media') {
+		if($this->request->action() === 'media') {
 			// Do not template media files
 			$this->auto_render = FALSE;
 		    $this->_auth_required = FALSE;
@@ -82,18 +82,18 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 		if ($this->_auth_required AND ! Auth::instance('admin')->logged_in())
 		{
 			Session::instance()->set('url', $_SERVER['REQUEST_URI']);
-			Request::instance()->redirect('admin/auth/login');
+			$this->request->redirect('admin/auth/login');
 		}
 
 		//Так как контроллеры являются ресурсами, имени ресурса присваивается имя контроллера
 		if (empty($this->_resource))
 		{
 			$this->_resource = array(
-				'route_name' => Route::name($this->request->route),
-				'directory' => $this->request->directory,
-				'controller' => $this->request->controller,
-				'action' => $this->request->action,
-				'object_id' => (Route::name($this->request->route) == 'page')
+				'route_name' => Route::name($this->request->route()),
+				'directory' => $this->request->directory(),
+				'controller' => $this->request->controller(),
+				'action' => $this->request->action(),
+				'object_id' => (Route::name($this->request->route()) == 'page')
 				                ? $this->request->param('page_alias')
 				                : $this->request->param('id'),
 			);
@@ -102,12 +102,12 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 		//Если карта методов была иницилизирована, то проверяем контроллер на возможность запуска
 		if($this->_auth_required)
 		{
-			if (isset($this->_actions[$this->request->action]))
+			if (isset($this->_actions[$this->request->action()]))
 			{
 				if ( ! ACL::instance()->is_allowed(
 					Auth::instance('admin')->get_user()->roles->as_array('id', 'name'),
-					$this->_resource,
-					$this->_actions[$this->request->action]))
+					$this->_actions[$this->request->action()],
+					$this->request))
 				{
 //					throw new Kohana_Exception403();
 					die('Not allowed');
@@ -126,7 +126,6 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 
 			$this->template->title            = $config['company_name'];
 			$this->template->page_title       = '';
-			$this->template->content          = '';
 			$this->template->right_content    = '';
 			$this->template->company_name     = $config['company_name'];
 			$this->template->ed_copy          = $config['ed_copy'];
@@ -138,21 +137,22 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 			                          OR Kohana::$environment == 'test')
 										? View::factory('profiler/stats') : '';
 		}
+		$this->template->content          = '';
 
 		$this->template->user = Auth::instance('admin')->get_user();
 	}
 
 	public function after()
 	{
-		if ($this->auto_render === TRUE)
+		$media = Route::get('docs/media');
+
+		if(is_object($this->template->content))
 		{
-			$media = Route::get('docs/media');
+			$this->template->content->controller = $this->request->controller();
+		}
 
-			if(is_object($this->template->content))
-			{
-				$this->template->content->controller = $this->request->controller;
-			}
-
+		if($this->auto_render === TRUE)
+		{
 			$styles = array(
 				$media->uri(array('file' => 'css/admin.css')) => 'screen, projection',
 			);
@@ -169,7 +169,7 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 		// При ajax запросе как ответ используется контент шаблона
 		if ($this->_ajax === TRUE)
 		{
-			$this->request->response = $this->template->content;
+			$this->response->body($this->template->content);
 		}
 		else
 		{

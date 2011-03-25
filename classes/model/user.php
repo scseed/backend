@@ -89,4 +89,11 @@ class Model_User extends Jelly_Model {
 		}
 	}
 
+	public function has_role($role_name)
+	{
+		$roles = $this->roles->as_array('name', 'id');
+
+		return array_key_exists($role_name, $roles);
+	}
+
 } // End Model_User

@@ -18,11 +18,11 @@ class Controller_Admin_Auth extends Controller_Admin_Template
 	{
 		if(Auth::instance('admin')->logged_in()) {
 			if($url = Session::instance()->get('url')) {
-				Request::instance()->redirect($url);
+				$this->request->redirect($url);
 			}
 			else
 			{
-				Request::instance()->redirect('admin');
+				$this->request->redirect('admin');
 			}
 		}
 
@@ -40,11 +40,11 @@ class Controller_Admin_Auth extends Controller_Admin_Template
 				! isset($post['remember']) ? TRUE : FALSE))
 			{
 				if($url = Session::instance()->get('url')) {
-					Request::instance()->redirect($url);
+					$this->request->redirect($url);
 				}
 				else
 				{
-					Request::instance()->redirect('admin');
+					$this->request->redirect('admin');
 				}
 			}
 			else
@@ -66,7 +66,7 @@ class Controller_Admin_Auth extends Controller_Admin_Template
 			$user_id = Auth::instance()->get_user()->id;
 			Auth::instance()->logout();
 		}
-		Request::instance()->redirect('admin');
+		$this->request->redirect('admin');
 	}
 
 	public function action_register()
@@ -109,7 +109,7 @@ class Controller_Admin_Auth extends Controller_Admin_Template
 	    }
 	    else
 	    {
-		    Request::instance()->redirect('admin/auth/login');
+		    $this->request->redirect('admin/auth/login');
 	    }
 	}
 } // End Template Controller User

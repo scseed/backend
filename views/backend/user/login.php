@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');?>
 <div id="login-form">
 	<h1 class="title"><?php echo __('Вход в систему') ?></h1>
-		<?php echo Form::open(); ?>
+		<?php echo Form::open(Request::current()); ?>
 			<?php if (!empty($errors['common'])): ?>
 				<h4 class="title"><div class="form-error"><?php echo $errors['common'] ?></div></h4>
 			<?php endif ?>

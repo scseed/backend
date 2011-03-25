@@ -44,7 +44,8 @@ class Menu_Admin extends Menu {
 					'name' => 'admin',
 					'title' => NULL,
 					'route_name' => 'admin',
-					'visible' => FALSE))
+					'visible' => FALSE,
+					'lvl' => 0))
 				->insert_as_new_root(++$max_scope_item->scope);
 		}
 
