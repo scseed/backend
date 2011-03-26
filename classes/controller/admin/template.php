@@ -15,7 +15,7 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 	public $actions_privileges = array();
 	protected $_active_menu_item = '';
 
-	public $_actions = array();
+	protected $_actions = array();
 	protected $media;
 	/**
 	 * Признак ajax-like запроса
@@ -109,13 +109,12 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 					$this->_actions[$this->request->action()],
 					$this->request))
 				{
-//					throw new Kohana_Exception403();
-					die('Not allowed');
+					throw new HTTP_Exception_403('Access not allowed');
 				};
 			}
 			else
 			{
-				die('fail in action map of '. $this->request->controller . ' controller');
+				throw new HTTP_Exception_401('fail in action map of ":controller" controller', array(':controller' => $this->request->controller()));
 			}
 		}
 
@@ -133,8 +132,7 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 			$this->template->debug            = View::factory('profiler/stats');
 			$this->template->styles           = array();
 			$this->template->scripts          = array();
-			$this->template->debug = (Kohana::$environment == 'development'
-			                          OR Kohana::$environment == 'test')
+			$this->template->debug = (Kohana::$environment > Kohana::PRODUCTION)
 										? View::factory('profiler/stats') : '';
 		}
 		$this->template->content          = '';
@@ -155,10 +153,14 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 		{
 			$styles = array(
 				$media->uri(array('file' => 'css/admin.css')) => 'screen, projection',
+				$media->uri(array('file' => 'js/markitup/markitup/skins/markitup/style.css')) => 'screen, projection',
+				$media->uri(array('file' => 'js/textile/style.css')) => 'screen, projection',
 			);
 
 			$scripts = array(
 				$media->uri(array('file' => 'js/jquery.js')),
+				$media->uri(array('file' => 'js/markitup/markitup/jquery.markitup.js')),
+				$media->uri(array('file' => 'js/textile/set.js')),
 				$media->uri(array('file' => 'js/admin_effects.js')),
 			);
 

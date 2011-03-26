@@ -56,4 +56,6 @@ $(document).ready(function(){
 			$(this).slideUp(200, function() {$(this).show(); $(this).removeClass('open')});
 		}
 	)
+
+      $("textarea").markItUp(mySettings);
 });

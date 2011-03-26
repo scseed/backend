@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct access allowed.');?>
 <div class="edit-content-form">
-<?php echo Form::open();?>
+<?php echo Form::open(Request::current());?>
 <?php foreach ($item->meta()->fields() as $field): if($field->in_form): $value = $item->{$field->name};?>
 	<div class="form-item">
 		<?php echo Form::label('filter_' . $field->name, $field->label)?>

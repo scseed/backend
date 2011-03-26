@@ -11,7 +11,7 @@ class Controller_Admin_Acl extends Controller_Admin_Template {
 	public function action_list()
 	{
 		$meta = Jelly::meta('acl');
-		$rules = Jelly::select('acl')->execute();
+		$rules = Jelly::query('acl')->select();
 
 		$this->template->page_title = 'Список Правил ACL';
 		$this->template->content = View::factory('backend/content/_crud/list')

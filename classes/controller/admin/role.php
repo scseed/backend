@@ -7,11 +7,11 @@
  * @copyright (c) 2010 EnerDesign <http://enerdesign.ru>
  */
 class Controller_Admin_Role extends Controller_Admin_Template {
-	
+
 	public function action_list()
 	{
 		$meta = Jelly::meta('role');
-		$roles = Jelly::select('role')->execute();
+		$roles = Jelly::query('role')->select();
 
 		$this->template->page_title = 'Список Ролей';
 		$this->template->content = View::factory('backend/content/_crud/list')
