@@ -27,7 +27,6 @@ class Model_User extends Jelly_Model {
 					'in_table' => FALSE,
 				)),
 				'email' => Jelly::field('Email', array(
-//					'unique' => TRUE,
 					'rules' => array(
 						'not_empty' => array(NULL),
 					),
@@ -36,7 +35,6 @@ class Model_User extends Jelly_Model {
 				)),
 				'password' => Jelly::field('Password', array(
 					'in_table' => FALSE,
-					//'default' => $pass,
 					'hash_with' => array(Auth::instance(), 'hash_password'),
 					'rules' => array(
 						'not_empty' => array(NULL),
@@ -50,7 +48,7 @@ class Model_User extends Jelly_Model {
 					'in_table' => FALSE,
 					'in_db' => FALSE,
 					'rules' => array(
-						'matches' => array('password'),
+						'matches' => array(':validation', 'password_confirm', 'password'),
 						'not_empty' => array(NULL),
 						'max_length' => array(50),
 						'min_length' => array(4)
@@ -75,11 +73,14 @@ class Model_User extends Jelly_Model {
 
 	/**
 	 * Validate callback wrapper for checking password match
-	 * @param Validate $array
-	 * @param string $field
+	 *
+	 * @static
+	 * @uses Auth
+	 * @param Validation $array
+	 * @param string     $field
 	 * @return void
 	 */
-	public static function _check_password_matches(Validate $array, $field)
+	public static function _check_password_matches(Validation $array, $field)
 	{
 		$auth = Auth::instance();
 		if($array['password'] !== $array[$field])
@@ -89,7 +90,13 @@ class Model_User extends Jelly_Model {
 		}
 	}
 
-	public function has_role($role_name)
+	/**
+	 * Is the model has specified role
+	 *
+	 * @param string|null $role_name
+	 * @return bool
+	 */
+	public function has_role($role_name = NULL)
 	{
 		$roles = $this->roles->as_array('name', 'id');
 
