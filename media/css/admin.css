@@ -270,6 +270,10 @@ p {
 	border-left: solid 1px #d8d8d8;
 }
 
+#content tr.disabled td {
+	background-color: red
+}
+
 #content table.content-table  {
 	color: #1e1e1e;
 	border-collapse: collapse;

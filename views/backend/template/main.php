@@ -47,7 +47,7 @@
 					</ul>
 				</div>
 			</div>
-			<?php echo $menu->generate('main')?>
+			<?php echo $menu->generate('admin')?>
 		</div>
 		<div id="content">
 			<div id="right-side">

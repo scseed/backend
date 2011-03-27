@@ -27,7 +27,7 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 
 	public function before()
 	{
-
+		I18n::lang('ru');
 		parent::before();
 
 		// Проверка на запрос AJAX-типа
