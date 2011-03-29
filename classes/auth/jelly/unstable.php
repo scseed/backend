@@ -2,8 +2,7 @@
 /**
  * Class Kohana_auth_jelly
  *
- * @author avis <smgladkovskiy@gmail.com>
- * @copyright (c) 2010 BlueFish <http://bluefish.ru>
+ * @author Sergei Gladkovskiy <smgladkovskiy@gmail.com>
  */
 class Auth_Jelly_Unstable extends Auth
 {
