@@ -10,7 +10,7 @@
 					array('title' => $item['title'])
 				);
 			?>
-			<?php if ($item['class'] == 'active'): ?>
+			<?php if ($item['active_class'] == 'active'): ?>
 				<?php $active = $name ?>
 			<?php endif ?>
 			<?php if (count($item['submenu'])): ?>

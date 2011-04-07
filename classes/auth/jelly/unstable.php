@@ -81,22 +81,22 @@ class Auth_Jelly_Unstable extends Auth
 			if ($remember === TRUE)
 			{
 				// Create a new autologin token
-				$token = Model::factory('user_token');
+				$token = Jelly::factory('user_token');
 
 				// Set token data
-				$token->user = $user->id;
-				$token->expires = time() + $this->_config['lifetime'];
+				$token->set(array(
+					'user' => $user->id,
+					'expires' => time() + $this->_config['lifetime']
+				));
 
-				$token->create();
+				$token->save();
 
 				// Set the autologin Cookie
 				Cookie::set('authautologin', $token->token, $this->_config['lifetime']);
 			}
 
 			// Finish the login
-			$this->complete_login($user);
-
-			return TRUE;
+			return $this->complete_login($user);
 		}
 
 		// Login failed
@@ -230,18 +230,19 @@ class Auth_Jelly_Unstable extends Auth
 	{
 		if(!$user->loaded()) {
 			// nothing to do
-			return;
+			return FALSE;
 		}
 		$user->logins += 1;
 		$user->last_login = time();
+		
 		try
 		{
 			$user->save();
 			return parent::complete_login($user);
 		}
-		catch(Validate_Exception $e)
+		catch(Jelly_Validation_Exception $e)
 		{
-			exit(Kohana::debug($e->array()->message('save_error')));
+			exit(Debug::vars($e->error('validation_error')));
 		}
 	}
 
@@ -258,7 +259,8 @@ class Auth_Jelly_Unstable extends Auth
 			// nothing to compare
 			return FALSE;
 		}
-		$hash = $this->hash_password($password, $this->find_salt($user->password));
+		$hash = $this->hash($password);
+
 		return $hash == $user->password;
 	}
 

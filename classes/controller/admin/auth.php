@@ -16,7 +16,7 @@ class Controller_Admin_Auth extends Controller_Admin_Template
 	 */
 	public function action_login()
 	{
-		if(Auth::instance('admin')->logged_in()) {
+		if(Auth::instance()->logged_in()) {
 			if($url = Session::instance()->get('url')) {
 				$this->request->redirect($url);
 			}
@@ -34,7 +34,7 @@ class Controller_Admin_Auth extends Controller_Admin_Template
 		if($_POST) {
 			$post = Arr::extract($_POST, array('email', 'password', 'remember'));
 
-			if(Auth::instance('admin')->login(
+			if(Auth::instance()->login(
 				$post['email'],
 				$post['password'],
 				! isset($post['remember']) ? TRUE : FALSE))

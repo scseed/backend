@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct access allowed.');
 
 /**
- * Template Controller menu
+ * Template Controller Core_Menu
  *
  * @package Menu
  * @author  Sergei Gladkovskiy <smgladkovskiy@gmail.com>
@@ -14,7 +14,7 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 		'move' => array('update'),
 		'delete' => array('delete'),
 	);
-
+	
 	/**
 	 * @return void
 	 */
@@ -59,7 +59,7 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 
 		$this->template->content = (method_exists(__CLASS__, $method))
 			? $this->{$method}($root)
-			: $this->request->redirect(Request::current()->uri(array('controller' => 'menu', 'action' => '')));
+			: $this->request->redirect(Request::current()->uri(array('controller' => 'menu', 'action' => '', 'id' => '')));
 	}
 
 	/**
@@ -275,7 +275,7 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 
 				$new_root->insert_as_new_root($scope + 1);
 
-				$this->request->redirect(Request::current()->uri(array('controller' => 'menu', 'action' => '', 'id' => NULL)));
+				$this->request->redirect(Request::current()->uri(array('controller' => 'menu', 'action' => '', 'id' => '')));
 			}
 			catch(Validation_Exception $e)
 			{
@@ -320,6 +320,7 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 			'action' => NULL,
 			'params' => NULL,
 			'query' => NULL,
+			'class' => NULL,
 			'visible' => TRUE,
 		);
 		$visibilities = array(
@@ -388,4 +389,5 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 			->bind('post', $post)
 			->bind('back', $back);
 	}
-}
+
+} // End Controller_Core_Menu
