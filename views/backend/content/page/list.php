@@ -1,5 +1,4 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');?>
-<?php //echo Kohana::debug($users)?>
 <table cellspacing="0">
 	<tr>
 		<th>Наименование</th>
