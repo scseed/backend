@@ -2,13 +2,16 @@
 
 return array(
 
-	'driver'       => 'Jelly_unstable',
-	'hash_method'  => 'sha1',
-	'salt_pattern' => '3, 4, 7, 10, 12, 15, 18, 20, 23, 25, 27, 30',
-	'lifetime'      => 1209600,
-	'session_key'   => 'auth_user',
-	'autologin_key' => 'auth_autologin',
-	'forced_key'    => 'auth_forced',
+	'types' => array(
+		'default' => 'login',
+		'admin' => 'admin',
+	),
+
+	'driver'       => 'Jelly',
+	'hash_method'  => 'sha256',
+	'hash_key'     => '',
+	'lifetime'     => 1209600,
+	'session_key'  => 'auth_user',
 
 	// Username/password combinations for the Auth File driver
 	'users' => array(
