@@ -72,22 +72,103 @@ class Model_User extends Jelly_Model {
 	}
 
 	/**
-	 * Validate callback wrapper for checking password match
+	 * Complete the login for a user by incrementing the logins and saving login timestamp
 	 *
-	 * @static
-	 * @uses Auth
-	 * @param Validation $array
-	 * @param string     $field
 	 * @return void
 	 */
-	public static function _check_password_matches(Validation $array, $field)
+	public function complete_login()
 	{
-		$auth = Auth::instance();
-		if($array['password'] !== $array[$field])
+		if ($this->_loaded)
 		{
-			// Re-use the error messge from the 'matches' rule in Validate
-			$array->error($field, 'matches', array('param1' => 'password'));
+			// Update the number of logins
+			$this->logins = $this->logins + 1;
+
+			// Set the last login date
+			$this->last_login = time();
+
+			// Save the user
+			$this->save();
 		}
+	}
+
+	/**
+	 * Allows a model use both email and username as unique identifiers for login
+	 *
+	 * @param   string  unique value
+	 * @return  string  field name
+	 */
+	public function unique_key($value)
+	{
+		return Valid::email($value) ? 'email' : 'username';
+	}
+
+	/**
+	 * Password validation for plain passwords.
+	 *
+	 * @param array $values
+	 * @return Validation
+	 */
+	public static function get_password_validation($values)
+	{
+		return Validation::factory($values)
+			->rule('password', 'min_length', array(':value', 8))
+			->rule('password_confirm', 'matches', array(':validation', ':field', 'password'));
+	}
+
+	/**
+	 * Create a new user
+	 *
+	 * Example usage:
+	 * ~~~
+	 * $user = Jelly::factory('user')->create_user($_POST, array(
+	 *	'username',
+	 *	'password',
+	 *	'email',
+	 * );
+	 * ~~~
+	 *
+	 * @param array $values
+	 * @param array $expected
+	 * @throws Validation_Exception
+	 */
+	public function create_user($values, $expected)
+	{
+		// Validation for passwords
+		$extra_validation = Model_User::get_password_validation($values);
+
+		return $this->set(Arr::extract($values, $expected))->save($extra_validation);
+	}
+
+	/**
+	 * Update an existing user
+	 *
+	 * [!!] We make the assumption that if a user does not supply a password, that they do not wish to update their password.
+	 *
+	 * Example usage:
+	 * ~~~
+	 * $user = Jelly::factory('user', 1)
+	 *	->update_user($_POST, array(
+	 *		'username',
+	 *		'password',
+	 *		'email',
+	 *	);
+	 * ~~~
+	 *
+	 * @param array $values
+	 * @param array $expected
+	 * @throws Validation_Exception
+	 */
+	public function update_user($values, $expected)
+	{
+		if (empty($values['password']))
+		{
+			unset($values['password'], $values['password_confirm']);
+		}
+
+		// Validation for passwords
+		$extra_validation = Model_User::get_password_validation($values);
+
+		return $this->set(Arr::extract($values, $expected))->save($extra_validation);
 	}
 
 	/**
