@@ -8,6 +8,12 @@ Route::set('docs/media', 'admin/media(/<file>)', array('file' => '.+'))
 		'file'       => NULL,
 	));
 
+Route::set('docs/media', 'admin/images')
+	->defaults(array(
+		'controller' => 'admin_home',
+		'action'     => 'images',
+	));
+
 Route::set('admin', 'admin(/<controller>(/<action>(/<id>)))')
 	->defaults(array(
 		'directory' => 'admin',

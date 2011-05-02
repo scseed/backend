@@ -35,6 +35,13 @@ mySettings = {
 		{name:'Quotes', openWith:'bq(!(([![Class]!]))!). '},
 		{name:'Code', openWith:'@', closeWith:'@'},
 		{separator:'---------------' },
-		{name:'Preview', call:'preview', className:'preview'}
+		{name:'Preview', call:'preview', className:'preview'},
+		{separator:'---------------' },
+        {name:'Pictures',
+         className:'pictures',
+         beforeInsert:function() {
+                $('<iframe src="/admin/images"></iframe>').modal();
+            }
+        }
 	]
 }

@@ -159,6 +159,7 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 
 			$scripts = array(
 				$media->uri(array('file' => 'js/jquery.js')),
+				$media->uri(array('file' => 'js/jquery.simplemodal.1.4.1.min.js')),
 				$media->uri(array('file' => 'js/markitup/markitup/jquery.markitup.js')),
 				$media->uri(array('file' => 'js/textile/set.js')),
 				$media->uri(array('file' => 'js/admin_effects.js')),

@@ -30,6 +30,9 @@
 				echo html::image('admin/media/i/icons/edit.png', array('class'=>'ico 16x16'));
 				echo html::anchor('admin/page/edit/'.$page_content->page->id, 'Править');
 				echo '&nbsp;&nbsp;';
+				echo html::image('admin/media/i/icons/add.png', array('class'=>'ico 16x16'));
+				echo html::anchor('admin/page/add/'.URL::query(array('parent' => $page_content->page->id)), 'создать здесь');
+				echo '&nbsp;&nbsp;';
 				echo html::image('admin/media/i/icons/trash.png', array('class'=>'ico 16x16'));
 				echo html::anchor('admin/page/delete/'.$page_content->page->id, 'Удалить',
 					array('onclick'=>"return window.confirm('Уверены в этом?')"));?>

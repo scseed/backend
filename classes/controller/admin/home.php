@@ -66,4 +66,9 @@ class Controller_Admin_Home extends Controller_Admin_Template {
 		$this->response->send_headers();
 	}
 
+	public function action_images()
+	{
+
+	}
+
 } // End Template Controller Home
