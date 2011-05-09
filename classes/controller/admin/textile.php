@@ -10,11 +10,7 @@ class Controller_Admin_Textile extends Controller {
 
 	public function action_preview()
 	{
-		// Load Textile support
-		require_once Kohana::find_file('vendor', 'textile' . DIRECTORY_SEPARATOR . 'textile');
-
 		$textile = new Textile();
-
 		$this->response->body($textile->TextileThis(HTML::chars($_POST['data'])));
 	}
 
