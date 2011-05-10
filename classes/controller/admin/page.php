@@ -41,75 +41,6 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 			->bind('pages', $pages);
 	}
 
-	public function action_edit($id = NULL)
-	{
-		$errors = NULL;
-
-		$page = Jelly::query('page', (int) $id)->select();
-
-		$ru_content = $page->get('page_contents')->with('lang')->where('page_content:lang.abbr', '=', 'ru')->limit(1)->select();
-		$en_content = $page->get('page_contents')->with('lang')->where('page_content:lang.abbr', '=', 'en')->limit(1)->select();
-
-		if($_POST)
-		{
-			$page_data = Arr::extract($_POST, array('alias', 'is_active'));
-		    $ru_content_data = Arr::get($_POST, 'ru');
-		    $en_content_data = Arr::get($_POST, 'en');
-
-		    $ru_content_data['page'] = $en_content_data['page'] = $page->id;
-		    $ru_content_data['lang'] = 1;
-		    $en_content_data['lang'] = 2;
-
-		    $page->set($page_data);
-		    $ru_content->set($ru_content_data);
-		    $en_content->set($en_content_data);
-
-		    try
-		    {
-			    $page->save();
-		    }
-		    catch(Validate_Exception $e)
-		    {
-			    $errors = $e->array->errors('common_validation');
-		    }
-
-		    if(! $errors)
-		    {
-			    try
-				{
-					$ru_content->save();
-				}
-				catch(Validate_Exception $e)
-				{
-					$errors = $e->array->errors('common_validation');
-				}
-		    }
-
-		    if(! $errors)
-		    {
-			    try
-				{
-					$en_content->save();
-				}
-				catch(Validate_Exception $e)
-				{
-					$errors = $e->array->errors('common_validation');
-				}
-		    }
-
-		    if( ! $errors)
-		    {
-			    $this->request->redirect('admin/page/list');
-		    }
-		}
-
-	    $this->template->content = View::factory('backend/content/page/edit')
-			->bind('page', $page)
-			->bind('errors', $errors)
-			->bind('ru_content', $ru_content)
-			->bind('en_content', $en_content);
-	}
-
 	public function action_add()
 	{
 		$parent = Arr::get($_GET, 'parent', 1);
@@ -205,7 +136,7 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 		    }
 		    catch(Jelly_Validation_Exception $e)
 		    {
-			    $errors = $e->array->errors('common_validation');
+			    $errors = $e->errors('common_validation');
 		    }
 
 			foreach($system_languages as $lang)
@@ -222,7 +153,7 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 				}
 				catch(Jelly_Validation_Exception $e)
 				{
-					$errors[$lang->abbr] = $e->array->errors('common_validation');
+					$errors[$lang->abbr] = $e->errors('common_validation');
 				}
 			}
 
@@ -232,6 +163,105 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 		    }
 
 		    $alias = $page_data['alias'];
+		}
+
+	    $this->template->content = View::factory('backend/content/page/add')
+			->bind('alias', $alias)
+			->bind('page', $page)
+			->bind('pages', $pages)
+			->bind('parent', $parent)
+			->bind('errors', $errors)
+			->bind('content', $content);
+	}
+
+	public function action_edit()
+	{
+		$id = $this->request->param('id');
+
+		$errors = NULL;
+
+		$_pages = Jelly::factory('page')->root(1);
+		$page = Jelly::query('page', (int) $id)->select();
+		$parent = $page->parent;
+		$system_languages = Jelly::query('system_lang')->select();
+
+		// Получим контент для всех системных языков
+		foreach($system_languages as $lang)
+		{
+			$content[$lang->abbr] = array(
+				'content' => $page->get('page_contents')->where('lang', '=', $lang->id)->limit(1)->select(),
+				'lang'    => $lang,
+			);
+		}
+
+		// Выделим все страницы, что находятся в этом скоупе
+		$pages[$_pages->id] = '~ Корень ~';
+		foreach($_pages->children() as $_page)
+		{
+			if($_page->has_children())
+			{
+				$pages[$_page->alias] = array($_page->id => $_page->get('page_contents')->with('lang')->where('page_content:lang.abbr', '=', 'ru')->limit(1)->execute()->title);
+
+			    foreach($_page->children() as $children)
+			    {
+				    $pages[$_page->alias][$children->id] = $children->get('page_contents')->with('lang')->where('page_content:lang.abbr', '=', 'ru')->limit(1)->execute()->title;
+			    }
+			}
+		    else
+		    {
+			    $pages[$_page->id] = $_page->get('page_contents')
+			        ->with('lang')
+			        ->where('page_content:lang.abbr', '=', 'ru')
+			        ->limit(1)
+			        ->execute()
+			        ->title;
+		    }
+		}
+
+		exit(Debug::vars($pages) . View::factory('profiler/stats'));
+
+		// Если есть родительский элемент, пропишем его стартовый алиас
+		$alias = $page->alias;
+
+		if($_POST)
+		{
+			$page_data = Arr::extract($_POST, array('alias', 'is_active'));
+			$parent_id = Arr::get($_POST, 'parent');
+
+		    $page->set($page_data);
+			$page->parent = $parent_id;
+
+			try
+			{
+				$page->save();
+			}
+			catch(Jelly_Validation_Exception $e)
+			{
+				$errors = $e->errors('common_validation');
+			}
+
+		    foreach($system_languages as $lang)
+			{
+				$content[$lang->abbr]['content']->set(Arr::get($_POST, $lang->abbr));
+				$content[$lang->abbr]['content']->page = $page->id;
+				$content[$lang->abbr]['content']->type = 1;
+				$content[$lang->abbr]['content']->lang = $lang->id;
+
+				try
+				{
+					$content[$lang->abbr]['content']->save();
+
+				}
+				catch(Jelly_Validation_Exception $e)
+				{
+					$errors[$lang->abbr] = $e->errors('common_validation');
+				}
+			}
+
+		    if( ! $errors)
+		    {
+			    $this->request->redirect('admin/page/list');
+		    }
 		}
 
 	    $this->template->content = View::factory('backend/content/page/add')
