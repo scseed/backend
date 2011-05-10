@@ -12,11 +12,11 @@
 	</div>
 
 	<div class="form-item">
-	<?php echo Form::label('parent', 'Родительский Элемент');?>
-	<?php if (isset($errors['parent'])):?>
-		<div class="form-error"><?php echo $errors['parent'] ?></div>
+	<?php echo Form::label('parent_page', 'Родительский Элемент');?>
+	<?php if (isset($errors['parent_page'])):?>
+		<div class="form-error"><?php echo $errors['parent_page'] ?></div>
 	<?php endif;?>
-	<?php echo Form::select('parent', $pages, $parent->id);?>
+	<?php echo Form::select('parent_page', $pages, $parent->id);?>
 	</div>
 
 	<div class="form-item">
@@ -26,7 +26,7 @@
 	<?php endif;?>
 	<?php echo Form::select('is_active', array(true => 'да', false => 'нет'), $page->is_active);?>
 	</div>
-	
+
 <?php foreach($content as $abbr => $content):?>
 	<?php echo Form::hidden($abbr . 'content_id', $content['content']->id)?>
 	<fieldset><legend>Содержание. Язык: <?php echo $content['lang']->locale_name?></legend>

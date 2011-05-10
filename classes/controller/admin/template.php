@@ -105,7 +105,7 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 			if (isset($this->_actions[$this->request->action()]))
 			{
 				if ( ! ACL::instance()->is_allowed(
-					Auth::instance('admin')->get_user()->roles->as_array('id', 'name'),
+					Jelly::query('user', Auth::instance('admin')->get_user()->id)->select()->roles->as_array('id', 'name'),
 					$this->_actions[$this->request->action()],
 					$this->request))
 				{

@@ -13,6 +13,11 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 		$this->action_list();
 	}
 
+	/**
+	 * Pages list
+	 *
+	 * @return void
+	 */
 	public function action_list ()
 	{
 		$parent = Arr::get($_GET, 'parent', 1);
@@ -41,51 +46,38 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 			->bind('pages', $pages);
 	}
 
+	/**
+	 * Adding new page
+	 *
+	 * @return void
+	 */
 	public function action_add()
 	{
+		// Get parent page
 		$parent = Arr::get($_GET, 'parent', 1);
 		$parent = Jelly::query('page', (int) $parent)->select();
-		$_pages = Jelly::factory('page')->root(1);
-		$system_languages = Jelly::query('system_lang')->select();
-		$errors = NULL;
-		$page = Jelly::factory('page');
 
-		// Если $parent не оказался, да ещё и не существует в БД, создадим...
+		$errors = NULL;
+
+		$_pages           = Jelly::factory('page')->root(1);
+		$system_languages = Jelly::query('system_lang')->select();
+		$page             = Jelly::factory('page');
+
+		// If there no global parent page - create it
 		if( ! $parent->loaded())
 		{
 			$pages_root = Jelly::factory('page')->set(array(
 				'alias'     => NULL,
 				'is_active' => FALSE
-		    ))->save();
+			))->save();
 			$pages_root->insert_as_new_root();
 			$parent = $pages_root;
 		}
 
-		// Выделим все страницы, что находятся в этом скоупе
-		$pages[$parent->id] = '~ Корень ~';
-		foreach($_pages->children() as $_page)
-		{
-			if($_page->has_children())
-			{
-				$pages[$_page->alias] = array($_page->id => $_page->get('page_contents')->with('lang')->where('lang.abbr', '=', 'ru')->limit(1)->execute()->title);
+		// Pages structure
+		$pages = $this->_pages_structure($_pages);
 
-			    foreach($_page->children() as $children)
-			    {
-				    $pages[$_page->alias][$children->id] = $children->get('page_contents')->with('lang')->where('lang.abbr', '=', 'ru')->limit(1)->execute()->title;
-			    }
-			}
-		    else
-		    {
-			    $pages[$_page->id] = $_page->get('page_contents')
-			        ->with('lang')
-			        ->where('page_content:lang.abbr', '=', 'ru')
-			        ->limit(1)
-			        ->execute()
-			        ->title;
-		    }
-		}
-
-		// Получим контент для всех системных языков
+		// Getting page contents by system languages
 		foreach($system_languages as $lang)
 		{
 			$content[$lang->abbr] = array(
@@ -94,12 +86,13 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 			);
 		}
 
-		// Если есть родительский элемент, пропишем его стартовый алиас
+		// If there is parent alias - set it as start
 		$alias = ($parent->alias) ?  $parent->alias . '/' : NULL;
 
 
 		if($_POST)
 		{
+			// Watch for page ID
 			$page_id = Arr::get($_POST, 'page_id', NULL);
 
 			if( $page_id)
@@ -116,56 +109,39 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 				}
 			}
 
-			$page_data = Arr::extract($_POST, array('parent', 'alias', 'is_active'));
+			$page_data = Arr::extract($_POST, array('parent_page', 'alias', 'is_active'));
 
-		    $parent_id = Arr::get($_POST, 'parent');
+			$page->set($page_data);
 
-		    $page->set($page_data);
-			$page->parent = $parent_id;
-
-		    try
-		    {
-			    if($page->loaded())
-			    {
-				    $page->save();
-			    }
-			    else
-			    {
-				    $page->insert_as_last_child($parent);
-			    }
-		    }
-		    catch(Jelly_Validation_Exception $e)
-		    {
-			    $errors = $e->errors('common_validation');
-		    }
-
-			foreach($system_languages as $lang)
+			try
 			{
-				$content[$lang->abbr]['content']->set(Arr::get($_POST, $lang->abbr));
-				$content[$lang->abbr]['content']->page = $page->id;
-				$content[$lang->abbr]['content']->type = 1;
-				$content[$lang->abbr]['content']->lang = $lang->id;
-
-				try
+				if($page->loaded())
 				{
-					$content[$lang->abbr]['content']->save();
-
+					$page->save();
 				}
-				catch(Jelly_Validation_Exception $e)
+				else
 				{
-					$errors[$lang->abbr] = $e->errors('common_validation');
+					$page->insert_as_last_child($page_data['parent_page']);
 				}
 			}
+			catch(Jelly_Validation_Exception $e)
+			{
+				$errors = $e->errors('common_validation');
+			}
 
-		    if( ! $errors)
-		    {
-			    $this->request->redirect(Route::get('admin')->uri(array('controller' => 'page', 'action' => 'list')));
-		    }
+			$errors = $this->_save_page_contents($content, $page, $system_languages);
 
-		    $alias = $page_data['alias'];
+			if( ! $errors)
+			{
+				$query = ($parent) ? URL::query(array('parent' => $parent->id)) : NULL;
+
+				$this->request->redirect(Route::get('admin')->uri(array('controller' => 'page', 'action' => 'list')).$query);
+			}
+
+			$alias = $page_data['alias'];
 		}
 
-	    $this->template->content = View::factory('backend/content/page/add')
+		$this->template->content = View::factory('backend/form/content/page')
 			->bind('alias', $alias)
 			->bind('page', $page)
 			->bind('pages', $pages)
@@ -174,18 +150,24 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 			->bind('content', $content);
 	}
 
+	/**
+	 * Editing page
+	 *
+	 * @return void
+	 */
 	public function action_edit()
 	{
 		$id = $this->request->param('id');
 
-		$errors = NULL;
-
-		$_pages = Jelly::factory('page')->root(1);
-		$page = Jelly::query('page', (int) $id)->select();
-		$parent = $page->parent;
+		$page             = Jelly::query('page', (int) $id)->select();
+		$_pages           = Jelly::factory('page')->root(1);
+		$parent           = $page->parent_page;
 		$system_languages = Jelly::query('system_lang')->select();
 
-		// Получим контент для всех системных языков
+		$errors = NULL;
+		$content = array();
+
+		// Getting page contents by system languages
 		foreach($system_languages as $lang)
 		{
 			$content[$lang->abbr] = array(
@@ -194,42 +176,18 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 			);
 		}
 
-		// Выделим все страницы, что находятся в этом скоупе
-		$pages[$_pages->id] = '~ Корень ~';
-		foreach($_pages->children() as $_page)
-		{
-			if($_page->has_children())
-			{
-				$pages[$_page->alias] = array($_page->id => $_page->get('page_contents')->with('lang')->where('page_content:lang.abbr', '=', 'ru')->limit(1)->execute()->title);
+		// Pages structure
+		$pages = $this->_pages_structure($_pages);
 
-			    foreach($_page->children() as $children)
-			    {
-				    $pages[$_page->alias][$children->id] = $children->get('page_contents')->with('lang')->where('page_content:lang.abbr', '=', 'ru')->limit(1)->execute()->title;
-			    }
-			}
-		    else
-		    {
-			    $pages[$_page->id] = $_page->get('page_contents')
-			        ->with('lang')
-			        ->where('page_content:lang.abbr', '=', 'ru')
-			        ->limit(1)
-			        ->execute()
-			        ->title;
-		    }
-		}
 
-		exit(Debug::vars($pages) . View::factory('profiler/stats'));
-
-		// Если есть родительский элемент, пропишем его стартовый алиас
+		// If there is parent alias - set it as start
 		$alias = $page->alias;
 
 		if($_POST)
 		{
-			$page_data = Arr::extract($_POST, array('alias', 'is_active'));
-			$parent_id = Arr::get($_POST, 'parent');
+			$page_data = Arr::extract($_POST, array('parent_page', 'alias', 'is_active'));
 
-		    $page->set($page_data);
-			$page->parent = $parent_id;
+			$page->set($page_data);
 
 			try
 			{
@@ -240,36 +198,101 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 				$errors = $e->errors('common_validation');
 			}
 
-		    foreach($system_languages as $lang)
+			// Saving page contents
+			$errors = $this->_save_page_contents($content, $page, $system_languages);
+
+			if( ! $errors)
 			{
-				$content[$lang->abbr]['content']->set(Arr::get($_POST, $lang->abbr));
-				$content[$lang->abbr]['content']->page = $page->id;
-				$content[$lang->abbr]['content']->type = 1;
-				$content[$lang->abbr]['content']->lang = $lang->id;
+				$query = ($parent) ? URL::query(array('parent' => $parent->id)) : NULL;
 
-				try
-				{
-					$content[$lang->abbr]['content']->save();
-
-				}
-				catch(Jelly_Validation_Exception $e)
-				{
-					$errors[$lang->abbr] = $e->errors('common_validation');
-				}
+				$this->request->redirect(Route::get('admin')->uri(array('controller' => 'page', 'action' => 'list')).$query);
 			}
-
-		    if( ! $errors)
-		    {
-			    $this->request->redirect('admin/page/list');
-		    }
+			$alias = $page_data['alias'];
 		}
 
-	    $this->template->content = View::factory('backend/content/page/add')
+		$this->template->content = View::factory('backend/form/content/page')
 			->bind('alias', $alias)
 			->bind('page', $page)
 			->bind('pages', $pages)
 			->bind('parent', $parent)
 			->bind('errors', $errors)
 			->bind('content', $content);
+	}
+
+	public function action_delete()
+	{
+		$page_id = $this->request->param('id');
+
+		Jelly::query('page', $page_id)->select()->delete_obj();
+
+		$this->request->redirect($this->request->referrer());
+	}
+
+	/**
+	 * Generates Pages structure
+	 *
+	 * @param Jelly_Model $root_page
+	 * @return array
+	 */
+	protected function _pages_structure(Jelly_Model $root_page)
+	{
+		$pages[$root_page->id] = '~ '.__('Pages Root').' ~';
+
+		foreach($root_page->children() as $_page)
+		{
+			$title = $_page->get('page_contents')->with('lang')->where('page_content:lang.abbr', '=', I18n::lang())->limit(1)->execute()->title;
+			if($_page->has_children())
+			{
+				$pages[$title] = array($_page->id => $title);
+
+				foreach($_page->children() as $children)
+				{
+					$pages[$title][$children->id] = $children->get('page_contents')->with('lang')->where('page_content:lang.abbr', '=', I18n::lang())->limit(1)->execute()->title;
+				}
+			}
+			else
+			{
+				$pages[$_page->id] = $title;
+			}
+		}
+
+		return $pages;
+	}
+
+	/**
+	 * Saves page contents
+	 *
+	 * @param array $content
+	 * @param Jelly_Model $page
+	 * @param Jelly_Collection $system_languages
+	 * @return null|array
+	 */
+	protected function _save_page_contents(array $content, Jelly_Model $page, Jelly_Collection $system_languages)
+	{
+		$errors = NULL;
+		foreach($system_languages as $lang)
+		{
+			$page_content = Arr::get($_POST, $lang->abbr);
+
+			if($page_content['content'] == '')
+				continue;
+
+			$content[$lang->abbr]['content']->set($page_content);
+			$content[$lang->abbr]['content']->page = $page->id;
+			$content[$lang->abbr]['content']->type = 1;
+			$content[$lang->abbr]['content']->lang = $lang->id;
+
+			try
+			{
+				$content[$lang->abbr]['content']->save();
+
+			}
+			catch(Jelly_Validation_Exception $e)
+			{
+				$errors[$lang->abbr] = $e->errors('common_validation');
+			}
+		}
+
+		return $errors;
 	}
 } // End Controller_pages
