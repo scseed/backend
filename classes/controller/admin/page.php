@@ -34,8 +34,6 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 
 		$pages = ($pages_ids)
 			? Jelly::query('page_content')
-				->with('lang')
-				->with('page')
 				->where('page_content:lang.abbr', '=', I18n::lang())
 				->where('page_content:page.id', 'IN', $pages_ids)
 				->execute()
