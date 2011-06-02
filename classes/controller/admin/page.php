@@ -238,14 +238,14 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 
 		foreach($root_page->children() as $_page)
 		{
-			$title = $_page->get('page_contents')->with('lang')->where('page_content:lang.abbr', '=', I18n::lang())->limit(1)->execute()->title;
+			$title = $_page->get('page_contents')->where('page_content:lang.abbr', '=', I18n::lang())->limit(1)->execute()->title;
 			if($_page->has_children())
 			{
 				$pages[$title] = array($_page->id => $title);
 
 				foreach($_page->children() as $children)
 				{
-					$pages[$title][$children->id] = $children->get('page_contents')->with('lang')->where('page_content:lang.abbr', '=', I18n::lang())->limit(1)->execute()->title;
+					$pages[$title][$children->id] = $children->get('page_contents')->where('page_content:lang.abbr', '=', I18n::lang())->limit(1)->execute()->title;
 				}
 			}
 			else
