@@ -28,33 +28,32 @@ class Model_User extends Jelly_Model {
 				)),
 				'email' => Jelly::field('Email', array(
 					'rules' => array(
-						'not_empty' => array(NULL),
+						array('not_empty'),
 					),
 					'label' => 'Email',
 
 				)),
 				'password' => Jelly::field('Password', array(
 					'in_table' => FALSE,
-					'hash_with' => array(Auth::instance(), 'hash_password'),
 					'rules' => array(
-						'not_empty' => array(NULL),
-						'max_length' => array(50),
-						'min_length' => array(4)
+						array('not_empty'),
+						array('min_length', array(':value', 4)),
 					),
+					'hash_with' => array(Auth::instance(), 'hash'),
 					'label' => 'Пароль'
 				)),
-				'password_confirm' => Jelly::field('Password', array(
-					'in_form' => TRUE,
-					'in_table' => FALSE,
-					'in_db' => FALSE,
-					'rules' => array(
-						'matches' => array(':validation', 'password_confirm', 'password'),
-						'not_empty' => array(NULL),
-						'max_length' => array(50),
-						'min_length' => array(4)
-					),
-					'label' => 'Подтверждение пароля'
-				)),
+//				'password_confirm' => Jelly::field('Password', array(
+//					'in_form' => TRUE,
+//					'in_table' => FALSE,
+//					'in_db' => FALSE,
+//					'rules' => array(
+//						'matches' => array(':validation', 'password_confirm', 'password'),
+//						'not_empty' => array(NULL),
+//						'max_length' => array(50),
+//						'min_length' => array(4)
+//					),
+//					'label' => 'Подтверждение пароля'
+//				)),
 				'tokens' => Jelly::field('HasMany', array(
 					'in_form' => FALSE,
 					'in_table' => FALSE,
@@ -67,6 +66,7 @@ class Model_User extends Jelly_Model {
 				)),
 				'roles' => Jelly::field('ManyToMany', array(
 					'label' => 'Роли пользователя',
+					'through' => 'roles_users'
 				)),
 			));
 	}
@@ -113,6 +113,17 @@ class Model_User extends Jelly_Model {
 		return Validation::factory($values)
 			->rule('password', 'min_length', array(':value', 8))
 			->rule('password_confirm', 'matches', array(':validation', ':field', 'password'));
+	}
+
+	/**
+	 * Loads a user based on unique key.
+	 *
+	 * @param   string  $unique_key
+	 * @return  Jelly_Model
+	 */
+	public function get_user($unique_key)
+	{
+		return Jelly::query('user')->where($this->unique_key($unique_key), '=', $unique_key)->limit(1)->select();
 	}
 
 	/**
