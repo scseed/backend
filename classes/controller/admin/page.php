@@ -59,14 +59,29 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 
 		$_pages           = Jelly::factory('page')->root(1);
 		$system_languages = Jelly::query('system_lang')->select();
+		$page_types       = Jelly::query('page_type')->select()->as_array('id', 'name');
 		$page             = Jelly::factory('page');
 
 		// If there no global parent page - create it
 		if( ! $parent->loaded())
 		{
+			if( ! count($page_types))
+			{
+				Jelly::factory('page_type')->set(array('name' => 'text'))->save();
+				$page_types       = Jelly::query('page_type')->select();
+			}
+
+			$static_page_type_id = NULL;
+			foreach($page_types as $id => $page_type_name)
+			{
+				if($page_type_name == 'text')
+				$static_page_type_id = $id;
+			}
+
 			$pages_root = Jelly::factory('page')->set(array(
 				'alias'     => NULL,
-				'is_active' => FALSE
+				'is_active' => FALSE,
+				'type'      => $static_page_type_id
 			))->save();
 			$pages_root->insert_as_new_root();
 			$parent = $pages_root;
@@ -107,7 +122,7 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 				}
 			}
 
-			$page_data = Arr::extract($_POST, array('parent_page', 'alias', 'is_active'));
+			$page_data = Arr::extract($_POST, array('parent_page', 'alias', 'is_active', 'type'));
 
 			$page->set($page_data);
 
@@ -145,7 +160,9 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 			->bind('pages', $pages)
 			->bind('parent', $parent)
 			->bind('errors', $errors)
-			->bind('content', $content);
+			->bind('content', $content)
+			->bind('page_types', $page_types)
+		;
 	}
 
 	/**
@@ -272,7 +289,7 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 		{
 			$page_content = Arr::get($_POST, $lang->abbr);
 
-			if($page_content['content'] == '')
+			if($page_content['title'] == '')
 				continue;
 
 			$content[$lang->abbr]['content']->set($page_content);

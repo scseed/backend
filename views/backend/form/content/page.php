@@ -20,6 +20,14 @@
 	</div>
 
 	<div class="form-item">
+	<?php echo Form::label('type', 'Тип страницы');?>
+	<?php if (isset($errors['type'])):?>
+		<div class="form-error"><?php echo $errors['type'] ?></div>
+	<?php endif;?>
+	<?php echo Form::select('type', $page_types, NULL);?>
+	</div>
+
+	<div class="form-item">
 	<?php echo Form::label('is_active', 'Опубликовано');?>
 	<?php if (isset($errors['is_active'])):?>
 		<div class="form-error"><?php echo $errors['is_active'] ?></div>
