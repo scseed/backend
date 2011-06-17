@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');?>
 <div id="login-form">
 	<h1 class="title"><?php echo __('Регистрация администратора') ?></h1>
-		<?php echo Form::open(); ?>
+		<?php echo Form::open(Request::current()); ?>
 			<div class="form-item">
 				<?php
 					echo Form::label('email', __('Эл. адрес'));

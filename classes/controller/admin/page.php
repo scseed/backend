@@ -178,6 +178,7 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 		$_pages           = Jelly::factory('page')->root(1);
 		$parent           = $page->parent_page;
 		$system_languages = Jelly::query('system_lang')->select();
+		$page_types       = Jelly::query('page_type')->select()->as_array('id', 'name');
 
 		$errors = NULL;
 		$content = array();
@@ -231,7 +232,9 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 			->bind('pages', $pages)
 			->bind('parent', $parent)
 			->bind('errors', $errors)
-			->bind('content', $content);
+			->bind('content', $content)
+			->bind('page_types', $page_types)
+		;
 	}
 
 	public function action_delete()

@@ -52,7 +52,7 @@ class Controller_Admin_Auth extends Controller_Admin_Template
 				$errors = array('common' => 'Неверное имя пользователя или пароль');
 			}
 		}
-		$this->template->content = View::factory('backend/user/login')
+		$this->template->content = View::factory('backend/form/user/login')
 			->bind('userdata', $post)
 			->set('errors', $errors);
 	}
@@ -73,43 +73,42 @@ class Controller_Admin_Auth extends Controller_Admin_Template
 	{
 		$count_users = Jelly::query('user')->count();
 
-	    if(! $count_users)
-	    {
-		    $errors = array();
-		    $user = Jelly::factory('user');
+		if(! $count_users)
+		{
+			$errors = array();
+			$user = Jelly::factory('user');
 
-		    if($_POST)
-		    {
-			    $post = Arr::extract($_POST, array('email', 'password', 'password_confirm', 'remember'));
+			if($_POST)
+			{
+				$post = Arr::extract($_POST, array('email', 'password', 'password_confirm', 'remember'));
 
-		        $user->set($post);
+				try
+				{
+					$user->create_user($_POST, array('email', 'password', 'password_confirm', 'remember'));
+					$user->add('role', array('login', 'admin'));
 
-		        try
-		        {
-			        $user->save();
-			        $user->add('role', array('login', 'admin'));
+					Auth::instance('admin')->login(
+						$post['email'],
+						$post['password'],
+						!isset($post['remember']) ? TRUE : FALSE);
+					$this->request->redirect('admin');
 
-		            Auth::instance('admin')->login(
-			            $post['email'],
-			            $post['password'],
-			            !isset($post['remember']) ? TRUE : FALSE);
-		            $this->request->redirect('admin');
+				}
+				catch(Jelly_Validation_Exception $e)
+				{
+					$errors = $e->errors('common_validation');
+					exit(Debug::vars($errors) . View::factory('profiler/stats'));
+				}
+			}
 
-		        }
-		        catch(Validate_Exception $e)
-		        {
-			        $errors = $e->array->messages('common_validation');
-		        }
-		    }
-
-		    $this->template->title = 'Регистрация администратора';
-			$this->template->content = View::factory('backend/user/register')
+			$this->template->title = 'Регистрация администратора';
+			$this->template->content = View::factory('backend/form/user/register')
 				->bind('userdata', $user)
 				->bind('errors', $errors);
-	    }
-	    else
-	    {
-		    $this->request->redirect('admin/auth/login');
-	    }
+		}
+		else
+		{
+			$this->request->redirect('admin/auth/login');
+		}
 	}
 } // End Template Controller User

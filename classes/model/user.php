@@ -37,7 +37,7 @@ class Model_User extends Jelly_Model {
 					'in_table' => FALSE,
 					'rules' => array(
 						array('not_empty'),
-						array('min_length', array(':value', 4)),
+//						array('min_length', array(':value', 4)),
 					),
 					'hash_with' => array(Auth::instance(), 'hash'),
 					'label' => 'Пароль'
@@ -94,7 +94,7 @@ class Model_User extends Jelly_Model {
 	/**
 	 * Allows a model use both email and username as unique identifiers for login
 	 *
-	 * @param   string  unique value
+	 * @param   string  $value unique value
 	 * @return  string  field name
 	 */
 	public function unique_key($value)
@@ -111,7 +111,7 @@ class Model_User extends Jelly_Model {
 	public static function get_password_validation($values)
 	{
 		return Validation::factory($values)
-			->rule('password', 'min_length', array(':value', 8))
+//			->rule('password', 'min_length', array(':value', 4))
 			->rule('password_confirm', 'matches', array(':validation', ':field', 'password'));
 	}
 
@@ -140,7 +140,7 @@ class Model_User extends Jelly_Model {
 	 *
 	 * @param array $values
 	 * @param array $expected
-	 * @throws Validation_Exception
+	 * @return Model_User
 	 */
 	public function create_user($values, $expected)
 	{
@@ -167,7 +167,7 @@ class Model_User extends Jelly_Model {
 	 *
 	 * @param array $values
 	 * @param array $expected
-	 * @throws Validation_Exception
+	 * @return Model_User
 	 */
 	public function update_user($values, $expected)
 	{
