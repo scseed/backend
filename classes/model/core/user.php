@@ -45,6 +45,11 @@ abstract class Model_Core_User extends Model_Auth_User {
 		$meta->field('username', 'String', array('in_db' => FALSE));
 	}
 
+	public function unique_key($value)
+	{
+		return 'email';
+	}
+
 	/**
 	 * Loads a user based on unique key.
 	 *

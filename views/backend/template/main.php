@@ -70,7 +70,7 @@
 				<div class="info-block">
 					<div class="info-block-wrapper">
 						<p>
-							<img src="/admin/media/i/icons/user.png" alt="" class="ico 16x16" /> <span class="big"><?php echo $user->name?></span>
+							<img src="/admin/media/i/icons/user.png" alt="" class="ico 16x16" /> <span class="big"><?php echo $profile->name?></span>
 						</p>
 						<p>
 							<img src="/admin/media/i/icons/acl-admin.png" alt="" class="ico 16x16" /> <span class="acl-role admin-role">Администратор</span>
@@ -82,12 +82,12 @@
 							<img src="/admin/media/i/icons/acl-content.png" alt="" class="ico 16x16" /> <span class="acl-role content-role">Контентер</span>
 						</p>--->
 						<p>
-							<img src="/admin/media/i/icons/mail.png" alt="" class="ico 16x16" /> <?php echo html::mailto($user->email, $user->email, array('class' => 'orange'))?>
+							<img src="/admin/media/i/icons/mail.png" alt="" class="ico 16x16" /> <?php echo html::mailto($profile->email, $profile->email, array('class' => 'orange'))?>
 						</p>
 					</div>
 					<div class="info-block-status">
 						<div class="info-block-status-wrapper">
-							Последний заход: <strong><?php echo date('d M Y', $user->last_login)?></strong> | <?php echo date('H:i', $user->last_login)?>
+							Последний заход: <strong><?php echo date('d M Y', $profile->last_login)?></strong> | <?php echo date('H:i', $profile->last_login)?>
 						</div>
 					</div>
 				</div>
