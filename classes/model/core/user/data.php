@@ -23,18 +23,19 @@ class Model_Core_User_Data extends Jelly_Model {
 				'last_name' => Jelly::field('String', array(
 					'empty' => FAlSE,
 					'rules' => array(
-						'not_empty' => array(TRUE)
+						array('not_empty')
 					),
 					'label' => 'Фамилия',
 				)),
 				'first_name' => Jelly::field('String', array(
 					'empty' => FAlSE,
 					'rules' => array(
-						'not_empty' => array(TRUE)
+						array('not_empty')
 					),
 					'label' => 'Имя',
 				)),
 				'patronymic' => Jelly::field('String', array(
+					'convert_empty' => TRUE,
 					'allow_null' => TRUE,
 					'label' => 'Отчество',
 				)),
@@ -47,6 +48,7 @@ class Model_Core_User_Data extends Jelly_Model {
 					'label' => 'Дата рождения',
 				)),
 				'phone' => Jelly::field('String', array(
+					'convert_empty' => TRUE,
 					'allow_null' => TRUE,
 					'label' => 'Телефон',
 				)),
