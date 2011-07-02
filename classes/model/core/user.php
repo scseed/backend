@@ -43,6 +43,13 @@ abstract class Model_Core_User extends Model_Auth_User {
 
 		// Disable 'username' field
 		$meta->field('username', 'String', array('in_db' => FALSE));
+		$meta->field('email', 'Email', array(
+			'label' => 'Email',
+			'rules' => array(
+				array('not_empty'),
+			),
+			'unique' => TRUE,
+		));
 	}
 
 	public function unique_key($value)
