@@ -16,17 +16,10 @@ abstract class Model_Core_User extends Model_Auth_User {
 	public static function initialize(Jelly_Meta $meta)
 	{
 		parent::initialize($meta);
-
+		
 		$meta->name_key('email')
 			->fields(array(
 				'id' => Jelly::field('Primary'),
-				'user_data' => Jelly::field('BelongsTo', array(
-					'allow_null' => true,
-					'default' => NULL,
-					'label' => __('User profile'),
-					'in_form' => FALSE,
-					'in_table' => FALSE,
-				)),
 				'is_active' => Jelly::field('Boolean', array(
 					'label' => 'Статус',
 					'label_true' => 'Активен',
