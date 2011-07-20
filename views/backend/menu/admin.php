@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');?>
 <ul id="menu">
-	<?php foreach($menu_arr as $name => $item): if($item['visible']):?>
+	<?php foreach($menu_arr as $name => $item): if($item['is_visible']):?>
 		<li class="<?php echo $item['active_class'] ?>">
 			<?php
 				echo Html::anchor(
@@ -9,9 +9,9 @@
 					array('title' => $item['title'])
 				);
 			?>
-			<?php if (count($item['submenu'])): ?>
+			<?php if (count($item['childrens'])): ?>
 				<ul>
-				<?php foreach($item['submenu'] as $sub_item): if($sub_item['visible']):?>
+				<?php foreach($item['childrens'] as $sub_item): if($sub_item['is_visible']):?>
 					<li>
 						<?php
 							echo Html::anchor(
