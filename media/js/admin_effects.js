@@ -57,5 +57,43 @@ $(document).ready(function(){
 		}
 	)
 
-      $("textarea").markItUp(mySettings);
+	$("textarea").markItUp(mySettings);
+
+	$('.page_content legend').click(function(){
+		toggle_fieldset_block(this);
+	})
+
+	$('.delete_content').click(function(){
+		var button = this;
+		var confirmation = confirm('Вы уверены?');
+
+		if(confirmation)
+		{
+			$.ajax({
+				url: $(this).attr('href'),
+				success: function(data){
+					toggle_fieldset_block(button);
+					$(button).parent().children('input').attr('value', '');
+					$(button).parent().children('a').remove();
+					alert('Содержание удалено');
+				}
+			});
+		}
+		
+		return false;
+	})
 });
+
+function toggle_fieldset_block(object)
+{
+	if($(object).parent().hasClass('closed'))
+	{
+		$(object).parent().children('div, a').slideDown();
+		$(object).parent().removeClass('closed');
+	}
+	else
+	{
+		$(object).parent().children('div, a').slideUp();
+		$(object).parent().addClass('closed');
+	}
+}

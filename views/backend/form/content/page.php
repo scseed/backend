@@ -35,19 +35,28 @@
 	<?php echo Form::select('is_active', array(true => 'да', false => 'нет'), $page->is_active);?>
 	</div>
 
+	<div class="form-item">
+	<?php echo Form::label('is_visible', 'Доступно для просмотра');?>
+	<?php if (isset($errors['is_visible'])):?>
+		<div class="form-error"><?php echo $errors['is_visible'] ?></div>
+	<?php endif;?>
+	<?php echo Form::select('is_visible', array(true => 'да', false => 'нет'), $page->is_visible);?>
+	</div>
+
 <?php foreach($content as $abbr => $content):?>
 	<?php echo Form::hidden($abbr . 'content_id', $content['content']->id)?>
-	<fieldset><legend>Содержание. Язык: <?php echo $content['lang']->locale_name?></legend>
+	<fieldset class="page_content<?php echo ( ! $content['content']->id) ? ' closed' : NULL?>">
+		<legend>Содержание. Язык: <?php echo $content['lang']->locale_name?></legend>
 		<div class="form-item">
 			<?php echo Form::label($abbr . '[title]', 'Заголовок');?>
-			<?php if (isset($errors['ru[title]'])):?>
+			<?php if (isset($errors[$abbr . '[title]'])):?>
 				<div class="form-error"><?php echo $errors[$abbr]['title'] ?></div>
 			<?php endif;?>
 			<?php echo Form::input($abbr . '[title]', $content['content']->title);?>
 		</div>
 		<div class="form-item">
 		<?php echo Form::label($abbr . '[long_title]', 'Заголовок на странице');?>
-		<?php if (isset($errors['ru[long_title]'])):?>
+		<?php if (isset($errors[$abbr . '[long_title]'])):?>
 			<div class="form-error"><?php echo $errors[$abbr]['long_title'] ?></div>
 		<?php endif;?>
 		<?php echo Form::input($abbr . '[long_title]', $content['content']->long_title);?>
@@ -59,6 +68,16 @@
 		<?php endif;?>
 		<?php echo Form::textarea($abbr . '[content]', $content['content']->content);?>
 		</div>
+		<?php if($content['content']->id)
+			{
+				echo html::anchor(
+					Route::url('admin_ajax', array('controller' => 'page_content', 'action' => 'delete', 'id' => $content['content']->id)),
+					html::image('admin/media/i/icons/trash.png', array('class'=>'ico 16x16')).
+					' Удалить языковое содержание',
+					array('class' => 'delete_content')
+				);
+			}
+		?>
 	</fieldset>
 <?php endforeach;?>
 

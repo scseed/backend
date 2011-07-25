@@ -626,3 +626,16 @@ html, body {
 .filter_item li.active a, .filter_item a:hover {
 	text-decoration:underline
 }
+
+.closed div, .closed a{
+	display: none;
+}
+
+.page_content legend {
+	cursor: pointer;
+}
+
+.page_content legend:hover {
+	color: gray
+}
+

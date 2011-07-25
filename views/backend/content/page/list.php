@@ -1,4 +1,11 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');?>
+<?php echo ($parent_lvl_id)
+		? HTML::anchor(
+			Route::url('admin', array('controller' => 'page', 'action' => 'list')).URL::query(array('parent' => $parent_lvl_id)),
+			__('На уровень выше')
+		 )
+		: NULL;
+?>
 <table cellspacing="0">
 	<tr>
 		<th>Наименование</th>
@@ -32,8 +39,22 @@
 				echo '&nbsp;&nbsp;';
 				echo html::image('admin/media/i/icons/trash.png', array('class'=>'ico 16x16'));
 				echo html::anchor('admin/page/delete/'.$page_content->page->id, 'Удалить',
-					array('onclick'=>"return window.confirm('Уверены в этом?')"));?>
+					array('onclick'=>"return window.confirm('Уверены в этом?')"));
+				echo '&nbsp;&nbsp;';
+				echo html::image('admin/media/i/icons/add.png', array('class'=>'ico 16x16'));
+				echo HTML::anchor(
+					Route::url('admin', array('controller' => 'page', 'action' => 'add')).URL::query(array('parent' => $page_content->page->id)),
+					__('добавить дочерний документ')
+				);
+			?>
 		</td>
 	</tr>
 <?php endforeach;?>
 </table>
+
+<?php
+	echo html::image('admin/media/i/icons/add.png', array('class'=>'ico 16x16'));
+	echo HTML::anchor(
+	Route::url('admin', array('controller' => 'page', 'action' => 'add')).URL::query(),
+	__('Добавить новую страницу на этом уровне')
+)?>
