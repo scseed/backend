@@ -10,6 +10,11 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 
 	protected $_page_data = NULL;
 	protected $_errors = NULL;
+	protected $_actions = array(
+		'move' => array(
+			'update'
+		),
+	);
 
 	public function action_index ()
 	{
@@ -35,12 +40,13 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 			$pages_ids[] = $_page->id;
 		}
 
-		$pages = ($pages_ids)
-			? Jelly::query('page_content')
-				->where('page_content:lang.abbr', '=', I18n::lang())
-				->where('page_content:page.id', 'IN', $pages_ids)
-				->execute()
-			: array();
+		$pages = Page::instance()->pages_structure();
+
+		if($parent != 1 AND $parent_page->loaded())
+		{
+			$pages = $this->_pages_structure_select($pages, $parent_page);
+		}
+
 
 		$this->template->page_title = 'Список Контентных страниц';
 		$this->template->content = View::factory('backend/content/page/list')
@@ -247,6 +253,55 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 	}
 
 	/**
+	 * @throws Http_Exception_404
+	 * @return void
+	 */
+	public function action_move()
+	{
+		$id        = (int) $this->request->param('id');
+		$direction = Arr::get($_GET, 'direction', NULL);
+
+		if( ! $id)
+			throw new Http_Exception_404('Node id is not specified');
+
+		$node = Jelly::query('page', $id)->select();
+
+		if( ! $node->loaded())
+			throw new Http_Exception_404('Menu node with id = :id was not found', array(':id' => $id));
+
+		switch($direction)
+		{
+			case 'up':
+				$sibling = Jelly::query('page')
+					->where('scope', '=', $node->scope)
+					->where('level', '=', $node->level)
+					->where('right', '=', $node->left - 1)
+					->limit(1)
+					->select();
+
+				if($sibling->loaded())
+					$sibling->move_to_next_sibling($node);
+
+				break;
+			case 'down':
+				$sibling = Jelly::query('page')
+					->where('scope', '=', $node->scope)
+					->where('level', '=', $node->level)
+					->where('left', '=', $node->right + 1)
+					->limit(1)
+					->select();
+
+				if($sibling->loaded())
+					$node->move_to_next_sibling($sibling);
+				break;
+			default:
+				break;
+		}
+
+		$this->request->redirect($this->request->referrer());
+	}
+
+	/**
 	 * Generates Pages structure
 	 *
 	 * @param  array $root_page
@@ -263,6 +318,17 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 		}
 
 		return $pages;
+	}
+
+	public function _pages_structure_select($pages_arr, $parent_page)
+	{
+		foreach($pages_arr as $id => $page)
+		{
+			if($parent_page->id == $id)
+				return $page['childrens'];
+
+			$this->_pages_structure_select($page['childrens'], $parent_page);
+		}
 	}
 
 	public function _save_page(Jelly_Model $page, $_page_types, $_pages)
