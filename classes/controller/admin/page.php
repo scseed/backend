@@ -58,7 +58,7 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 
 		if($parent != NULL AND $parent_page->loaded())
 		{
-			$pages = $this->_pages_structure_select($pages, $parent_page);
+			$pages = $this->_pages_structure_select($pages, $parent_page->id);
 		}
 
 		$this->template->page_title = 'Список Контентных страниц';
@@ -84,8 +84,8 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 		$system_languages = Jelly::query('system_lang')->select();
 		$_page_types      = Jelly::query('page_type')->select();
 		$page             = Jelly::factory('page');
-
 		$_roots           = Jelly::query('page')->where('parent_page', '=', NULL)->select();
+
 		$_pages = array();
 		foreach($_roots as $root)
 		{
@@ -176,13 +176,13 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 	{
 		$id = $this->request->param('id');
 
-		$page             = Jelly::query('page', (int) $id)->select();
-
-		$_pages_content   = Jelly::query('page_content')->with('page')->with('lang')->select();
-		$parent           = $page->parent_page;
-		$system_languages = Jelly::query('system_lang')->select();
+		$page              = Jelly::query('page', (int) $id)->select();
+		$_pages_content    = Jelly::query('page_content')->with('page')->with('lang')->select();
+		$parent            = $page->parent_page;
+		$system_languages  = Jelly::query('system_lang')->select();
 		$_page_types       = Jelly::query('page_type')->select();
 		$_roots            = Jelly::query('page')->where('parent_page', '=', NULL)->select();
+		
 		$_pages = array();
 		foreach($_roots as $root)
 		{
@@ -252,6 +252,11 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 		;
 	}
 
+	/**
+	 * Page deleting
+	 * 
+	 * @return void
+	 */
 	public function action_delete()
 	{
 		$page_id = $this->request->param('id');
@@ -262,6 +267,8 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 	}
 
 	/**
+	 * Page moving
+	 * 
 	 * @throws Http_Exception_404
 	 * @return void
 	 */
@@ -353,17 +360,39 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 		return $pages;
 	}
 
+	/**
+	 * Extracting child nodes of current $parent_page in $pages_arr
+	 *
+	 * @recursive
+	 * @param  array $pages_arr
+	 * @param  int   $parent_page
+	 * @return array
+	 */
 	public function _pages_structure_select($pages_arr, $parent_page)
 	{
-		foreach($pages_arr as $id => $page)
+		static $_page = array();
+
+		foreach($pages_arr as $page)
 		{
-			if($parent_page->id == $id)
-				return $page['childrens'];
+			if($page['id'] == $parent_page)
+			{
+				$_page = $page['childrens'];
+			}
 
 			$this->_pages_structure_select($page['childrens'], $parent_page);
 		}
+
+		return ($_page) ? $_page : NULL;
 	}
 
+	/**
+	 * Saving page procedure
+	 *
+	 * @param  Jelly_Model      $page
+	 * @param  Jelly_Collection $_page_types
+	 * @param  Jelly_Collection $_pages
+	 * @return Jelly_Model
+	 */
 	public function _save_page(Jelly_Model $page, $_page_types, $_pages)
 	{
 		$this->_page_data['alias'] = trim($this->_page_data['alias']);
