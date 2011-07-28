@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');?>
-<?php echo ($parent_lvl_id)
+<?php echo ($parent_lvl instanceof Jelly_Model AND $parent_lvl->loaded())
 		? HTML::anchor(
-			Route::url('admin', array('controller' => 'page', 'action' => 'list')).URL::query(array('parent' => $parent_lvl_id)),
+			Route::url('admin', array('controller' => 'page', 'action' => 'list')).URL::query(array('parent' => $parent_lvl->parent->id)),
 			__('На уровень выше')
 		 )
 		: NULL;

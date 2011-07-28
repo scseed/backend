@@ -8,7 +8,7 @@
 	<?php if (isset($errors['alias'])):?>
 		<div class="form-error"><?php echo $errors['alias'] ?></div>
 	<?php endif;?>
-	<?php echo ($parent->alias) ? $parent->alias . '/ ' : NULL;?><?php echo Form::input('alias', $alias);?>
+	<?php echo ($parent AND $parent->alias) ? $parent->alias . '/ ' : NULL;?><?php echo Form::input('alias', $alias);?>
 	</div>
 
 	<div class="form-item">
@@ -16,7 +16,7 @@
 	<?php if (isset($errors['parent_page'])):?>
 		<div class="form-error"><?php echo $errors['parent_page'] ?></div>
 	<?php endif;?>
-	<?php echo Form::select('parent_page', $pages, $parent->id);?>
+	<?php echo Form::select('parent_page', $pages, ($parent) ? $parent->id : 0);?>
 	</div>
 
 	<div class="form-item">
