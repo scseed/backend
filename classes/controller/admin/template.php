@@ -10,13 +10,16 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 
 	public $template = 'backend/template/main';
 
-	public $_auth_required = TRUE;
-	protected $_resource = '';
+	public $_auth_required     = TRUE;
 	public $actions_privileges = array();
+
+
+	protected $_resource         = '';
 	protected $_active_menu_item = '';
 
 	protected $_actions = array();
 	protected $media;
+
 	/**
 	 * Признак ajax-like запроса
 	 *
@@ -28,6 +31,7 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 	public function before()
 	{
 		I18n::lang('ru');
+
 		parent::before();
 
 		// Проверка на запрос AJAX-типа
@@ -82,7 +86,7 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 		if ($this->_auth_required AND ! Auth::instance('admin')->logged_in())
 		{
 			Session::instance()->set('url', $_SERVER['REQUEST_URI']);
-			$this->request->redirect('admin/auth/login');
+			$this->request->redirect(Route::url('admin', array('controller' => 'auth', 'action' => 'login')));
 		}
 
 		//Так как контроллеры являются ресурсами, имени ресурса присваивается имя контроллера
@@ -132,8 +136,6 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 			$this->template->debug            = View::factory('profiler/stats');
 			$this->template->styles           = array();
 			$this->template->scripts          = array();
-			$this->template->debug = (Kohana::$environment > Kohana::PRODUCTION)
-										? View::factory('profiler/stats') : '';
 		}
 		$this->template->content          = '';
 

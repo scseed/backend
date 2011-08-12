@@ -10,7 +10,6 @@
 	<meta name="description" content="" />
 	<?php foreach($styles as $file => $type) echo HTML::style($file, array('media' => $type), TRUE), "\n" ?>
 	<?php foreach($scripts as $file) echo HTML::script($file), "\n" ?>
-
 	<!--[if lte IE 6]>
 		<?php echo Html::script('js/DD_belatedPNG.js'); ?>
 		<script type="text/javascript">
@@ -31,8 +30,10 @@
 		<div id="main-wrapper"></div>
 	</div>
 	<div id="footer">
-		&copy; Система управления сайтом  разработана в студии <a href="http://enerdesign.ru/">EnerDesign</a>
+		<?php echo ($ed_copy === TRUE) ? '&copy; Система управления сатйом разработана в студии <a href="http://enerdesign.ru/">EnerDesign</a>' : ''?>
 	</div>
-	<?php echo $debug?>
+	<script type="text/javascript">
+		$('#left-side').css({marginRight: '0'});
+	</script>
 </body>
 </html>

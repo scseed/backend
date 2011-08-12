@@ -31,7 +31,7 @@ class Controller_Admin_Auth extends Controller_Admin_Template
 			'password' => NULL
 		);
 		$errors = array();
-		if($_POST) {
+		if($this->request->method() === Request::POST) {
 			$post = Arr::extract($_POST, array('email', 'password', 'remember'));
 
 			if(Auth::instance()->login(
@@ -44,7 +44,7 @@ class Controller_Admin_Auth extends Controller_Admin_Template
 				}
 				else
 				{
-					$this->request->redirect('admin');
+					$this->request->redirect(Route::url('admin'));
 				}
 			}
 			else
@@ -66,7 +66,7 @@ class Controller_Admin_Auth extends Controller_Admin_Template
 			$user_id = Auth::instance()->get_user()->id;
 			Auth::instance()->logout();
 		}
-		$this->request->redirect('admin');
+		$this->request->redirect(Route::url('admin'));
 	}
 
 	public function action_register()
@@ -78,7 +78,7 @@ class Controller_Admin_Auth extends Controller_Admin_Template
 			$errors = array();
 			$user = Jelly::factory('user');
 
-			if($_POST)
+			if($this->request->method() === Request::POST)
 			{
 				$post = Arr::extract($_POST, array('email', 'password', 'password_confirm', 'remember'));
 
@@ -97,7 +97,6 @@ class Controller_Admin_Auth extends Controller_Admin_Template
 				catch(Jelly_Validation_Exception $e)
 				{
 					$errors = $e->errors('common_validation');
-					exit(Debug::vars($errors) . View::factory('profiler/stats'));
 				}
 			}
 
@@ -108,7 +107,7 @@ class Controller_Admin_Auth extends Controller_Admin_Template
 		}
 		else
 		{
-			$this->request->redirect('admin/auth/login');
+			$this->request->redirect(Route::url('admin'));
 		}
 	}
 } // End Template Controller User

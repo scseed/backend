@@ -543,6 +543,8 @@ p {
 }
 
 #login-form {
+	margin: 10em auto 0;
+	position:static;
 	padding: 10px;
 	border: solid 1px #ccc;
 	width: 300px;
