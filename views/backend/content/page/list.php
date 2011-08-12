@@ -47,12 +47,7 @@
 		</td>
 		<td><?php echo $page['alias']?></td>
 		<td>
-<!--			--><?php //$all=count($page['page_contents']); $i=1; foreach($page['page_contents'] as $content)
-//			{
-//			  echo $content->lang->abbr;
-//			  if($i < $all) echo ', ';
-//			  $i++;
-//			}?>
+			<?php echo implode(', ', $page['langs'])?>
 		</td>
 		<td><?php
 				echo html::image('admin/media/i/icons/edit.png', array('class'=>'ico 16x16'));

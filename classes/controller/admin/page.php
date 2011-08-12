@@ -33,6 +33,12 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 		$roots = Jelly::query('page')
 			->where('parent_page', '=', $parent)
 			->execute();
+		$_page_contents = Jelly::query('page_content')->select();
+
+		foreach($_page_contents as $page_content)
+		{
+			$page_contents[$page_content->page->id][] = $page_content->lang->locale_name;
+		}
 
 		$_pages = array();
 		if(count($roots) == 1)
@@ -59,6 +65,13 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 		if($parent != NULL AND $parent_page->loaded())
 		{
 			$pages = $this->_pages_structure_select($pages, $parent_page->id);
+		}
+
+		foreach($pages as $id => $page)
+		{
+			$pages[$id]['langs'] = (isset($page_contents[$id]))
+				? $page_contents[$id]
+				: array();
 		}
 
 		$this->template->page_title = 'Список Контентных страниц';
@@ -182,7 +195,7 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 		$system_languages  = Jelly::query('system_lang')->select();
 		$_page_types       = Jelly::query('page_type')->select();
 		$_roots            = Jelly::query('page')->where('parent_page', '=', NULL)->select();
-		
+
 		$_pages = array();
 		foreach($_roots as $root)
 		{
@@ -254,7 +267,7 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 
 	/**
 	 * Page deleting
-	 * 
+	 *
 	 * @return void
 	 */
 	public function action_delete()
@@ -268,7 +281,7 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 
 	/**
 	 * Page moving
-	 * 
+	 *
 	 * @throws Http_Exception_404
 	 * @return void
 	 */
