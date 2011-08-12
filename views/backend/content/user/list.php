@@ -21,15 +21,11 @@ switch($field)
 		$label = ($user->{$field->name}) ? 'label_true' : 'label_false';
 		echo $field->$label;
 		break;
+	case $field instanceof Jelly_Field_Timestamp:
+		echo date('d.m.Y', $user->{$field->name});
+		break;
 	case $field instanceof Jelly_Field_ManyToMany:
-		$i = 0; $coma = '';
-		$count = count($user->{$field->name});
-		foreach ($user->{$field->name} as $param)
-		{
-			if(++$i < $count)
-				$coma = ', ';
-			echo $param->name . $coma;
-		}
+		echo implode($user->{$field->name}->as_array('id', 'description'), ', ');
 		break;
 	default:
 		echo $user->{$field->name};

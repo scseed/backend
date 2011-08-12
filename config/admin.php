@@ -6,6 +6,7 @@ return array(
 	 * Is shown in title and head near logo
 	 */
 	'company_name' => 'SomeShit Ltd.',
+	'site_name'    => 'SomeShit.com',
 
 	/**
 	 * Media folder for admin views

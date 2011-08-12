@@ -2,5 +2,5 @@
 
 class Jelly_Field_Primary extends Jelly_Core_Field_Primary
 {
-	public $in_form = FALSE;
+//	public $in_form = FALSE;
 }

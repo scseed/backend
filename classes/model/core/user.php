@@ -16,32 +16,67 @@ abstract class Model_Core_User extends Model_Auth_User {
 	public static function initialize(Jelly_Meta $meta)
 	{
 		parent::initialize($meta);
-		
+
 		$meta->name_key('email')
 			->fields(array(
 				'id' => Jelly::field('Primary'),
 				'is_active' => Jelly::field('Boolean', array(
-					'label' => 'Статус',
-					'label_true' => 'Активен',
-					'label_false' => 'Отключён',
-					'default' => TRUE
+					'label'       => __('Статус'),
+					'label_true'  => __('Активен'),
+					'label_false' => __('Отключён'),
+					'default'     => TRUE
 				)),
 				'date_create' => Jelly::field('Timestamp', array(
 					'auto_now_create' => TRUE,
+					'in_form'         => FALSE,
+					'label'           => __('Дата создания'),
 				)),
 				'date_update' => Jelly::field('Timestamp', array(
 					'auto_now_update' => TRUE,
+					'in_form'         => FALSE,
+					'in_table'        => FALSE,
+					'label'           => __('Дата обновления'),
+				)),
+				'user_data'   => Jelly::field('BelongsTo', array(
+					'allow_null' => TRUE,
+					'default'    => NULL,
+					'label'      => __('Данные пользователя'),
+					'in_table'   => FALSE,
 				)),
 			));
 
 		// Disable 'username' field
 		$meta->field('username', 'String', array('in_db' => FALSE));
 		$meta->field('email', 'Email', array(
-			'label' => 'Email',
+			'label' => __('Email'),
 			'rules' => array(
 				array('not_empty'),
 			),
 			'unique' => TRUE,
+		));
+		$meta->field('logins', 'Integer', array(
+			'in_form'  => FALSE,
+			'in_table' => FALSE,
+		));
+		$meta->field('password', 'Password', array(
+			'in_table' => FALSE,
+			'label'    => __('Пароль'),
+			'rules'    => array(
+				array('not_empty'),
+				array('min_length', array(':value', 8)),
+			),
+			'hash_with' => array(Auth::instance(), 'hash'),
+		));
+		$meta->field('roles', 'ManyToMany', array(
+			'label' => __('Роли пользователя'),
+		));
+		$meta->field('user_tokens', 'HasMany', array(
+			'in_form'  => FALSE,
+			'in_table' => FALSE,
+		));
+		$meta->field('last_login', 'Timestamp', array(
+			'in_form'  => FALSE,
+			'in_table' => FALSE,
 		));
 	}
 

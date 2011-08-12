@@ -23,12 +23,11 @@
 		<div id="header">
 			<div id="header-wrapper">
 				<?php echo html::anchor(
-					'admin',
-					html::image('admin/media/i/logo.png', array(
-						'id' => 'logo',
-						'alt' => $company_name
-					))
-				)?>
+						'admin',
+						html::image('admin/media/i/logo.png', array(
+							'id' => 'logo',
+							'alt' => $company_name
+						)))?>
 				<?php echo $company_name?>
 				<div id="ed-panel" <?php echo ($ed_copy === FALSE) ? 'class="nologo"' : ''?>>
 					<ul>

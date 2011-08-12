@@ -17,42 +17,38 @@ class Model_Core_User_Data extends Jelly_Model {
 	{
 		$meta->table('user_data')
 			->fields(array(
-				'id' => Jelly::field('Primary', array(
-					'in_form' => FALSE,
-				)),
+				'id' => Jelly::field('Primary'),
 				'last_name' => Jelly::field('String', array(
-					'empty' => FAlSE,
 					'rules' => array(
 						array('not_empty')
 					),
-					'label' => 'Фамилия',
+					'label' => __('Фамилия'),
 				)),
 				'first_name' => Jelly::field('String', array(
-					'empty' => FAlSE,
 					'rules' => array(
 						array('not_empty')
 					),
-					'label' => 'Имя',
+					'label' => __('Имя'),
 				)),
 				'patronymic' => Jelly::field('String', array(
 					'convert_empty' => TRUE,
-					'allow_null' => TRUE,
-					'label' => 'Отчество',
+					'allow_null'    => TRUE,
+					'label'         => __('Отчество'),
 				)),
-				'birthdate' => Jelly::field('String', array(
+				'birthdate' => Jelly::field('Timestamp', array(
 					'convert_empty' => TRUE,
-					'allow_null' => FALSE,
-					'rules' => array(
-						array('not_empty'),
-					),
-					'label' => 'Дата рождения',
+					'allow_null'    => FALSE,
+					'label'         => __('Дата рождения'),
+					'format'        => 'Y-m-d',
 				)),
 				'phone' => Jelly::field('String', array(
 					'convert_empty' => TRUE,
-					'allow_null' => TRUE,
-					'label' => 'Телефон',
+					'allow_null'    => TRUE,
+					'label'         => __('Телефон'),
 				)),
-				'user' => Jelly::field('HasOne'),
+				'user' => Jelly::field('HasOne', array(
+					'in_form'    => FALSE,
+				)),
 			));
 	}
 } // End Model_User_data

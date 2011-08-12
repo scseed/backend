@@ -352,6 +352,10 @@ p {
 	background: url(/admin/media/i/bg/ed-panel/bg.png) left top no-repeat;
 }
 
+#header-wrapper #ed-panel.nologo {
+	background: transparent;
+}
+
 #ed-panel ul {
 	font-size: 10px;
 	list-style: none;
