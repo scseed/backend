@@ -155,16 +155,24 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 		{
 			$styles = array(
 				$media->uri(array('file' => 'css/admin.css')) => 'screen, projection',
-				$media->uri(array('file' => 'js/markitup/markitup/skins/markitup/style.css')) => 'screen, projection',
-				$media->uri(array('file' => 'js/textile/style.css')) => 'screen, projection',
+//				$media->uri(array('file' => 'js/markitup/markitup/skins/markitup/style.css')) => 'screen, projection',
+//				$media->uri(array('file' => 'js/textile/style.css')) => 'screen, projection',
+//				'js/redactor/css/redactor.css' => 'screen, projection',
 			);
+
+//			StaticCss::instance()->add('js/redactor/css/redactor.css');
 
 			$scripts = array(
 				$media->uri(array('file' => 'js/jquery.js')),
-				$media->uri(array('file' => 'js/markitup/markitup/jquery.markitup.js')),
-				$media->uri(array('file' => 'js/textile/set.js')),
+//				$media->uri(array('file' => 'js/markitup/markitup/jquery.markitup.js')),
+//				$media->uri(array('file' => 'js/textile/set.js')),
 				$media->uri(array('file' => 'js/admin_effects.js')),
+				'js/ckeditor/ckeditor.js',
+				'js/ckeditor/adapters/jquery.js'
 			);
+
+//			StaticJs::instance()->add('js/redactor.js');
+
 
 			$this->template->styles = array_merge( $this->template->styles, $styles );
 			$this->template->scripts = array_merge( $this->template->scripts, $scripts );

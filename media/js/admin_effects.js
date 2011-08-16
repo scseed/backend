@@ -57,7 +57,8 @@ $(document).ready(function(){
 		}
 	)
 
-	$("textarea").markItUp(mySettings);
+//	$("textarea").markItUp(mySettings);
+	$('textarea').ckeditor();
 
 	$('.page_content legend').click(function(){
 		toggle_fieldset_block(this);
@@ -72,14 +73,15 @@ $(document).ready(function(){
 			$.ajax({
 				url: $(this).attr('href'),
 				success: function(data){
+					$(button).parent().find('input').val('');
+					$(button).parent().find('textarea').html('');
 					toggle_fieldset_block(button);
-					$(button).parent().children('input').attr('value', '');
-					$(button).parent().children('a').remove();
+					$(button).parent().find('a').remove();
 					alert('Содержание удалено');
 				}
 			});
 		}
-		
+
 		return false;
 	})
 });

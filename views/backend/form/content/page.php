@@ -66,13 +66,13 @@
 		<?php if (isset($errors[$abbr . '[content]'])):?>
 			<div class="form-error"><?php echo $errors[$abbr]['content'] ?></div>
 		<?php endif;?>
-		<?php echo Form::textarea($abbr . '[content]', $content['content']->content);?>
+		<?php echo Form::textarea($abbr . '[content]', $content['content']->content, array('id' => $abbr));?>
 		</div>
 		<?php if($content['content']->id)
 			{
-				echo html::anchor(
+				echo HTML::anchor(
 					Route::url('admin_ajax', array('controller' => 'page_content', 'action' => 'delete', 'id' => $content['content']->id)),
-					html::image('admin/media/i/icons/trash.png', array('class'=>'ico 16x16')).
+					HTML::image('admin/media/i/icons/trash.png', array('class'=>'ico 16x16')).
 					' Удалить языковое содержание',
 					array('class' => 'delete_content')
 				);

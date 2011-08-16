@@ -4,7 +4,7 @@
  * Template Controller content
  *
  * @author Sergei Gladkovskiy <smgladkovskiy@gmail.com>
- * @copyrignt 
+ * @copyrignt
  */
 class Controller_Admin_Ajax_Page_Content extends Controller_Admin_Ajax_Template {
 
@@ -14,15 +14,16 @@ class Controller_Admin_Ajax_Page_Content extends Controller_Admin_Ajax_Template 
 		$jobisdone = FALSE;
 		$errors    = NULL;
 
-		try
-		{
-			Jelly::query('page_content', $id)->delete();
-			$jobisdone = TRUE;
-		}
-		catch(Jelly_Validation_Exception $e)
-		{
-			$errors = $e->errors('common_validation');
-		}
+//		try
+//		{
+//			Jelly::query('page_content', $id)->delete();
+//			$jobisdone = TRUE;
+//		}
+//		catch(Jelly_Validation_Exception $e)
+//		{
+//			$errors = $e->errors('common_validation');
+//		}
+		$jobisdone = TRUE;
 
 		$status = array(
 			'status' => $jobisdone,

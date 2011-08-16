@@ -230,18 +230,18 @@ p {
 	color: #00a1d7;
 }
 
-#content table {
+#content #left-side >  table {
 	width: 100%;
 	border-spacing: 0px;
 	margin: 3em 0;
 	color: #3a3a3a;
 }
 
-#content table .center {
+#content #left-side > table .center {
 	text-align: center;
 }
 
-#content table tr th {
+#content #left-side > table tr th {
 	vertical-align: middle;
 	background: #616161;
 	height: 25px;
@@ -252,11 +252,11 @@ p {
 	padding: 0 3px;
 }
 
-#content table tr th:first-child{
+#content #left-side > table tr th:first-child{
 	border-left: solid 1px #616161;
 }
 
-#content table tr td {
+#content #left-side > table tr td {
 	background: url(/admin/media/i/bg/table/td.gif) repeat-x left top;
 	height: 15px;
 	border-left: solid 1px #fff;
@@ -266,59 +266,59 @@ p {
 	padding: 5px;
 }
 
-#content table tr td:first-child {
+#content #left-side > table tr td:first-child {
 	border-left: solid 1px #d8d8d8;
 }
 
-#content tr.disabled td {
+#content > tr.disabled td {
 	background-color: red
 }
 
-#content table.content-table  {
+#content #left-side > table.content-table  {
 	color: #1e1e1e;
 	border-collapse: collapse;
 }
 
-#content table .ico {
+#content #left-side > table .ico {
 	margin-right: 5px;
 }
 
-#content table.content-table td.num {
+#content #left-side > table.content-table td.num {
 	text-align: center;
 	font-size: 10px;
 	width: 5%;
 }
 
-#content table.content-table td.type {
+#content #left-side > table.content-table td.type {
 	text-align: center;
 	width: 30px;
 }
 
-#content table.content-table td.type .ico {
+#content #left-side > table.content-table td.type .ico {
 	margin-right: 0;
 }
 
-#content table.content-table td.name {
+#content #left-side > table.content-table td.name {
 	text-align: left;
 	font-size: 14px;
 }
 
-#content table.content-table td.edit {
+#content #left-side > table.content-table td.edit {
 	text-align: center;
 	width: 105px;
 }
 
-#content table.content-table td.delete {
+#content #left-side > table.content-table td.delete {
 	text-align: center;
 	width: 75px;
 }
 
-#content table.content-table tr td:first-child {
+#content #left-side > table.content-table tr td:first-child {
 	border: none;
 	border-bottom: dashed 1px #ccc;
 }
 
-#content table.content-table  tr td {
+#content #left-side > table.content-table  tr td {
 	background: none;
 	border: none;
 	border-bottom: dashed 1px #ccc;
@@ -529,7 +529,7 @@ p {
 }
 
 .edit-content-form textarea {
-	height: 300px;
+	height: 500px;
 }
 
 .edit-content-form {
