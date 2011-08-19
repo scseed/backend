@@ -20,8 +20,12 @@ $(document).ready(function(){
 		$(this).animate({width: 165}, 200);
 	});
 
-	if($('input[type=datepicker]').length)
-		$('input[type=datepicker]').datepicker({dateFormat: 'dd.mm.yy'});
+
+	if($('input[class=datepicker]').length)
+	{
+		$.datepicker.setDefaults( $.datepicker.regional[ "ru" ] );
+		$('input[class=datepicker]').datepicker({dateFormat: 'dd.mm.yy'});
+	}
 
 	$('label[for=features], label[for=qualities], label[for=modes]').each(function(){
 		$('#'+$(this).attr('for')).slideUp(200);
@@ -57,8 +61,8 @@ $(document).ready(function(){
 		}
 	)
 
-//	$("textarea").markItUp(mySettings);
-	$('textarea').ckeditor();
+	if($('textarea').length > 0)
+		$('textarea').ckeditor();
 
 	$('.page_content legend').click(function(){
 		toggle_fieldset_block(this);

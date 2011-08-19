@@ -8,7 +8,7 @@
 	<meta name="keywords" content="" />
 	<meta name="description" content="" />
 	<?php foreach ($styles as $file => $type) echo HTML::style($file, array('media' => $type), TRUE), "\n" ?>
-	<?php foreach ($scripts as $file) echo HTML::script($file), "\n" ?>
+	<?php echo StaticCss::instance()->get_all()?>
 	<!--[if lte IE 6]>
 		<?php echo Html::script('media/js/DD_belatedPNG.js'); ?>
 		<script type="text/javascript">
@@ -107,5 +107,7 @@
 	<div id="footer">
 		<?php echo ($ed_copy === TRUE) ? '&copy; Система управления сатйом разработана в студии <a href="http://enerdesign.ru/">EnerDesign</a>' : ''?>
 	</div>
+<?php echo StaticJs::instance()->get_all()?>
+<?php //foreach ($scripts as $file) echo HTML::script($file), "\n" ?>
 </body>
 </html>
