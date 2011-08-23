@@ -240,7 +240,7 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 			$page = $this->_save_page($page, $_page_types, $_pages);
 
 			// Saving page contents
-			if( ! $page->is_root())
+			if( ! $page->is_root() AND ! $this->_errors)
 				$this->_save_page_contents($content, $page, $system_languages);
 
 			if( ! $this->_errors)
@@ -455,7 +455,7 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 		}
 		catch(Jelly_Validation_Exception $e)
 		{
-			$this->_errors = $e->errors('common_validation');
+			$this->_errors = $e->errors('validate');
 		}
 
 		return $page;
@@ -492,7 +492,7 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 			}
 			catch(Jelly_Validation_Exception $e)
 			{
-				$this->_errors[$lang->abbr] = $e->errors('common_validation');
+				$this->_errors[$lang->abbr] = $e->errors('validate');
 			}
 		}
 	}

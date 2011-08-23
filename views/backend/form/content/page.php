@@ -45,25 +45,25 @@
 
 <?php foreach($content as $abbr => $content):?>
 	<?php echo Form::hidden($abbr . 'content_id', $content['content']->id)?>
-	<fieldset class="page_content<?php echo ( ! $content['content']->id) ? ' closed' : NULL?>">
+	<fieldset class="page_content<?php echo ( ! $content['content']->title) ? ' closed' : NULL?>">
 		<legend>Содержание. Язык: <?php echo $content['lang']->locale_name?></legend>
 		<div class="form-item">
 			<?php echo Form::label($abbr . '[title]', 'Заголовок');?>
-			<?php if (isset($errors[$abbr . '[title]'])):?>
+			<?php if (isset($errors[$abbr]['title'])):?>
 				<div class="form-error"><?php echo $errors[$abbr]['title'] ?></div>
 			<?php endif;?>
 			<?php echo Form::input($abbr . '[title]', $content['content']->title);?>
 		</div>
 		<div class="form-item">
 		<?php echo Form::label($abbr . '[long_title]', 'Заголовок на странице');?>
-		<?php if (isset($errors[$abbr . '[long_title]'])):?>
+		<?php if (isset($errors[$abbr]['long_title'])):?>
 			<div class="form-error"><?php echo $errors[$abbr]['long_title'] ?></div>
 		<?php endif;?>
 		<?php echo Form::input($abbr . '[long_title]', $content['content']->long_title);?>
 		</div>
 		<div class="form-item">
 		<?php echo Form::label($abbr . '[content]', 'Содержание');?>
-		<?php if (isset($errors[$abbr . '[content]'])):?>
+		<?php if (isset($errors[$abbr]['content'])):?>
 			<div class="form-error"><?php echo $errors[$abbr]['content'] ?></div>
 		<?php endif;?>
 		<?php echo Form::textarea($abbr . '[content]', $content['content']->content, array('id' => $abbr));?>
