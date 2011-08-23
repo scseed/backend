@@ -169,7 +169,7 @@ class Controller_Admin_User extends Controller_Admin_Template {
 		}
 		catch(Jelly_Validation_Exception $e)
 		{
-			$errors['user_data'] = $e->errors('common_validation');
+			$errors['user_data'] = $e->errors('validate');
 		}
 
 		if(empty($errors))
@@ -197,7 +197,7 @@ class Controller_Admin_User extends Controller_Admin_Template {
 			}
 			catch (Jelly_Validation_Exception $e)
 			{
-				$errors['user'] = $e->errors('common_validation');
+				$errors['user'] = $e->errors('validate');
 			}
 		}
 

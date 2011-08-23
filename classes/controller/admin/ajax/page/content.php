@@ -21,7 +21,7 @@ class Controller_Admin_Ajax_Page_Content extends Controller_Admin_Ajax_Template 
 //		}
 //		catch(Jelly_Validation_Exception $e)
 //		{
-//			$errors = $e->errors('common_validation');
+//			$errors = $e->errors('validate');
 //		}
 		$jobisdone = TRUE;
 

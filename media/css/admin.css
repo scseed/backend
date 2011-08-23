@@ -645,3 +645,30 @@ html, body {
 	color: gray
 }
 
+.pattern {
+	display: none;
+}
+
+.answer .answer_text, .answer .ordering, .answer .delete, .answer .ordering .up, .answer .ordering .down {
+	display: inline-block;
+}
+.answer .answer_text {
+	width: 80%
+}
+
+.answer .ordering .up, .answer .ordering .down,  .answer .delete a{
+	height: 16px;
+	width: 16px;
+	cursor: pointer;
+}
+.answer .ordering .hidden {
+	display: none;
+}
+
+.answer .ordering .up {
+	background: url('/admin/media/i/icons/arrow_up.png');
+}
+
+.answer .ordering .down {
+	background: url('/admin/media/i/icons/arrow_down.png');
+}

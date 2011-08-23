@@ -96,7 +96,7 @@ class Controller_Admin_Auth extends Controller_Admin_Template
 				}
 				catch(Jelly_Validation_Exception $e)
 				{
-					$errors = $e->errors('common_validation');
+					$errors = $e->errors('validate');
 				}
 			}
 
