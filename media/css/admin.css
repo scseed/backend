@@ -157,6 +157,10 @@ p {
 	margin-bottom: 15px;
 }
 
+.hidden {
+	display: none;
+}
+
 .button, button {
 	border: solid 1px #999999;
 	display: -moz-inline-stack;
