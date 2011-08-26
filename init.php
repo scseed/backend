@@ -8,15 +8,16 @@ Route::set('docs/media', 'admin/media(/<file>)', array('file' => '.+'))
 		'file'       => NULL,
 	));
 
-Route::set('admin', 'admin(/<controller>(/<action>(/<id>)))')
-	->defaults(array(
-		'directory' => 'admin',
-		'controller' => 'home',
-		'action' => 'index',
-));
 Route::set('admin_ajax', 'admin/ajax/<controller>(/<action>(/<id>))')
 	->defaults(array(
 		'directory' => 'admin/ajax',
 		'controller' => NULL,
 		'action' => NULL,
+));
+
+Route::set('admin', 'admin(/<controller>(/<action>(/<id>)))')
+	->defaults(array(
+		'directory' => 'admin',
+		'controller' => 'home',
+		'action' => 'index',
 ));
