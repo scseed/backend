@@ -142,12 +142,25 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 		}
 		$this->template->content          = '';
 
+		StaticCss::instance()
+			->add_modpath('css/admin.css')
+			->add_modpath('css/jquery-ui-1.8.16.custom.css')
+		;
+		StaticJs::instance()
+				->add_modpath('js/jquery-1.6.2.min.js')
+				->add_modpath('js/jquery-ui-1.8.16.custom.min.js')
+				->add_modpath('js/i18n/jquery.ui.datepicker-ru.js')
+				->add_modpath('js/admin_effects.js')
+				->add('js/ckeditor/ckeditor.min.js')
+				->add('js/ckeditor/adapters/jquery.js')
+			;
+
 		$this->template->user = Auth::instance('admin')->get_user();
 	}
 
 	public function after()
 	{
-		$media = Route::get('docs/media');
+//		$media = Route::get('docs/media');
 
 		if(is_object($this->template->content))
 		{
@@ -156,24 +169,17 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 
 		if($this->auto_render === TRUE)
 		{
-			$styles = array(
-				$media->uri(array('file' => 'css/admin.css')) => 'screen, projection',
-				$media->uri(array('file' => 'css/jquery-ui-1.8.16.custom.css')) => 'screen, projection',
-			);
+//			$styles = array(
+//				$media->uri(array('file' => 'css/admin.css')) => 'screen, projection',
+//				$media->uri(array('file' => 'css/jquery-ui-1.8.16.custom.css')) => 'screen, projection',
+//			);
 
 //			StaticCss::instance()->add('js/redactor/css/redactor.css');
 
-			StaticJs::instance()
-				->add('js/jquery-1.6.2.min.js', NULL, 'modpath')
-				->add('js/jquery-ui-1.8.16.custom.min.js', NULL, 'modpath')
-				->add('js/i18n/jquery.ui.datepicker-ru.js', NULL, 'modpath')
-				->add('js/admin_effects.js', NULL, 'modpath')
-				->add('js/ckeditor/ckeditor.js')
-				->add('js/ckeditor/adapters/jquery.js')
-			;
 
 
-			$this->template->styles = array_merge( $this->template->styles, $styles );
+
+//			$this->template->styles = array_merge( $this->template->styles, $styles );
 //			$this->template->scripts = array_merge( $this->template->scripts, $scripts );
 		}
 
