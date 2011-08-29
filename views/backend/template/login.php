@@ -8,8 +8,7 @@
     <meta http-equiv="Content-Language" content="ru-ru" />
 	<meta name="keywords" content="" />
 	<meta name="description" content="" />
-	<?php foreach($styles as $file => $type) echo HTML::style($file, array('media' => $type), TRUE), "\n" ?>
-	<?php foreach($scripts as $file) echo HTML::script($file), "\n" ?>
+	<?php echo StaticCss::instance()->get_all()?>
 	<!--[if lte IE 6]>
 		<?php echo Html::script('js/DD_belatedPNG.js'); ?>
 		<script type="text/javascript">
@@ -35,5 +34,6 @@
 	<script type="text/javascript">
 		$('#left-side').css({marginRight: '0'});
 	</script>
+<?php echo StaticJs::instance()->get_all()?>
 </body>
 </html>
