@@ -569,6 +569,10 @@ p {
 	margin-bottom: 15px;
 }
 
+.checkbox label, .checkbox input{
+	display: inline-block!important;
+}
+
 .form-error {
 	color: #AF0000;
 	padding: 5px 0;
