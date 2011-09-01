@@ -52,12 +52,18 @@ $(document).ready(function(){
 		$(this).closest('.form-item').remove();
 	});
 
+	$('.filter_item').each(function(){
+		$(this).css({
+			width:$(this).find('ul').width() + 22
+		});
+	});
+
 	$('.filter_item ul').hover(
 		function(){
 			$(this).addClass('open').show(200);
 		},
 		function () {
-			$(this).slideUp(200, function() {$(this).show(); $(this).removeClass('open')});
+			$(this).hide(200, function() {$(this).show(); $(this).removeClass('open')});
 		}
 	)
 

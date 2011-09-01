@@ -608,17 +608,32 @@ html, body {
 }
 /* end sticky footer */
 
+#vacancy_filter {
+	display: inline-block;
+}
 .filter_item {
+	display: inline-block;
 	border: 1px solid #ccc;
-	float:left;
 	margin: 0 0.5em 1em;
-	padding: 0.5em
+	padding: 0.5em;
+	height: 52px;
 }
 
 .filter_item ul {
 	list-style:none;
-	padding: 0;
-	margin: 0;
+	position: absolute;
+	border: 1px solid #ccc;
+	background: #f0f0f0;
+	color: #000;
+	/*margin-top: -10px;*/
+	padding: 10px;
+	margin: 5px 0;
+	text-align: left;
+	cursor: default;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-khtml-border-radius: 5px;
+	border-radius: 5px;
 }
 
 .filter_item li {
@@ -628,6 +643,7 @@ html, body {
 .filter_item li.active,
 .filter_item ul.open li {
 	display: block!important;
+	font-weight: bold;
 }
 
 .filter_item p {
