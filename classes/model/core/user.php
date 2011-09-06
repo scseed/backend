@@ -63,7 +63,7 @@ abstract class Model_Core_User extends Model_Auth_User {
 			'label'    => __('Пароль'),
 			'rules'    => array(
 				array('not_empty'),
-				array('min_length', array(':value', 8)),
+				array('min_length', array(':value', 4)),
 			),
 			'hash_with' => array(Auth::instance(), 'hash'),
 		));
@@ -83,6 +83,23 @@ abstract class Model_Core_User extends Model_Auth_User {
 	public function unique_key($value)
 	{
 		return 'email';
+	}
+
+	/**
+	 * Password validation for plain passwords.
+	 *
+	 * @param array $values
+	 * @return Validation
+	 */
+	public static function get_password_validation($values)
+	{
+		return Validation::factory($values)
+			->labels(array(
+				'password' => __('Пароль'),
+				'password_confirm' => __('Подтверждение пароля'),
+			))
+			->rule('password', 'min_length', array(':value', 4))
+			->rule('password_confirm', 'matches', array(':validation', ':field', 'password'));
 	}
 
 	/**
