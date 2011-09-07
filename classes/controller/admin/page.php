@@ -33,7 +33,11 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 		$roots = Jelly::query('page')
 			->where('parent_page', '=', $parent)
 			->execute();
-		$_page_contents = Jelly::query('page_content')->select();
+		$_page_contents = Jelly::query('page_content')
+			->with('lang')
+			->with('page')
+			->active()
+			->select();
 
 		foreach($_page_contents as $page_content)
 		{
