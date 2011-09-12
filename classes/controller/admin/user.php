@@ -40,6 +40,7 @@ class Controller_Admin_User extends Controller_Admin_Template {
 		$statuses = array(1 => __('Активен'), 0 => __('Отключён'));
 		$post     = array(
 			"user" => array(
+				'id' => NULL,
 				"email" => NULL,
 				"roles" => NULL,
 				"password" => NULL,
