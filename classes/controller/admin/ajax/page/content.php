@@ -14,15 +14,15 @@ class Controller_Admin_Ajax_Page_Content extends Controller_Admin_Ajax_Template 
 		$jobisdone = FALSE;
 		$errors    = NULL;
 
-//		try
-//		{
-//			Jelly::query('page_content', $id)->delete();
-//			$jobisdone = TRUE;
-//		}
-//		catch(Jelly_Validation_Exception $e)
-//		{
-//			$errors = $e->errors('validate');
-//		}
+		try
+		{
+			Jelly::query('page_content', $id)->delete();
+			$jobisdone = TRUE;
+		}
+		catch(Jelly_Validation_Exception $e)
+		{
+			$errors = $e->errors('validate');
+		}
 		$jobisdone = TRUE;
 
 		$status = array(
