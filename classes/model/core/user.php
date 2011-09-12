@@ -15,10 +15,10 @@ abstract class Model_Core_User extends Model_Auth_User {
 	 */
 	public static function initialize(Jelly_Meta $meta)
 	{
-
+parent::initialize($meta);
 		$meta->name_key('email')
 			->fields(array(
-				'id' => Jelly::field('Primary'),
+//				'id' => Jelly::field('Primary'),
 				'is_active' => Jelly::field('Boolean', array(
 						'label'       => __('Статус'),
 						'label_true'  => __('Активен'),
@@ -44,7 +44,9 @@ abstract class Model_Core_User extends Model_Auth_User {
 					)),
 		// Disable 'username' field
 				'username'   => Jelly::field('String', array(
-						'in_db' => FALSE
+						'in_db' => FALSE,
+						'in_form'  => FALSE,
+						'in_table' => FALSE,
 					)),
 				'email'      => Jelly::field('Email', array(
 						'label' => __('Email'),
@@ -61,6 +63,7 @@ abstract class Model_Core_User extends Model_Auth_User {
 							array('min_length', array(':value', 4)),
 						),
 						'hash_with' => array(Auth::instance(), 'hash'),
+						'in_form'  => FALSE,
 					)),
 				'logins'  => Jelly::field('Integer', array(
 						'in_form'  => FALSE,
@@ -78,7 +81,7 @@ abstract class Model_Core_User extends Model_Auth_User {
 						'in_table' => FALSE,
 					)),
 				));
-		parent::initialize($meta);
+
 	}
 
 	public function unique_key($value)

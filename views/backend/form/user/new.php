@@ -55,7 +55,7 @@
 		<?php if (isset($errors['user']['roles'])): ?>
 			<div class="form-error"><?php echo $errors['user']['roles'] ?></div>
 		<?php endif?>
-		<?php echo Form::select('user[roles][]', $roles, $post['user']['roles'], array('id' => 'roles', 'multiple' => 'multiple'))?>
+		<?php echo Form::select('user[roles]', $roles, $post['user']['roles'], array('id' => 'roles', 'multiple' => 'multiple'))?>
 	</div>
 	<div class="form-item">
 		<?php echo Form::label('is_active', __('Роли пользователя'))?>

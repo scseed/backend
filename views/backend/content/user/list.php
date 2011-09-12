@@ -35,17 +35,16 @@ switch($field)
 		</td>
 <?php endif; endforeach;?>
 		<td>
-			<?php
-				echo html::image('admin/media/i/icons/edit.png', array('class'=>'ico 16x16'));
-				echo html::anchor('admin/user/edit/'.$user->id, 'Править');
-				echo '&nbsp;&nbsp;';
-//				echo html::image('admin/media/i/icons/user.png', array('class'=>'ico 16x16'));
-//				echo html::anchor('admin/user/roles/'.$user->id, 'Роли');
-//				echo '&nbsp;&nbsp;';
-				echo html::image('admin/media/i/icons/trash.png', array('class'=>'ico 16x16'));
-				echo html::anchor('admin/user/delete/'.$user->id, 'Удалить',
-					array('onclick'=>"return window.confirm('Уверены в этом?')"));
-			?>
+			<?php echo HTML::anchor(
+				Route::url('admin', array('controller' => 'user', 'action' => 'edit', 'id' => $user->id)),
+				HTML::image('admin/media/i/icons/user--pencil.png', array('alt' => __('Править'))),
+				array('title' => __('Править'))
+			)?>&nbsp;&nbsp;
+			<?php echo HTML::anchor(
+				Route::url('admin', array('controller' => 'user', 'action' => 'delete', 'id' => $user->id)),
+				HTML::image('admin/media/i/icons/user--minus.png', array('alt' => __('Удалить'))),
+				array('title' => __('Удалить'), 'onclick'=>"return window.confirm('Уверены в этом?')")
+			)?>
 		</td>
 	</tr>
 <?php endforeach;?>

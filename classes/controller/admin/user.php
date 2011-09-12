@@ -8,6 +8,8 @@
  */
 class Controller_Admin_User extends Controller_Admin_Template {
 
+	protected $_errors = NULL;
+
 	public function action_index()
 	{
 		return $this->action_list();
@@ -34,39 +36,54 @@ class Controller_Admin_User extends Controller_Admin_Template {
 	{
 		$this->template->page_title = 'Новый пользователь';
 
-		$roles            = Jelly::query('role')->select()->as_array('id', 'description');
-		$statuses         = array(1 => __('Активен'), 0 => __('Отключён'));
-		$user_fields      = Jelly::meta('user')->fields();
-		$user_data_fields = Jelly::meta('user_data')->fields();
-
-		$errors = NULL;
-		$post   = array();
-		foreach($user_fields as $user_field)
-		{
-			if($user_field->in_form)
-				$post['user'][$user_field->name] = ($user_field->default) ? $user_field->default : NULL;
-		}
-
-		foreach($user_data_fields as $user_data_field)
-		{
-			if($user_data_field->in_form)
-				$post['user_data'][$user_data_field->name] = ($user_data_field->default) ? $user_data_field->default : NULL;
-		}
-
+		$roles    = Jelly::query('role')->select()->as_array('id', 'description');
+		$statuses = array(1 => __('Активен'), 0 => __('Отключён'));
+		$post     = array(
+			"user" => array(
+				"email" => NULL,
+				"roles" => NULL,
+				"password" => NULL,
+				"password_confirm" => NULL,
+				"is_active" => TRUE,
+			),
+			"user_data" => array(
+				'id' => NULL,
+				"last_name" => NULL,
+				"first_name" => NULL,
+				"patronymic" => NULL,
+				"birthdate" => NULL,
+				"phone" => NULL,
+				"country" => NULL,
+				"city" => NULL,
+				"address" => NULL,
+				"metro" => NULL,
+				"wage_level" => NULL,
+				"about" => NULL,
+			)
+		);
+//		foreach($user_fields as $user_field)
+//		{
+//			if($user_field->in_form)
+//				$post['user'][$user_field->name] = ($user_field->default) ? $user_field->default : NULL;
+//		}
+//
+//		foreach($user_data_fields as $user_data_field)
+//		{
+//			if($user_data_field->in_form)
+//				$post['user_data'][$user_data_field->name] = ($user_data_field->default) ? $user_data_field->default : NULL;
+//		}
+//exit(Debug::vars($post) . View::factory('profiler/stats'));
 		if ($this->request->method() === Request::POST)
 		{
-			$post['user']['password_confirm'] = NULL;
-			$save_array = $this->_add_edit($post);
-
-			$post = $save_array['post'];
-			$errors = $save_array['errors'];
+			$post_data = Arr::extract($_POST, array_keys($post));
+			$post = $this->_add_edit($post_data);
 		}
 
 		$this->template->content = View::factory('backend/form/user/new')
 			->bind('post', $post)
 			->bind('roles', $roles)
 			->bind('statuses', $statuses)
-			->bind('errors', $errors);
+			->bind('errors', $this->_errors);
 	}
 
 	/**
@@ -75,48 +92,63 @@ class Controller_Admin_User extends Controller_Admin_Template {
 	 * @TODO: отправлять email пользователю при смене его пароля.
 	 * @param integer $id
 	 */
-	public function action_edit($id)
+	public function action_edit()
 	{
-		$roles = Jelly::query('role')->select()->as_array('id', 'name');
-		$user = Jelly::factory('user', (int) $id);
+		$user_id = (int) $this->request->param('id');
 
-		if( ! $user->loaded()) Request::factory('error/404')->execute();
+		if( ! $user_id)
+			throw new HTTP_Exception_404(__('User id is not defined'));
 
-		$errors = NULL;
+		$user = Jelly::query('user', $user_id)->select();
+		$user_data = $user->user_data;
 
-		if ($_POST)
+		if( ! $user->loaded())
+			throw new HTTP_Exception_404(__('User not found'));
+
+		$roles    = Jelly::query('role')->select()->as_array('id', 'description');
+		$statuses = array(1 => __('Активен'), 0 => __('Отключён'));
+		$post     = array(
+			"user" => array(
+				'id' => $user->id,
+				"email" => $user->email,
+				"roles" => $user->roles->as_array('name', 'id'),
+				"password" => NULL,
+				"password_confirm" => NULL,
+				"is_active" => $user->is_active,
+			),
+			"user_data" => array(
+				'id' => $user_data->id,
+				"last_name" => $user_data->last_name,
+				"first_name" => $user_data->first_name,
+				"patronymic" => $user_data->patronymic,
+//				"birthdate" => $user_data->borthdate,
+//				"phone" => $user_data->phone,
+//				"country" => $user_data->country,
+//				"city" => $user_data->city,
+//				"address" => $user_data->address,
+//				"metro" => $user_data->metro,
+//				"wage_level" => $user_data->wage_level,
+//				"about" => $user_data->about,
+			)
+		);
+//exit(Debug::vars($post) . View::factory('profiler/stats'));
+		if ($this->request->method() === Request::POST)
 		{
-			foreach($user->meta()->fields() as $field)
+			$post_data = Arr::extract($_POST, array_keys($post));
+			if($post_data['user']['password'] == '' AND $post_data['user']['password_confirm'] == '')
 			{
-				if($field->in_form)
-					$post_fields[] = $field->name;
-			}
-			$post = arr::extract($_POST, $post_fields, NULL);
-			if($post['password'] == '' AND $post['password_confirm'] == '')
-			{
-				unset($post['password'], $post['password_confirm']);
+				unset($post_data['user']['password'], $post_data['user']['password_confirm']);
 			}
 
-			$user->set($post);
-
-			try
-			{
-				$user->save();
-				$this->request->redirect('admin/user/list');
-			}
-			catch (Validate_Exception $e)
-			{
-				$errors =  $e->array->errors('user');
-			}
+			$post = $this->_add_edit($post_data, 'update');
 		}
 
-		$this->template->content = View::factory('backend/content/_crud/edit')
-			->set('roles', $roles)
-			->set('item', $user)
-			->set('meta', $user->meta())
-			->set('errors', $errors);
-
 		$this->template->page_title = 'Правка данных пользователя ' . $user->name;
+		$this->template->content = View::factory('backend/form/user/new')
+			->set('roles', $roles)
+			->set('post', $post)
+			->set('statuses', $statuses)
+			->set('errors', $this->_errors);
 	}
 
 	/**
@@ -127,12 +159,10 @@ class Controller_Admin_User extends Controller_Admin_Template {
 	public function action_delete ($id)
 	{
 		$user = Jelly::query('user', (int) $id)->select();
-		if($user->user_data->delete())
-		{
-			$this->request->redirect(
-				Route::url('admin', array('controller' => 'user', 'action' => 'list'))
-			);
-		}
+
+		$user->user_data->delete();
+
+		$this->request->redirect($this->request->referrer());
 	}
 
 	/**
@@ -142,18 +172,16 @@ class Controller_Admin_User extends Controller_Admin_Template {
 	 * @return array
 	 * @TODO: Sending email on success creating/updating
 	 */
-	public function _add_edit($post)
+	public function _add_edit($post, $action = 'create')
 	{
-		$action         = 'create';
-		$errors         = NULL;
 		$user_info      = Arr::extract(Arr::get($_POST, 'user'), array_keys($post['user']), NULL);
 		$user_data_info = Arr::extract(Arr::get($_POST, 'user_data'), array_keys($post['user_data']), NULL);
 
 		$user      = (Arr::get($user_info, 'id'))
-			? Jelly::query('user', Arr::get($user_info, 'id'))->select()
+			? Jelly::query('user', (int) Arr::get($user_info, 'id'))->select()
 			: Jelly::factory('user');
 		$user_data = (Arr::get($user_data_info, 'id'))
-			? Jelly::query('user_data', Arr::get($user_data_info, 'id'))->select()
+			? Jelly::query('user_data', (int) Arr::get($user_data_info, 'id'))->select()
 			: Jelly::factory('user_data');
 
 		if($user->loaded())
@@ -169,24 +197,24 @@ class Controller_Admin_User extends Controller_Admin_Template {
 		}
 		catch(Jelly_Validation_Exception $e)
 		{
-			$errors['user_data'] = $e->errors('validate');
+			$this->_errors['user_data'] = $e->errors('validate');
 		}
 
-		if(empty($errors))
+		if(empty($this->_errors))
 		{
 			$user_info['user_data'] = $user_data->id;
 			try
 			{
 				if($user->loaded())
 				{
-					$user->set($user_info);
-					$user->save();
-//					$user->add('roles', $user_info['roles'])->save();
+					$user->update_user($user_info, array_keys($user_info));
 				}
 				else
 				{
-					$user->create_user($user_info, array_keys($post['user']));
+					$user->create_user($user_info, array_keys($user_info));
 				}
+
+				$user_info['id'] = $user->id;
 
 				if($user->has_role('admin') AND $action == 'create')
 					$this->_send_email($user, $user_info['password']);
@@ -197,17 +225,15 @@ class Controller_Admin_User extends Controller_Admin_Template {
 			}
 			catch (Jelly_Validation_Exception $e)
 			{
-				$errors['user'] = $e->errors('validate');
+				$errors = $e->errors('validate');
+				$this->_errors['user'] = $errors['_external'];
 			}
 		}
 
 		$post['user']      = $user_info;
 		$post['user_data'] = $user_data_info;
 
-		return array(
-			'post' => $post,
-			'errors' => $errors,
-		);
+		return $post;
 	}
 
 	public function _send_email($user, $password)
