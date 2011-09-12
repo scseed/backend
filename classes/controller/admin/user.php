@@ -42,7 +42,7 @@ class Controller_Admin_User extends Controller_Admin_Template {
 			"user" => array(
 				'id' => NULL,
 				"email" => NULL,
-				"roles" => NULL,
+				"roles" => array(),
 				"password" => NULL,
 				"password_confirm" => NULL,
 				"is_active" => TRUE,
@@ -52,28 +52,9 @@ class Controller_Admin_User extends Controller_Admin_Template {
 				"last_name" => NULL,
 				"first_name" => NULL,
 				"patronymic" => NULL,
-				"birthdate" => NULL,
-				"phone" => NULL,
-				"country" => NULL,
-				"city" => NULL,
-				"address" => NULL,
-				"metro" => NULL,
-				"wage_level" => NULL,
-				"about" => NULL,
 			)
 		);
-//		foreach($user_fields as $user_field)
-//		{
-//			if($user_field->in_form)
-//				$post['user'][$user_field->name] = ($user_field->default) ? $user_field->default : NULL;
-//		}
-//
-//		foreach($user_data_fields as $user_data_field)
-//		{
-//			if($user_data_field->in_form)
-//				$post['user_data'][$user_data_field->name] = ($user_data_field->default) ? $user_data_field->default : NULL;
-//		}
-//exit(Debug::vars($post) . View::factory('profiler/stats'));
+
 		if ($this->request->method() === Request::POST)
 		{
 			$post_data = Arr::extract($_POST, array_keys($post));
@@ -122,17 +103,9 @@ class Controller_Admin_User extends Controller_Admin_Template {
 				"last_name" => $user_data->last_name,
 				"first_name" => $user_data->first_name,
 				"patronymic" => $user_data->patronymic,
-//				"birthdate" => $user_data->borthdate,
-//				"phone" => $user_data->phone,
-//				"country" => $user_data->country,
-//				"city" => $user_data->city,
-//				"address" => $user_data->address,
-//				"metro" => $user_data->metro,
-//				"wage_level" => $user_data->wage_level,
-//				"about" => $user_data->about,
 			)
 		);
-//exit(Debug::vars($post) . View::factory('profiler/stats'));
+
 		if ($this->request->method() === Request::POST)
 		{
 			$post_data = Arr::extract($_POST, array_keys($post));
