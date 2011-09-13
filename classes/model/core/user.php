@@ -59,7 +59,7 @@ parent::initialize($meta);
 						'in_table' => FALSE,
 						'label'    => __('Пароль'),
 						'rules'    => array(
-							array('not_empty'),
+//							array('not_empty'),
 							array('min_length', array(':value', 4)),
 						),
 						'hash_with' => array(Auth::instance(), 'hash'),
