@@ -68,7 +68,7 @@
 				<div class="info-block">
 					<div class="info-block-wrapper">
 						<p>
-							<img src="/admin/media/i/icons/user.png" alt="" class="ico 16x16" /> <span class="big"><?php echo $user->name?></span>
+							<img src="/admin/media/i/icons/user.png" alt="" class="ico 16x16" /> <span class="big"><?php echo $user->user_data->last_name?> <?php echo $user->user_data->first_name?></span>
 						</p>
 						<p>
 							<img src="/admin/media/i/icons/acl-admin.png" alt="" class="ico 16x16" /> <span class="acl-role admin-role">Администратор</span>

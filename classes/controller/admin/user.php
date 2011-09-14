@@ -21,11 +21,15 @@ class Controller_Admin_User extends Controller_Admin_Template {
 	{
 		$this->template->page_title = 'Список пользователей';
 
-		$users = Jelly::query('user')->select();
+		$role_users = Jelly::query('roles_users')
+			->where('roles_users:role.name', '=', 'admin')
+			->select()
+		;
+
 		$users_meta = Jelly::meta('user');
 
 		$this->template->content = View::factory('backend/content/user/list')
-			->bind('users', $users)
+			->bind('users', $role_users)
 			->bind('meta', $users_meta);
 	}
 

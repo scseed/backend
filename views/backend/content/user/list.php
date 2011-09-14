@@ -10,7 +10,7 @@ foreach($meta->fields() as $field):
 <?php endif; endforeach;?>
 		<th>Операции</th>
 	</tr>
-<?php foreach($users as $user):?>
+<?php foreach($users as $role_user):?>
 	<tr>
 <?php foreach($meta->fields() as $field): if($field->in_table):?>
 		<td>
@@ -18,17 +18,18 @@ foreach($meta->fields() as $field):
 switch($field)
 {
 	case $field instanceof Jelly_Field_Boolean:
-		$label = ($user->{$field->name}) ? 'label_true' : 'label_false';
+		$label = ($role_user->user->{$field->name}) ? 'label_true' : 'label_false';
 		echo $field->$label;
 		break;
 	case $field instanceof Jelly_Field_Timestamp:
-		echo date('d.m.Y', $user->{$field->name});
+		echo date('d.m.Y', $role_user->user->{$field->name});
 		break;
 	case $field instanceof Jelly_Field_ManyToMany:
-		echo implode($user->{$field->name}->as_array('id', 'description'), ', ');
+//		echo implode($role_user->user->{$field->name}->as_array('id', 'description'), ', ');
+			echo $role_user->role->description;
 		break;
 	default:
-		echo $user->{$field->name};
+		echo $role_user->user->{$field->name};
 		break;
 
 }?>
@@ -36,12 +37,12 @@ switch($field)
 <?php endif; endforeach;?>
 		<td>
 			<?php echo HTML::anchor(
-				Route::url('admin', array('controller' => 'user', 'action' => 'edit', 'id' => $user->id)),
+				Route::url('admin', array('controller' => 'user', 'action' => 'edit', 'id' => $role_user->user->id)),
 				HTML::image('admin/media/i/icons/user--pencil.png', array('alt' => __('Править'))),
 				array('title' => __('Править'))
 			)?>&nbsp;&nbsp;
 			<?php echo HTML::anchor(
-				Route::url('admin', array('controller' => 'user', 'action' => 'delete', 'id' => $user->id)),
+				Route::url('admin', array('controller' => 'user', 'action' => 'delete', 'id' => $role_user->user->id)),
 				HTML::image('admin/media/i/icons/user--minus.png', array('alt' => __('Удалить'))),
 				array('title' => __('Удалить'), 'onclick'=>"return window.confirm('Уверены в этом?')")
 			)?>
