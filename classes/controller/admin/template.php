@@ -83,7 +83,7 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 			$this->_actions = Arr::merge($this->_actions, $default_actions);
 		}
 
-		$config = Kohana::config('admin');
+		$config = Kohana::$config->load('admin');
 
 		//Если требуется авторизация отправлям позователя на форму логина
 		if ($this->_auth_required AND ! Auth::instance('admin')->logged_in())

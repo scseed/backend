@@ -217,7 +217,7 @@ class Controller_Admin_User extends Controller_Admin_Template {
 	public function _send_email($user, $password)
 	{
 		$message = View::factory('backend/content/email/user/credentials')
-			->set('site', Kohana::config('admin'))
+			->set('site', Kohana::$config->load('admin'))
 			->bind('user', $user)
 			->bind('password', $password)
 		;
