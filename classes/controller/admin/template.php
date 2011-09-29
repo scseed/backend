@@ -34,6 +34,9 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 
 		parent::before();
 
+	    if(Kohana::$is_cli)
+		    $this->auto_render = FALSE;
+
 		// Проверка на запрос AJAX-типа
 		if (Request::current()->is_ajax() OR Request::initial() !== Request::current())
 		{
@@ -86,7 +89,7 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 		$config = Kohana::$config->load('admin');
 
 		//Если требуется авторизация отправлям позователя на форму логина
-		if ($this->_auth_required AND ! Auth::instance('admin')->logged_in())
+		if ($this->_auth_required AND ! Auth::instance('admin')->logged_in() AND ! Kohana::$is_cli)
 		{
 			Session::instance()->set('url', $_SERVER['REQUEST_URI']);
 			$this->request->redirect(Route::url('admin', array('controller' => 'auth', 'action' => 'login')));
@@ -107,7 +110,7 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 		}
 
 		//Если карта методов была иницилизирована, то проверяем контроллер на возможность запуска
-		if($this->_auth_required)
+		if($this->_auth_required AND ! Kohana::$is_cli)
 		{
 			if (isset($this->_actions[$this->request->action()]))
 			{

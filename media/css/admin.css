@@ -130,7 +130,7 @@ p {
 }
 
 .inline {
-	display: inline;
+	display: inline!important;
 }
 
 .ico {
