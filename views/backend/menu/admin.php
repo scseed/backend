@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');?>
 <ul id="menu">
-	<?php foreach($menu_arr as $name => $item): if($item['is_visible']):?>
+	<?php foreach($menu_arr as $name => $item): if(Arr::get($item, 'is_visible', FALSE)):?>
 		<li class="<?php echo $item['active_class'] ?>">
 			<?php
 				echo Html::anchor(

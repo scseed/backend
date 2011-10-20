@@ -45,6 +45,7 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 		}
 
 		$_pages = array();
+		$multiple_roots = FALSE;
 		if(count($roots) == 1)
 		{
 			$_pages = $roots[0]->descendants(TRUE, 'ASC', TRUE);
@@ -52,6 +53,7 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 		elseif(count($roots) > 1 AND $parent_page instanceof Jelly_Model AND $parent_page->loaded())
 		{
 			$_pages = $parent_page->descendants(FALSE, 'ASC', TRUE);
+		    $multiple_roots = TRUE;
 		}
 
 		$pages_ids = array();
@@ -64,7 +66,7 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 			? $parent_page->root($parent_page->scope())->alias
 			: NULL;
 
-		$pages = Page::instance()->pages_structure(TRUE, $lang);
+		$pages = Page::instance()->pages_structure($multiple_roots, $lang);
 
 		if($parent != NULL AND $parent_page->loaded())
 		{

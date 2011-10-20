@@ -14,7 +14,7 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 		'move' => array('update'),
 		'delete' => array('delete'),
 	);
-	
+
 	/**
 	 * @return void
 	 */
@@ -59,7 +59,7 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 
 		$this->template->content = (method_exists(__CLASS__, $method))
 			? $this->{$method}($root)
-			: $this->request->redirect(Request::current()->uri(array('controller' => 'menu', 'action' => '', 'id' => '')));
+			: $this->request->redirect(Route::url(Route::name(Request::current()->route()), array('controller' => 'menu', 'action' => '', 'id' => '')));
 	}
 
 	/**
@@ -126,8 +126,8 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 				$node->save();
 
 				$link = ($node->parent()->id)
-					? Request::current()->uri(array('controller' => 'menu','action' => 'tree','id' => $node->parent()->id))
-					: Request::current()->uri(array('controller' => 'menu','action' => '','id' => NULL));
+					? Route::url(Route::name(Request::current()->route()), array('controller' => 'menu','action' => 'tree','id' => $node->parent()->id))
+					: Route::url(Route::name(Request::current()->route()), array('controller' => 'menu','action' => '','id' => NULL));
 				$this->request->redirect($link);
 			}
 			catch(Validation_Exception $e)
@@ -233,7 +233,7 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 		if( ! $node->loaded())
 			throw new Http_Exception_404('Menu node with id = :id was not found', array(':id' => $id));
 
-		$node->visible = ! $node->visible;
+		$node->is_visible = ! $node->is_visible;
 
 		try
 		{
@@ -253,23 +253,23 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 	 */
 	protected function _add_root()
 	{
-		$back  = $this->request->referrer();
-		$_post = array(
+		$back  = Route::url(Route::name(Request::current()->route()), array('controller' => 'menu','action' => 'tree','id' => NULL));
+		$post = array(
 			'name'       => NULL,
 			'route_name' => NULL,
 			'controller' => NULL,
 		);
 
-		if($_POST)
+		if($this->request->method() === Request::POST)
 		{
-			$post = Arr::extract($_POST, array_keys($_post));
+			$post_data = Arr::extract($_POST, array_keys($post));
 
 			$last_scope_menu = Jelly::query('menu')->distinct('scope')->order_by('scope', 'DESC')->limit(1)->select();
 			$scope           = ($last_scope_menu->loaded()) ? $last_scope_menu->scope : 0;
-			$post['visible'] = 0;
+			$post_data['visible'] = 0;
 			$new_root        = Jelly::factory('menu');
 
-			$new_root->set($post);
+			$new_root->set($post_data);
 
 			try
 			{
@@ -277,21 +277,20 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 
 				$new_root->insert_as_new_root($scope + 1);
 
-				$this->request->redirect(Request::current()->uri(array('controller' => 'menu', 'action' => '', 'id' => '')));
+				$this->request->redirect(
+					Route::url(Route::name(Request::current()->route()), array(
+						'controller' => 'menu',
+						'action' => 'tree',
+						'id' => $new_root->id,
+					))
+				);
 			}
 			catch(Validation_Exception $e)
 			{
 				throw new Kohana_Exception($e);
 			}
-		}
 
-		if(!isset($post))
-		{
-			$post = $_post;
-		}
-		else
-		{
-			$post = Arr::merge($_post, $post);
+		    $post = Arr::merge($post_data, $post);
 		}
 
 		return View::factory('menu/manage/add/root')
@@ -305,15 +304,15 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 	 */
 	protected function _add_node()
 	{
-		$back    = $this->request->referrer();
 		$root_id = Arr::get($_GET, 'root', NULL);
 		$prev_id = Arr::get($_GET, 'prev', NULL);
 		$next_id = Arr::get($_GET, 'next', NULL);
+		$back    = Route::url(Route::name(Request::current()->route()), array('controller' => 'menu','action' => ($root_id) ? 'tree' : '','id' => $root_id));
 		$root    = ($root_id) ? Jelly::query('menu', (int) $root_id)->select() : NULL;
 		$prev    = ($prev_id) ? Jelly::query('menu', (int) $prev_id)->select() : NULL;
 		$next    = ($next_id) ? Jelly::query('menu', (int) $next_id)->select() : NULL;
 
-		$_post = array(
+		$post = array(
 			'name' => NULL,
 			'title' => NULL,
 			'anchor_title' => NULL,
@@ -331,12 +330,12 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 			0 => __('не виден'),
 		);
 
-		if($_POST)
+		if($this->request->method() === Request::POST)
 		{
-			$post     = Arr::extract($_POST, array_keys($_post));
+			$post_data     = Arr::extract($_POST, array_keys($post));
 			$new_node = Jelly::factory('menu');
 
-			$_params = ($post['params']) ? explode(';', $post['params']) : array();
+			$_params = ($post_data['params']) ? explode(';', $post_data['params']) : array();
 
 			$params = array();
 			foreach($_params as $param_string)
@@ -344,9 +343,9 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 				$params += array(strstr($param_string, '=', TRUE) => str_replace('=', '', strstr($param_string, '=')));
 			}
 
-			$post['params'] = $params;
+			$post_data['params'] = $params;
 
-			$new_node->set($post);
+			$new_node->set($post_data);
 
 			try
 			{
@@ -364,7 +363,7 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 				}
 
 				$this->request->redirect(
-					Request::current()->uri(array(
+					Route::url(Route::name(Request::current()->route()), array(
 						'controller' => 'menu',
 						'action' => 'tree',
 						'id' => $root->id
@@ -375,15 +374,8 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 			{
 				throw new Kohana_Exception($e);
 			}
-		}
 
-		if(!isset($post))
-		{
-			$post = $_post;
-		}
-		else
-		{
-			$post = Arr::merge($_post, $post);
+		    $post = Arr::merge($post_data, $post);
 		}
 
 		return View::factory('menu/manage/add/node')
