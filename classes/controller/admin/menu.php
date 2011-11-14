@@ -98,7 +98,7 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 			'params' => ($model_params) ? implode(';', $params) : NULL,
 			'query' => $node->query,
 			'class' => $node->class,
-			'visible' => $node->visible,
+			'is_visible' => $node->is_visible,
 		);
 
 		$visibilities = array(
@@ -233,7 +233,7 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 		if( ! $node->loaded())
 			throw new Http_Exception_404('Menu node with id = :id was not found', array(':id' => $id));
 
-		$node->is_visible = ! $node->is_visible;
+		$node->is_visible = ! (bool) $node->is_visible;
 
 		try
 		{
@@ -266,7 +266,7 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 
 			$last_scope_menu = Jelly::query('menu')->distinct('scope')->order_by('scope', 'DESC')->limit(1)->select();
 			$scope           = ($last_scope_menu->loaded()) ? $last_scope_menu->scope : 0;
-			$post_data['visible'] = 0;
+			$post_data['is_visible'] = 0;
 			$new_root        = Jelly::factory('menu');
 
 			$new_root->set($post_data);
@@ -323,7 +323,7 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 			'params' => NULL,
 			'query' => NULL,
 			'class' => NULL,
-			'visible' => TRUE,
+			'is_visible' => TRUE,
 		);
 		$visibilities = array(
 			1 => __('виден'),
