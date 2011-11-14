@@ -316,7 +316,6 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 
 				if($sibling->loaded())
 					$sibling->move_to_next_sibling($node);
-
 				break;
 			case 'down':
 				$sibling = Jelly::query('page')
@@ -447,7 +446,17 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 		{
 			if($page->loaded())
 			{
+				$new_position = FALSE;
+
+				if($page->changed('parent_page'))
+				{
+					$new_position = TRUE;
+				}
+
 				$page->save();
+
+				if($new_position)
+					$page->move_to_last_child($this->_page_data['parent_page']);
 			}
 			elseif( ! $page->loaded() AND $parent_page)
 			{

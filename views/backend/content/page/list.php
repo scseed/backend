@@ -18,7 +18,7 @@
 	<tr>
 		<td>
 			<?php echo HTML::anchor(
-				Request::current()->uri(array(
+				Request::current()->route()->uri(array(
 					'controller' => 'page',
 					'action' => 'move',
 					'id' => $page['id'],
@@ -26,7 +26,7 @@
 				'&uarr; выше',
 				array('title' => __('переместить на пункт выше')))?>
 			<?php echo HTML::anchor(
-				Request::current()->uri(array(
+				Request::current()->route()->uri(array(
 					'controller' => 'page',
 					'action' => 'move',
 					'id' => $page['id'],
