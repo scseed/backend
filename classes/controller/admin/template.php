@@ -198,4 +198,14 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 
 	}
 
+	public function _back()
+	{
+		$this->request->redirect(
+			Route::url('admin', array(
+				'controller' => $this->request->controller(),
+				'action' => 'list')
+			)
+		);
+	}
+
 } // End Controller_Admin_Template
