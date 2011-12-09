@@ -36,7 +36,7 @@ class Controller_Admin_User extends Controller_Admin_Template {
 	/**
 	 * Creating new user
 	 */
-	public function action_new ()
+	public function action_add ()
 	{
 		$this->template->page_title = 'Новый пользователь';
 
@@ -61,7 +61,14 @@ class Controller_Admin_User extends Controller_Admin_Template {
 
 		if ($this->request->method() === Request::POST)
 		{
-			$post_data = Arr::extract($_POST, array_keys($post));
+			$post_data = Arr::extract($_POST, array_keys($post), NULL);
+
+			if($post_data['user']['id'] == '')
+				unset($post_data['user']['id']);
+
+			if($post_data['user_data']['id'] == '')
+				unset($post_data['user_data']['id']);
+
 			$post = $this->_add_edit($post_data);
 		}
 
@@ -76,7 +83,6 @@ class Controller_Admin_User extends Controller_Admin_Template {
 	 * Editing user
 	 *
 	 * @TODO: отправлять email пользователю при смене его пароля.
-	 * @param integer $id
 	 */
 	public function action_edit()
 	{
@@ -118,6 +124,12 @@ class Controller_Admin_User extends Controller_Admin_Template {
 				unset($post_data['user']['password'], $post_data['user']['password_confirm']);
 			}
 
+			if( ! $post['user']['id'])
+				unset($post['user']['id']);
+
+			if( ! $post['user_data']['id'])
+				unset($post['user_data']['id']);
+
 			$post = $this->_add_edit($post_data, 'update');
 		}
 
@@ -147,13 +159,14 @@ class Controller_Admin_User extends Controller_Admin_Template {
 	 * Creating/Updating user
 	 *
 	 * @param  array $post
+	 * @param  string $action
 	 * @return array
 	 * @TODO: Sending email on success creating/updating
 	 */
 	public function _add_edit($post, $action = 'create')
 	{
-		$user_info      = Arr::extract(Arr::get($_POST, 'user'), array_keys($post['user']), NULL);
-		$user_data_info = Arr::extract(Arr::get($_POST, 'user_data'), array_keys($post['user_data']), NULL);
+		$user_info      = Arr::extract(Arr::get($post, 'user'), array_keys($post['user']), NULL);
+		$user_data_info = Arr::extract(Arr::get($post, 'user_data'), array_keys($post['user_data']), NULL);
 
 		$user      = (Arr::get($user_info, 'id'))
 			? Jelly::query('user', (int) Arr::get($user_info, 'id'))->select()
@@ -181,6 +194,7 @@ class Controller_Admin_User extends Controller_Admin_Template {
 		if(empty($this->_errors))
 		{
 			$user_info['user_data'] = $user_data->id;
+			$user_info['name'] = $user_data->last_name.' '.$user_data->first_name;
 			try
 			{
 				if($user->loaded())
@@ -203,8 +217,7 @@ class Controller_Admin_User extends Controller_Admin_Template {
 			}
 			catch (Jelly_Validation_Exception $e)
 			{
-				$errors = $e->errors('validate');
-				$this->_errors['user'] = $errors['_external'];
+				$this->_errors['user'] = $e->errors('validate');
 			}
 		}
 

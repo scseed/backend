@@ -15,7 +15,7 @@ abstract class Model_Core_User extends Model_Auth_User {
 	 */
 	public static function initialize(Jelly_Meta $meta)
 	{
-parent::initialize($meta);
+		parent::initialize($meta);
 		$meta->name_key('email')
 			->fields(array(
 //				'id' => Jelly::field('Primary'),

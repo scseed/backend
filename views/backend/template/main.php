@@ -104,7 +104,7 @@
 		<div id="main-wrapper"></div>
 	</div>
 	<div id="footer">
-		<?php echo ($ed_copy === TRUE) ? '&copy; Система управления сатйом разработана в студии <a href="http://enerdesign.ru/">EnerDesign</a>' : ''?>
+<!--		--><?php //echo ($ed_copy === TRUE) ? '&copy; Система управления сатйом разработана в студии <a href="http://enerdesign.ru/">EnerDesign</a>' : ''?>
 	</div>
 <?php echo StaticJs::instance()->get_all()?>
 </body>

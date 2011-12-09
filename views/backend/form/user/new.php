@@ -1,8 +1,15 @@
 <?php defined('SYSPATH') or die('No direct access allowed.');?>
+<?php if($errors):?>
+<div class="error">
+	<?php foreach($errors as $block => $_errors): foreach($_errors as $error):?>
+	<div><?php echo $error?></div>
+	<?php endforeach;endforeach;?>
+</div>
+<?php endif;?>
 <div class="edit-content-form">
 <?php echo Form::open(Request::current());?>
-	<?php echo Form::hidden('user[id]', $post['user']['id'])?>
-	<?php echo Form::hidden('user_data[id]', $post['user_data']['id'])?>
+	<?php echo Form::hidden('user[id]', Arr::get($post['user'], 'id'))?>
+	<?php echo Form::hidden('user_data[id]', Arr::get($post['user_data'], 'id'))?>
 
 	<div class="form-item">
 		<?php echo Form::label('last_name', 'Фамилия')?>
