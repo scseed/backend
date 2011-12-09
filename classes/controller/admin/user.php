@@ -22,7 +22,7 @@ class Controller_Admin_User extends Controller_Admin_Template {
 		$this->template->page_title = 'Список пользователей';
 
 		$role_users = Jelly::query('roles_users')
-			->where('roles_users:role.name', '=', 'admin')
+			->where(':role.name', '=', 'admin')
 			->select()
 		;
 
