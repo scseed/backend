@@ -55,6 +55,14 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 			$_pages = $parent_page->descendants(FALSE, 'ASC', TRUE);
 		    $multiple_roots = TRUE;
 		}
+		elseif(count($roots) > 1 AND $parent == NULL)
+		{
+			foreach($roots as $root)
+			{
+				$_pages = $root->descendants(TRUE, 'ASC', TRUE);
+			}
+			$multiple_roots = TRUE;
+		}
 
 		$pages_ids = array();
 		foreach($_pages as $_page)
