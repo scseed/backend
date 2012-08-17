@@ -274,8 +274,8 @@ p {
 	border-left: solid 1px #d8d8d8;
 }
 
-#content > tr.disabled td {
-	background-color: red
+#content tr.disabled td {
+	background-color: #FFDBDB!important;
 }
 
 #content #left-side > table.content-table  {
