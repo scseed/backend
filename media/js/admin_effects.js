@@ -67,8 +67,8 @@ $(document).ready(function(){
 		}
 	)
 
-	if($('textarea').length > 0)
-		$('textarea').ckeditor();
+//	if($('textarea').length > 0)
+//		$('textarea').ckeditor();
 
 	$('.page_content legend').click(function(){
 		toggle_fieldset_block(this);
