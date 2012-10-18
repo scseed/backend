@@ -154,8 +154,6 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 				->add_modpath('js/jquery-ui-1.8.16.custom.min.js')
 				->add_modpath('js/i18n/jquery.ui.datepicker-ru.js')
 				->add_modpath('js/admin_effects.js')
-				->add('js/ckeditor/ckeditor.min.js')
-				->add('js/ckeditor/adapters/jquery.js')
 			;
 
 		$this->template->user = Auth::instance('admin')->get_user();
@@ -163,27 +161,9 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 
 	public function after()
 	{
-//		$media = Route::get('docs/media');
-
 		if(is_object($this->template->content))
 		{
 			$this->template->content->controller = $this->request->controller();
-		}
-
-		if($this->auto_render === TRUE)
-		{
-//			$styles = array(
-//				$media->uri(array('file' => 'css/admin.css')) => 'screen, projection',
-//				$media->uri(array('file' => 'css/jquery-ui-1.8.16.custom.css')) => 'screen, projection',
-//			);
-
-//			StaticCss::instance()->add('js/redactor/css/redactor.css');
-
-
-
-
-//			$this->template->styles = array_merge( $this->template->styles, $styles );
-//			$this->template->scripts = array_merge( $this->template->scripts, $scripts );
 		}
 
 		// При ajax запросе как ответ используется контент шаблона
