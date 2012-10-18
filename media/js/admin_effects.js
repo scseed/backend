@@ -65,14 +65,11 @@ $(document).ready(function(){
 		function () {
 			$(this).hide(200, function() {$(this).show(); $(this).removeClass('open')});
 		}
-	)
-
-//	if($('textarea').length > 0)
-//		$('textarea').ckeditor();
+	);
 
 	$('.page_content legend').click(function(){
 		toggle_fieldset_block(this);
-	})
+	});
 
 	$('.delete_content').click(function(){
 		var button = this;
