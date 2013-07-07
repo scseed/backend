@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');?>
-<?php //echo Kohana::debug($users)?>
-<table cellspacing="0">
+<table class="table table-striped table-bordered table-hover">
+	<thead>
 	<tr>
 <?php
 foreach($meta->fields() as $field):
@@ -8,8 +8,9 @@ foreach($meta->fields() as $field):
 ?>
 		<th><?php echo $field->label ?></th>
 <?php endif; endforeach;?>
-		<th>Операции</th>
+		<th></th>
 	</tr>
+	</thead>
 <?php foreach($users as $role_user):?>
 	<tr>
 <?php foreach($meta->fields() as $field): if($field->in_table):?>
@@ -36,16 +37,27 @@ switch($field)
 		</td>
 <?php endif; endforeach;?>
 		<td>
-			<?php echo HTML::anchor(
-				Route::url('admin', array('controller' => 'user', 'action' => 'edit', 'id' => $role_user->user->id)),
-				HTML::image('admin/media/i/icons/user--pencil.png', array('alt' => __('Править'))),
-				array('title' => __('Править'))
-			)?>&nbsp;&nbsp;
-			<?php echo HTML::anchor(
-				Route::url('admin', array('controller' => 'user', 'action' => 'delete', 'id' => $role_user->user->id)),
-				HTML::image('admin/media/i/icons/user--minus.png', array('alt' => __('Удалить'))),
-				array('title' => __('Удалить'), 'onclick'=>"return window.confirm('Уверены в этом?')")
-			)?>
+			<div class="btn-group">
+				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+					<i class="icon-cog"></i>
+					<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu pull-right">
+					<li>
+						<?php echo HTML::anchor(
+							Route::url('admin', array('controller' => 'user', 'action' => 'edit', 'id' => $role_user->user->id)),
+							'<i class="icon-edit"></i> '.__('Править')
+						)?>
+					</li>
+					<li>
+						<?php echo HTML::anchor(
+							Route::url('admin', array('controller' => 'user', 'action' => 'delete', 'id' => $role_user->user->id)),
+							'<i class="icon-trash"></i> '.__('Удалить'),
+							array('onclick'=>"return window.confirm('Уверены в этом?')")
+						)?>
+					</li>
+				</ul>
+			</div>
 		</td>
 	</tr>
 <?php endforeach;?>

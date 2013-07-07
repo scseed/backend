@@ -7,8 +7,6 @@
  */
 class Controller_Admin_Auth extends Controller_Admin_Template
 {
-
-	public $template = 'backend/template/login';
 	public $_auth_required = FALSE;
 
 	/**
@@ -53,7 +51,8 @@ class Controller_Admin_Auth extends Controller_Admin_Template
 			}
 		}
 		$this->template->content = View::factory('backend/form/user/login')
-			->bind('userdata', $post)
+			->bind('post', $post)
+			->bind('can_remember', $true)
 			->set('errors', $errors);
 	}
 

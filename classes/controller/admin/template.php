@@ -88,8 +88,10 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 
 		$config = Kohana::$config->load('admin');
 
+		$is_logged_in =  Auth::instance('admin')->logged_in();
+
 		//Если требуется авторизация отправлям позователя на форму логина
-		if ($this->_auth_required AND ! Auth::instance('admin')->logged_in() AND ! Kohana::$is_cli)
+		if ($this->_auth_required AND !$is_logged_in AND ! Kohana::$is_cli)
 		{
 			Session::instance()->set('url', $_SERVER['REQUEST_URI']);
 			$this->request->redirect(Route::url('admin', array('controller' => 'auth', 'action' => 'login')));
@@ -143,20 +145,25 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 			$this->template->styles           = array();
 			$this->template->scripts          = array();
 		}
+		$this->template->logged_in          = $is_logged_in;
 		$this->template->content          = '';
 
 		StaticCss::instance()
 			->add_modpath('css/admin.css')
-			->add_modpath('css/jquery-ui-1.8.16.custom.css')
+			->add_modpath('css/bootstrap.min.css')
+			->add_modpath('css/bootstrap-responsive.min.css')
+			->add_modpath('css/datepicker.css')
+			->add_modpath('css/font-awesome.min.css')
 		;
 		StaticJs::instance()
-				->add_modpath('js/jquery-1.6.2.min.js')
-				->add_modpath('js/jquery-ui-1.8.16.custom.min.js')
-				->add_modpath('js/i18n/jquery.ui.datepicker-ru.js')
-				->add_modpath('js/admin_effects.js')
+				->add_modpath('js/jquery-1.10.2.min.js')
+				->add_modpath('js/bootstrap.min.js')
+				->add_modpath('js/bootstrap-datepicker.js')
+				->add_modpath('js/bootstrap-datepicker.ru.js')
 				->add('js/ckeditor/ckeditor.min.js')
 				->add('js/ckeditor/adapters/jquery.js')
-			;
+				->add_modpath('js/admin_effects.js')
+		;
 
 		$this->template->user = Auth::instance('admin')->get_user();
 	}

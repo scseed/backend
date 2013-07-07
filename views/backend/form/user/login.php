@@ -1,61 +1,64 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');?>
-<div id="login-form">
-	<h1 class="title"><?php echo __('Вход в систему') ?></h1>
-		<?php echo Form::open(Request::current()); ?>
-			<?php if (!empty($errors['common'])): ?>
-				<h4 class="title"><div class="form-error"><?php echo $errors['common'] ?></div></h4>
+<div class="row-fluid" style="margin: 5em auto">
+	<div class="span3">&nbsp;</div>
+	<div class="span6">
+		<?php echo Form::open(Request::current(), array('class' => 'form-horizontal')); ?>
+		<fieldset>
+			<legend><?php echo __('Авторизуйтесь');?></legend>
+			<?php if (!empty($errors)): ?>
+				<div class="alert alert-error">
+					<?php echo $errors ?>
+				</div>
 			<?php endif ?>
-			<div class="form-item">
-				<?php
-					echo Form::label('email', __('Эл. адрес'));
-				?>
-				<?php if (!empty($errors['email'])): ?>
-					<div class="form-error"><?php echo $errors['email'] ?></div>
-				<?php endif ?>
-				<?php
-					echo Form::input(
-									'email',
-									$userdata['email'],
-									array('type' => 'text', 'id' => 'email')
-					);
-				?>
+			<div class="control-group">
+				<?php echo Form::label('login_email', __('Email'), array('class' => 'control-label'))?>
+				<div class="controls">
+					<div class="input-prepend">
+						<span class="add-on"><i class="icon-envelope"></i></span>
+						<?php echo Form::input(
+							'email',
+							Arr::get($post, 'email'),
+							array('type' => 'text', 'id' => 'login_email', 'class' => 'input-xlarge')
+						);?>
+					</div>
+				</div>
 			</div>
-			<div class="form-item">
-				<?php
-					echo Form::label('password', __('Пароль'));
-				?>
-				<?php if ( ! empty($userdata['password']) AND ! empty($errors['password'])): ?>
-					<div class="form-error"><?php echo $errors['password'] ?></div>
-				<?php endif ?>
-				<?php
-					echo Form::input(
-									'password',
-									'',
-									array('type' => 'password', 'id' => 'password')
-					);
-				?>
+			<div class="control-group">
+				<?php echo Form::label('login_password', __('Пароль'), array('class' => 'control-label'))?>
+				<div class="controls">
+					<div class="input-prepend">
+						<span class="add-on"><i class="icon-asterisk"></i></span>
+						<?php echo Form::input(
+							'password',
+							NULL,
+							array('type' => 'password', 'id' => 'login_password', 'class' => 'input-xlarge')
+						);?>
+					</div>
+				</div>
 			</div>
-			<div class="form-item">
-				<?php
-					echo Form::label('remember', __('Запомнить меня'));
-				?>
-				<?php
-					echo Form::checkbox(
-									'remember',
-									'1',
-									!empty($_POST['remember']) ? TRUE : FALSE,
-									array('id' => 'remember')
-					);
-				?>
+			<?php if($can_remember):?>
+				<div class="control-group">
+					<div class="controls">
+						<label class="checkbox">
+							<?php echo Form::checkbox(
+								'remember',
+								1,
+								(bool) Arr::get($post, 'remember'),
+								array('type' => 'checkbox', 'id' => 'login_remember',)
+							);?>
+							<?php echo __('Запомнить меня')?>
+						</label>
+					</div>
+				</div>
+			<?php endif;?>
+			<div class="form-actions">
+				<div class="btn-toolbar">
+					<div class="btn-group">
+						<?php echo Form::button(NULL, __('Войти'), array ('type' => 'submit', 'class' => 'btn btn-primary'));?>
+					</div>
+				</div>
 			</div>
-			<div class="form-item text-right">
-				<?php
-					echo Form::button(
-									'login',
-									'Войти &raquo;',
-									array ('type' => 'submit')
-					);
-				?>
-			</div>
+		</fieldset>
 		<?php echo Form::close(); ?>
+	</div>
 </div>

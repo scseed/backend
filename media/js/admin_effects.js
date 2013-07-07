@@ -1,48 +1,26 @@
 $(document).ready(function(){
-	$('#menu > li > a').each(function(){
-		if ($(this).parent('li').find('ul').size() == 0){
-			$(this).parent('li').append('<div class="menu-wrapper-line" />');
-		}
-		else {
-			$(this).click(function(){
-				$('#menu > li.active').removeClass('active');
-				$(this).parent('li').addClass('active');
-				return false;
-			});
-		}
+
+	$('[rel="tooltip"]').tooltip({});
+
+	$('.btn-loading')
+	.click(function () {
+		var btn = $(this);
+		btn.button('loading');
 	});
 
-	$('#ed-panel').mouseenter(function(){
-		$(this).animate({width: 245}, 200);
-	});
-
-	$('#ed-panel').mouseleave(function(){
-		$(this).animate({width: 165}, 200);
-	});
-
-
-	if($('input[class=datepicker]').length)
+	var datepicker = $('.datepicker');
+	if(datepicker.length)
 	{
-		$.datepicker.setDefaults( $.datepicker.regional[ "ru" ] );
-		$('input[class=datepicker]').datepicker({dateFormat: 'dd.mm.yy'});
+		datepicker.datepicker({
+			format: "dd.mm.yyyy",
+			weekStart: 1,
+			todayBtn: "linked",
+			language: "ru",
+//			calendarWeeks: true,
+			autoclose: true,
+			todayHighlight: true
+		});
 	}
-
-	$('label[for=features], label[for=qualities], label[for=modes]').each(function(){
-		$('#'+$(this).attr('for')).slideUp(200);
-		$(this).css('border-bottom', 'dashed 1px #ccc').css('cursor', 'pointer');
-	});
-
-	$('label[for=features], label[for=qualities], label[for=modes]').toggle(
-		function(){
-			$('#'+$(this).attr('for')).slideDown(200);
-			$(this).css('border-bottom', 'none');
-		},
-
-		function(){
-			$('#'+$(this).attr('for')).slideUp(200);
-			$(this).css('border-bottom', 'dashed 1px #ccc');
-		}
-	);
 
 	$('#add_answer').click(function(){
 		$('#poll_answers').append('<div class="form-item"><label for="answers[]">Вариант ответа <span class="delete_answer">удалить</span></label><input type="text" name="answers[]"></div>');
@@ -65,14 +43,14 @@ $(document).ready(function(){
 		function () {
 			$(this).hide(200, function() {$(this).show(); $(this).removeClass('open')});
 		}
-	)
-
-	if($('textarea').length > 0)
-		$('textarea').ckeditor();
+	);
+//
+//	if($('textarea').length > 0)
+//		$('textarea').ckeditor();
 
 	$('.page_content legend').click(function(){
 		toggle_fieldset_block(this);
-	})
+	});
 
 	$('.delete_content').click(function(){
 		var button = this;
@@ -109,3 +87,17 @@ function toggle_fieldset_block(object)
 		$(object).parent().addClass('closed');
 	}
 }
+
+$(function() {
+	var dateTo   = $( "#date_to" )
+	  , dateFrom = $( "#date_from" )
+	;
+	dateFrom.datepicker().on('changeDate', function(ev){
+		dateTo.datepicker('setStartDate', new Date(ev.date));
+		dateTo.datepicker('show');
+	});
+
+	dateTo.datepicker().on('changeDate', function(ev){
+		dateFrom.datepicker('setEndDate', new Date(ev.date));
+	});
+});
