@@ -57,7 +57,7 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 
 		$config = Kohana::$config->load('admin');
 
-		$is_logged_in =  Auth::instance('admin')->logged_in();
+		$this->is_logged_in =  Auth::instance('admin')->logged_in();
 
 		// Auth check
 		$this->_auth_check();
@@ -75,7 +75,7 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 			$this->template->styles           = array();
 			$this->template->scripts          = array();
 		}
-		$this->template->logged_in = $is_logged_in;
+		$this->template->logged_in = $this->is_logged_in;
 		$this->template->content   = '';
 
 		StaticCss::instance()
@@ -128,10 +128,10 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 	protected function _auth_check()
 	{
 		// Auth require check and setting $this->_user
-		if ($this->_auth_required AND class_exists('Auth')  AND ! Auth::instance()->logged_in())
+		if ($this->_auth_required AND ! Kohana::$is_cli AND ! $this->is_logged_in)
 		{
 			Session::instance()->set('url', $_SERVER['REQUEST_URI']);
-			$this->request->redirect(Route::url('auth', array('lang' => I18n::$lang, 'action' => 'login')));
+			$this->request->redirect(Route::url('admin', array('controller' => 'auth', 'action' => 'login')));
 		}
 		elseif($this->_auth_required AND (class_exists('Auth') AND Auth::instance()->logged_in() OR Auth::instance()->logged_in()))
 		{
