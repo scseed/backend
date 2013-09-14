@@ -10,14 +10,14 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 
 	public $template = 'backend/template/main';
 
-	public $_auth_required     = TRUE;
-	public $actions_privileges = array();
+	public $_auth_required = TRUE;
 
+	protected $_user       = NULL;
+	protected $_user_roles = array();
 
 	protected $_resource         = '';
 	protected $_active_menu_item = '';
 
-	protected $_actions = array();
 	protected $media;
 
 	/**
@@ -27,6 +27,18 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 	 */
 	protected $_ajax = FALSE;
 
+	public function __construct(Request $request, Response $response)
+	{
+		// Ajax-like request setting if HMVC call or POST request with param `is_ajax` == `true`
+		if ($request->is_ajax() OR ($request !== Request::initial() AND $request->param('code') === NULL)
+		OR ($request->method() === HTTP_Request::POST AND $request->post('is_ajax') === 'true'))
+		{
+			$request->requested_with('xmlhttprequest');
+			$this->_ajax = TRUE;
+		}
+
+		parent::__construct($request, $response);
+	}
 
 	public function before()
 	{
@@ -34,101 +46,21 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 
 		parent::before();
 
-	    if(Kohana::$is_cli)
-		    $this->auto_render = FALSE;
-
-		// Проверка на запрос AJAX-типа
-		if (Request::current()->is_ajax() OR Request::initial() !== Request::current())
-		{
-			$this->_ajax = TRUE;
-		}
-
-
 		if($this->request->action() === 'media') {
 			// Do not template media files
-			$this->auto_render = FALSE;
+			$this->auto_render    = FALSE;
 		    $this->_auth_required = FALSE;
 		}
 
-		$default_actions = array(
-			'index' => array(
-				'read'
-				),
-			'list' => array(
-				'read'
-			),
-			'new' => array(
-				'read', 'create'
-			),
-			'add' => array(
-				'read', 'create'
-			),
-			'edit' => array(
-				'update'
-			),
-			'delete' => array(
-				'delete'
-			),
-			'status' => array(
-				'update', 'delete'
-			),
-			'close' => array(
-				'update',
-			)
-		);
-
-		if(empty($this->_actions))
-		{
-			$this->_actions = $default_actions;
-		}
-		else
-		{
-			$this->_actions = Arr::merge($this->_actions, $default_actions);
-		}
+		if(Kohana::$is_cli)
+			$this->auto_render = FALSE;
 
 		$config = Kohana::$config->load('admin');
 
 		$is_logged_in =  Auth::instance('admin')->logged_in();
 
-		//Если требуется авторизация отправлям позователя на форму логина
-		if ($this->_auth_required AND !$is_logged_in AND ! Kohana::$is_cli)
-		{
-			Session::instance()->set('url', $_SERVER['REQUEST_URI']);
-			$this->request->redirect(Route::url('admin', array('controller' => 'auth', 'action' => 'login')));
-		}
-
-		//Так как контроллеры являются ресурсами, имени ресурса присваивается имя контроллера
-		if (empty($this->_resource))
-		{
-			$this->_resource = array(
-				'route_name' => Route::name($this->request->route()),
-				'directory' => $this->request->directory(),
-				'controller' => $this->request->controller(),
-				'action' => $this->request->action(),
-				'object_id' => (Route::name($this->request->route()) == 'page')
-				                ? $this->request->param('page_alias')
-				                : $this->request->param('id'),
-			);
-		}
-
-		//Если карта методов была иницилизирована, то проверяем контроллер на возможность запуска
-		if($this->_auth_required AND ! Kohana::$is_cli)
-		{
-			if (isset($this->_actions[$this->request->action()]))
-			{
-				if ( ! ACL::instance()->is_allowed(
-					Jelly::query('user', Auth::instance('admin')->get_user()->id)->select()->roles->as_array('id', 'name'),
-					$this->_actions[$this->request->action()],
-					$this->request))
-				{
-					throw new HTTP_Exception_403('Access not allowed');
-				};
-			}
-			else
-			{
-				throw new HTTP_Exception_401('fail in action map of ":controller" controller', array(':controller' => $this->request->controller()));
-			}
-		}
+		// Auth check
+		$this->_auth_check();
 
 		if ($this->auto_render === TRUE)
 		{
@@ -137,16 +69,14 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 
 			$this->template->title            = $config['company_name'];
 			$this->template->page_title       = '';
-			$this->template->right_content    = '';
 			$this->template->company_name     = $config['company_name'];
-			$this->template->ed_copy          = $config['ed_copy'];
-			$this->template->menu             = Menu::factory('admin');
+			$this->template->menu             = Menu::factory('admin', $this->_user_roles);
 			$this->template->debug            = View::factory('profiler/stats');
 			$this->template->styles           = array();
 			$this->template->scripts          = array();
 		}
-		$this->template->logged_in          = $is_logged_in;
-		$this->template->content          = '';
+		$this->template->logged_in = $is_logged_in;
+		$this->template->content   = '';
 
 		StaticCss::instance()
 			->add_modpath('css/admin.css')
@@ -193,6 +123,50 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 				'action' => 'list')
 			)
 		);
+	}
+
+	protected function _auth_check()
+	{
+		// Auth require check and setting $this->_user
+		if ($this->_auth_required AND class_exists('Auth')  AND ! Auth::instance()->logged_in())
+		{
+			Session::instance()->set('url', $_SERVER['REQUEST_URI']);
+			$this->request->redirect(Route::url('auth', array('lang' => I18n::$lang, 'action' => 'login')));
+		}
+		elseif($this->_auth_required AND (class_exists('Auth') AND Auth::instance()->logged_in() OR Auth::instance()->logged_in()))
+		{
+			$this->_user = Jelly::query('user', Auth::instance()->get_user()->id)->select();
+			$this->_check_activity();
+			View::set_global('_user', $this->_user);
+		}
+
+		if(class_exists('Auth') AND Auth::instance()->logged_in() AND ! $this->_user)
+		{
+			$this->_user = Jelly::query('user', Auth::instance()->get_user()->id)->select();
+			$this->_check_activity();
+			View::set_global('_user', $this->_user);
+		}
+	}
+
+	protected function _check_activity()
+	{
+		if( ! $this->_user->is_active AND $this->request->controller() != 'Error')
+			throw new HTTP_Exception_403(__('Пользователь не зарегистирован или отключён'));
+
+		$this->_user_roles = $this->_user->roles->as_array('id', 'name');
+		$this->_deputy = Deputy::instance();
+		$roles = Arr::extract(Kohana::$config->load('deputy.roles'), $this->_user_roles);
+		$this->_deputy->set_roles($roles);
+		$resource = array(
+			$this->request->controller(),
+			$this->request->action(),
+		);
+		$resource = implode('/', $resource);
+
+		if($this->_deputy->allowed($resource) == FALSE)
+			throw new HTTP_Exception_403(__('Действие запрещено'));
+
+//		$this->_check_rules_acceptance();
 	}
 
 } // End Controller_Admin_Template
