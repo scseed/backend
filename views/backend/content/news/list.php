@@ -2,7 +2,7 @@
 <?php echo HTML::anchor(
 	Route::url('admin', array('controller' => 'news', 'action' => 'add')),
 	'<i class="icon-plus"></i> Добавить новость',
-	array('class' => 'btn btn-primary pull-right', 'id' => 'addNewsBtn'))?>
+	array('class' => 'btn btn-primary pull-right', 'id' => 'addBtn'))?>
 <?php echo $pagination?>
 <table class="table table-striped table-bordered table-hover">
 	<thead>

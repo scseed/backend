@@ -1,41 +1,30 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');?>
+<?php echo HTML::anchor(
+	Route::url('admin', array('controller' => 'user', 'action' => 'add')),
+	'<i class="icon-plus"></i> Добавить пользователя',
+	array('class' => 'btn btn-primary pull-right', 'id' => 'addBtn'))?>
 <table class="table table-striped table-bordered table-hover">
 	<thead>
 	<tr>
-<?php
-foreach($meta->fields() as $field):
-	if($field->in_table):
-?>
-		<th><?php echo $field->label ?></th>
-<?php endif; endforeach;?>
+		<th>Фамилия</th>
+		<th>Имя</th>
+		<th>Отчество</th>
+		<th>email</th>
+		<th>Дата последнего входа</th>
+		<th>Количество заходов</th>
+		<th>Статус</th>
 		<th></th>
 	</tr>
 	</thead>
 <?php foreach($users as $role_user):?>
 	<tr>
-<?php foreach($meta->fields() as $field): if($field->in_table):?>
-		<td>
-<?php
-switch($field)
-{
-	case $field instanceof Jelly_Field_Boolean:
-		$label = ($role_user->user->{$field->name}) ? 'label_true' : 'label_false';
-		echo $field->$label;
-		break;
-	case $field instanceof Jelly_Field_Timestamp:
-		echo date('d.m.Y', $role_user->user->{$field->name});
-		break;
-	case $field instanceof Jelly_Field_ManyToMany:
-//		echo implode($role_user->user->{$field->name}->as_array('id', 'description'), ', ');
-			echo $role_user->role->description;
-		break;
-	default:
-		echo $role_user->user->{$field->name};
-		break;
-
-}?>
-		</td>
-<?php endif; endforeach;?>
+		<td><?php echo $role_user->user->last_name?></td>
+		<td><?php echo $role_user->user->first_name?></td>
+		<td><?php echo $role_user->user->patronymic?></td>
+		<td><?php echo $role_user->user->email?></td>
+		<td><?php echo $role_user->user->last_login?></td>
+		<td><?php echo $role_user->user->logins?></td>
+		<td><?php echo ($role_user->user->is_active) ? 'Активен' : 'Отключён'?></td>
 		<td>
 			<div class="btn-group">
 				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
@@ -51,7 +40,7 @@ switch($field)
 					</li>
 					<li>
 						<?php echo HTML::anchor(
-							Route::url('admin', array('controller' => 'user', 'action' => 'delete', 'id' => $role_user->user->id)),
+							Route::url('admin', array('controller' => 'user', 'action' => 'activity', 'id' => $role_user->user->id)),
 							'<i class="icon-trash"></i> '.__('Удалить'),
 							array('onclick'=>"return window.confirm('Уверены в этом?')")
 						)?>

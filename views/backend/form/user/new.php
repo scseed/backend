@@ -8,33 +8,32 @@
 <?php endif;?>
 <?php echo Form::open(Request::current(), array('class' => 'form-horizontal'));?>
 	<?php echo Form::hidden('user[id]', Arr::get($post['user'], 'id'))?>
-	<?php echo Form::hidden('user_data[id]', Arr::get($post['user_data'], 'id'))?>
 
 	<div class="control-group">
 		<?php echo Form::label('last_name', 'Фамилия', array('class' => 'control-label'))?>
-		<?php if (isset($errors['user_data']['last_name'])): ?>
-			<div class="form-error"><?php echo $errors['user_data']['last_name'] ?></div>
+		<?php if (isset($errors['user']['last_name'])): ?>
+			<div class="form-error"><?php echo $errors['user']['last_name'] ?></div>
 		<?php endif?>
 		<div class="controls">
-			<?php echo Form::input('user_data[last_name]', $post['user_data']['last_name'], array('id' => 'last_name'))?>
+			<?php echo Form::input('user[last_name]', $post['user']['last_name'], array('id' => 'last_name'))?>
 		</div>
 	</div>
 	<div class="control-group">
 		<?php echo Form::label('first_name', 'Имя', array('class' => 'control-label'))?>
-		<?php if (isset($errors['user_data']['first_name'])): ?>
-			<div class="form-error"><?php echo $errors['user_data']['first_name'] ?></div>
+		<?php if (isset($errors['user']['first_name'])): ?>
+			<div class="form-error"><?php echo $errors['user']['first_name'] ?></div>
 		<?php endif?>
 		<div class="controls">
-			<?php echo Form::input('user_data[first_name]', $post['user_data']['first_name'], array('id' => 'first_name'))?>
+			<?php echo Form::input('user[first_name]', $post['user']['first_name'], array('id' => 'first_name'))?>
 		</div>
 	</div>
 	<div class="control-group">
 		<?php echo Form::label('patronymic', 'Отчество', array('class' => 'control-label'))?>
-		<?php if (isset($errors['user_data']['patronymic'])): ?>
-			<div class="form-error"><?php echo $errors['user_data']['patronymic'] ?></div>
+		<?php if (isset($errors['user']['patronymic'])): ?>
+			<div class="form-error"><?php echo $errors['user']['patronymic'] ?></div>
 		<?php endif?>
 		<div class="controls">
-			<?php echo Form::input('user_data[patronymic]', $post['user_data']['patronymic'], array('id' => 'patronymic'))?>
+			<?php echo Form::input('user[patronymic]', $post['user']['patronymic'], array('id' => 'patronymic'))?>
 		</div>
 	</div>
 

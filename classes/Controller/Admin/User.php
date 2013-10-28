@@ -10,10 +10,6 @@ class Controller_Admin_User extends Controller_Admin_Template {
 
 	protected $_errors = NULL;
 
-	public function action_index()
-	{
-		return $this->action_list();
-	}
 	/**
 	 * List of users
 	 */
@@ -45,18 +41,15 @@ class Controller_Admin_User extends Controller_Admin_Template {
 		$post     = array(
 			"user" => array(
 				'id' => NULL,
+				"last_name" => NULL,
+				"first_name" => NULL,
+				"patronymic" => NULL,
 				"email" => NULL,
 				"roles" => array(),
 				"password" => NULL,
 				"password_confirm" => NULL,
 				"is_active" => TRUE,
 			),
-			"user_data" => array(
-				'id' => NULL,
-				"last_name" => NULL,
-				"first_name" => NULL,
-				"patronymic" => NULL,
-			)
 		);
 
 		if ($this->request->method() === Request::POST)
@@ -65,9 +58,6 @@ class Controller_Admin_User extends Controller_Admin_Template {
 
 			if($post_data['user']['id'] == '')
 				unset($post_data['user']['id']);
-
-			if($post_data['user_data']['id'] == '')
-				unset($post_data['user_data']['id']);
 
 			$post = $this->_add_edit($post_data);
 		}
@@ -92,7 +82,6 @@ class Controller_Admin_User extends Controller_Admin_Template {
 			throw new HTTP_Exception_404(__('User id is not defined'));
 
 		$user = Jelly::query('user', $user_id)->select();
-		$user_data = $user->user_data;
 
 		if( ! $user->loaded())
 			throw new HTTP_Exception_404(__('User not found'));
@@ -102,18 +91,15 @@ class Controller_Admin_User extends Controller_Admin_Template {
 		$post     = array(
 			"user" => array(
 				'id' => $user->id,
+				"last_name" => $user->last_name,
+				"first_name" => $user->first_name,
+				"patronymic" => $user->patronymic,
 				"email" => $user->email,
 				"roles" => $user->roles->as_array('name', 'id'),
 				"password" => NULL,
 				"password_confirm" => NULL,
 				"is_active" => $user->is_active,
 			),
-			"user_data" => array(
-				'id' => $user_data->id,
-				"last_name" => $user_data->last_name,
-				"first_name" => $user_data->first_name,
-				"patronymic" => $user_data->patronymic,
-			)
 		);
 
 		if ($this->request->method() === Request::POST)
@@ -126,9 +112,6 @@ class Controller_Admin_User extends Controller_Admin_Template {
 
 			if( ! $post['user']['id'])
 				unset($post['user']['id']);
-
-			if( ! $post['user_data']['id'])
-				unset($post['user_data']['id']);
 
 			$post = $this->_add_edit($post_data, 'update');
 		}
@@ -152,7 +135,7 @@ class Controller_Admin_User extends Controller_Admin_Template {
 
 		$user->user_data->delete();
 
-		$this->request->redirect($this->request->referrer());
+		HTTP::redirect($this->request->referrer());
 	}
 
 	/**
@@ -166,35 +149,18 @@ class Controller_Admin_User extends Controller_Admin_Template {
 	public function _add_edit($post, $action = 'create')
 	{
 		$user_info      = Arr::extract(Arr::get($post, 'user'), array_keys($post['user']), NULL);
-		$user_data_info = Arr::extract(Arr::get($post, 'user_data'), array_keys($post['user_data']), NULL);
 
 		$user      = (Arr::get($user_info, 'id'))
 			? Jelly::query('user', (int) Arr::get($user_info, 'id'))->select()
 			: Jelly::factory('user');
-		$user_data = (Arr::get($user_data_info, 'id'))
-			? Jelly::query('user_data', (int) Arr::get($user_data_info, 'id'))->select()
-			: Jelly::factory('user_data');
 
 		if($user->loaded())
 		{
 			$action = 'update';
 		}
 
-		$user_data->set($user_data_info);
-		try
-		{
-			$user_data->save();
-			$user_data_info['id'] = $user_data->id;
-		}
-		catch(Jelly_Validation_Exception $e)
-		{
-			$this->_errors['user_data'] = $e->errors('validate');
-		}
-
 		if(empty($this->_errors))
 		{
-			$user_info['user_data'] = $user_data->id;
-			$user_info['name'] = $user_data->last_name.' '.$user_data->first_name;
 			try
 			{
 				if($user->loaded())
@@ -211,7 +177,7 @@ class Controller_Admin_User extends Controller_Admin_Template {
 				if($user->has_role('admin') AND $action == 'create')
 					$this->_send_email($user, $user_info['password']);
 
-				$this->request->redirect(
+				HTTP::redirect(
 					Route::url('admin', array('controller' => 'user', 'action' => 'list'))
 				);
 			}
@@ -222,26 +188,24 @@ class Controller_Admin_User extends Controller_Admin_Template {
 		}
 
 		$post['user']      = $user_info;
-		$post['user_data'] = $user_data_info;
 
 		return $post;
 	}
 
 	public function _send_email($user, $password)
 	{
+		$admin_config = Kohana::$config->load('admin');
 		$message = View::factory('backend/content/email/user/credentials')
-			->set('site', Kohana::$config->load('admin'))
+			->set('site', $admin_config)
 			->bind('user', $user)
 			->bind('password', $password)
 		;
-		Email::connect();
-		Email::send(
-			$user->email,
-			'no-reply@adidas.ru',
-			'Данные для входа в админ-центр',
-			$message,
-			TRUE
-		);
+		$site_config = Kohana::$config->load('site');
+		$email = Email::factory('Создание учётной записи', $message, 'text/html')
+			->to($user->email)
+			->from($admin_config->support_email)
+			->send()
+		;
 	}
 
 } // End Template Controller user
