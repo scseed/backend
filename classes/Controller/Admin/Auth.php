@@ -16,11 +16,11 @@ class Controller_Admin_Auth extends Controller_Admin_Template
 	{
 		if(Auth::instance()->logged_in()) {
 			if($url = Session::instance()->get('url')) {
-				$this->request->redirect($url);
+				HTTP::redirect($url);
 			}
 			else
 			{
-				$this->request->redirect('admin');
+				HTTP::redirect('admin');
 			}
 		}
 
@@ -38,11 +38,11 @@ class Controller_Admin_Auth extends Controller_Admin_Template
 				! isset($post['remember']) ? TRUE : FALSE))
 			{
 				if($url = Session::instance()->get('url')) {
-					$this->request->redirect($url);
+					HTTP::redirect($url);
 				}
 				else
 				{
-					$this->request->redirect(Route::url('admin'));
+					HTTP::redirect(Route::url('admin'));
 				}
 			}
 			else
@@ -65,7 +65,7 @@ class Controller_Admin_Auth extends Controller_Admin_Template
 			$user_id = Auth::instance()->get_user()->id;
 			Auth::instance()->logout();
 		}
-		$this->request->redirect(Route::url('admin'));
+		HTTP::redirect(Route::url('admin'));
 	}
 
 	public function action_register()
@@ -90,7 +90,7 @@ class Controller_Admin_Auth extends Controller_Admin_Template
 						$post['email'],
 						$post['password'],
 						!isset($post['remember']) ? TRUE : FALSE);
-					$this->request->redirect('admin');
+					HTTP::redirect('admin');
 
 				}
 				catch(Jelly_Validation_Exception $e)
@@ -106,7 +106,7 @@ class Controller_Admin_Auth extends Controller_Admin_Template
 		}
 		else
 		{
-			$this->request->redirect(Route::url('admin'));
+			HTTP::redirect(Route::url('admin'));
 		}
 	}
 } // End Template Controller User

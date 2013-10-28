@@ -72,9 +72,8 @@
 			{
 				echo HTML::anchor(
 					Route::url('admin_ajax', array('controller' => 'page_content', 'action' => 'delete', 'id' => $content['content']->id)),
-					HTML::image('admin/media/i/icons/trash.png', array('class'=>'ico 16x16')).
-					' Удалить языковое содержание',
-					array('class' => 'delete_content')
+					'<i class="icon-trash"></i> Удалить языковое содержание',
+					array('class' => 'btn btn-mini btn-danger')
 				);
 			}
 		?>
@@ -89,8 +88,30 @@
 					'action' => 'list',
 			)),
 			 __('Отмена'),
-			array('class' => 'button', 'title' => __('Отмена')));?>
-		<?php echo Form::button(NULL, __('Сохранить'), array ('type' => 'submit'));?>
+			array('class' => 'btn', 'title' => __('Отмена')));?>
+		<?php echo Form::button(NULL, __('Сохранить'), array('class' => 'btn btn-success'));?>
 	</div>
 	<?php echo Form::close();?>
 </div>
+<?php
+// CKEditor
+include_once DOCROOT.'js/ckfinder/ckfinder.php';
+include_once DOCROOT.'js/ckeditor/ckeditor.php';
+$CKEditor = new CKEditor();
+$ckfinder = new CKFinder();
+$CKEditor->basePath = '/js/ckeditor/';
+$ckfinder->BasePath = '/js/ckfinder/';
+$ckfinder->SetupCKEditorObject($CKEditor);
+$CKEditor->config = array(
+	'toolbar' => array(
+		array( 'Bold','Italic','Underline','Strike','Subscript','Superscript','Blockquote','-','NumberedList','BulletedList','-',
+
+			'Outdent','Indent','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','-','RemoveFormat','Source',  ),
+		array( 'Format','Font','FontSize','TextColor','BGColor' ),
+		array( 'HorizontalRule','Image','Link', 'Unlink', 'Anchor' ),
+	),
+	'width' => '100%',
+//	'filebrowserImageBrowseUrl' => '/js/ckfinder/ckfinder.html?Type=Images',
+);
+$CKEditor->replaceAll();
+?>

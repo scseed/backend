@@ -52,7 +52,7 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 		    $this->_auth_required = FALSE;
 		}
 
-		if(Kohana::$is_cli)
+		if(PHP_SAPI == 'cli')
 			$this->auto_render = FALSE;
 
 		$config = Kohana::$config->load('admin');
@@ -70,7 +70,7 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 			$this->template->title            = $config['company_name'];
 			$this->template->page_title       = '';
 			$this->template->company_name     = $config['company_name'];
-			$this->template->menu             = Menu::factory('admin', $this->_user_roles);
+			$this->template->menu             = Menu::factory('admin', $this->_user_roles, $this->request);
 			$this->template->debug            = View::factory('profiler/stats');
 			$this->template->styles           = array();
 			$this->template->scripts          = array();
@@ -128,10 +128,10 @@ class Controller_Admin_Template extends Kohana_Controller_Template {
 	protected function _auth_check()
 	{
 		// Auth require check and setting $this->_user
-		if ($this->_auth_required AND ! Kohana::$is_cli AND ! $this->is_logged_in)
+		if ($this->_auth_required AND PHP_SAPI != 'cli' AND ! $this->is_logged_in)
 		{
 			Session::instance()->set('url', $_SERVER['REQUEST_URI']);
-			$this->request->redirect(Route::url('admin', array('controller' => 'auth', 'action' => 'login')));
+			HTTP::redirect(Route::url('admin', array('controller' => 'auth', 'action' => 'login')));
 		}
 		elseif($this->_auth_required AND (class_exists('Auth') AND Auth::instance()->logged_in() OR Auth::instance()->logged_in()))
 		{

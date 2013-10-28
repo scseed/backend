@@ -87,7 +87,7 @@
 
 <?php
 	echo HTML::anchor(
-		Route::url('admin', array('controller' => 'page', 'action' => 'add')).URL::query(),
+		Route::url('admin', array('controller' => 'page', 'action' => 'add')).URL::query(array('parent' => $parent_lvl->id)),
 		'<i class="icon-plus"></i> ' . __('Добавить новую страницу на этом уровне'),
 		array('class' => 'btn btn-primary btn-small')
 )?>

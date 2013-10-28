@@ -1,12 +1,14 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
+$site_config = Kohana::$config->load('site');
+
 return array(
 	/**
 	 * Company name
 	 * Is shown in title and head near logo
 	 */
-	'company_name' => 'SomeShit Ltd.',
-	'site_name'    => 'SomeShit.com',
+	'company_name' => $site_config->company_name,
+	'site_name'    => $site_config->site_name,
 
 	/**
 	 * Media folder for admin views

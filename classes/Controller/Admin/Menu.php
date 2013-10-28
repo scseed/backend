@@ -59,7 +59,7 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 
 		$this->template->content = (method_exists(__CLASS__, $method))
 			? $this->{$method}($root)
-			: $this->request->redirect(Route::url(Route::name(Request::current()->route()), array('controller' => 'menu', 'action' => '', 'id' => '')));
+			: HTTP::redirect(Route::url(Route::name(Request::current()->route()), array('controller' => 'menu', 'action' => '', 'id' => '')));
 	}
 
 	/**
@@ -128,7 +128,7 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 				$link = ($node->parent()->id)
 					? Route::url(Route::name(Request::current()->route()), array('controller' => 'menu','action' => 'tree','id' => $node->parent()->id))
 					: Route::url(Route::name(Request::current()->route()), array('controller' => 'menu','action' => '','id' => NULL));
-				$this->request->redirect($link);
+				HTTP::redirect($link);
 			}
 			catch(Validation_Exception $e)
 			{
@@ -198,7 +198,7 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 				break;
 		}
 
-		$this->request->redirect($this->request->referrer());
+		HTTP::redirect($this->request->referrer());
 	}
 
 	/**
@@ -214,7 +214,7 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 
 		$node = Jelly::query('menu', $id)->select()->delete_obj();
 
-		$this->request->redirect($this->request->referrer());
+		HTTP::redirect($this->request->referrer());
 	}
 
 	/**
@@ -244,7 +244,7 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 			throw new Kohana_Exception($e);
 		}
 
-		$this->request->redirect($this->request->referrer());
+		HTTP::redirect($this->request->referrer());
 	}
 
 	/**
@@ -277,7 +277,7 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 
 				$new_root->insert_as_new_root($scope + 1);
 
-				$this->request->redirect(
+				HTTP::redirect(
 					Route::url(Route::name(Request::current()->route()), array(
 						'controller' => 'menu',
 						'action' => 'tree',
@@ -362,7 +362,7 @@ class Controller_Admin_Menu extends Controller_Admin_Template {
 					$new_node->insert_as_first_child($root);
 				}
 
-				$this->request->redirect(
+				HTTP::redirect(
 					Route::url(Route::name(Request::current()->route()), array(
 						'controller' => 'menu',
 						'action' => 'tree',

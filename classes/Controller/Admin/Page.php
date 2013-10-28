@@ -28,8 +28,8 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 	 */
 	public function action_list ()
 	{
-		$parent = Arr::get($_GET, 'parent', NULL);
-		$parent_page = Jelly::query('page', $parent)->select();
+		$parent = Arr::get($_GET, 'parent', 1);
+		$parent_page = Jelly::query('page', intval($parent, NULL))->select();
 		$roots = Jelly::query('page')
 			->where('parent_page', '=', $parent)
 			->execute();
@@ -81,11 +81,18 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 			$pages = $this->_pages_structure_select($pages, $parent_page->id);
 		}
 
-		foreach($pages as $id => $page)
+		if($pages)
 		{
-			$pages[$id]['langs'] = (isset($page_contents[$id]))
+			foreach($pages as $id => $page)
+			{
+				$pages[$id]['langs'] = (isset($page_contents[$id]))
 				? $page_contents[$id]
 				: array();
+			}
+		}
+		else
+		{
+			$pages = array();
 		}
 
 		$this->template->page_title = 'Список Контентных страниц';
@@ -136,6 +143,7 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 		// Pages structure
 		$pages = array(0 => __('/'));
 		$pages += $this->_pages_structure($_pages, $pages_content, $parent_root);
+		$content = array();
 
 		// Getting page contents by system languages
 		foreach($system_languages as $lang)
@@ -175,7 +183,7 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 			{
 				$query = ($page->parent_page->id) ? URL::query(array('parent' => $page->parent_page->id)) : NULL;
 
-				$this->request->redirect(
+				HTTP::redirect(
 					Route::get('admin')->uri(array('controller' => 'page', 'action' => 'list')).$query
 				);
 			}
@@ -261,7 +269,7 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 			{
 				$query = ($page->parent_page->id) ? URL::query(array('parent' => $page->parent_page->id)) : NULL;
 
-				$this->request->redirect(
+				HTTP::redirect(
 					Route::get('admin')->uri(array('controller' => 'page', 'action' => 'list')).$query
 				);
 			}
@@ -290,7 +298,7 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 
 		Jelly::query('page', $page_id)->select()->delete_obj();
 
-		$this->request->redirect($this->request->referrer());
+		HTTP::redirect($this->request->referrer());
 	}
 
 	/**
@@ -340,7 +348,7 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 				break;
 		}
 
-		$this->request->redirect($this->request->referrer());
+		HTTP::redirect($this->request->referrer());
 	}
 
 	/**
@@ -353,9 +361,10 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 	 */
 	protected function _pages_structure(array $root_page, array $pages_content, $parent_root)
 	{
-		$scope_root = ($parent_root) ? $parent_root->root($parent_root->scope) : NULL;
-		$scope_lang = ($scope_root) ? $scope_root->alias : I18n::lang();
+		$scope_root   = ($parent_root) ? $parent_root->root($parent_root->scope) : NULL;
+		$scope_lang   = ($scope_root) ? $scope_root->alias : I18n::lang();
 		$default_lang = I18n::lang();
+		$pages        = array();
 
 		foreach($root_page as $_page)
 		{
@@ -405,7 +414,14 @@ class Controller_Admin_Page extends Controller_Admin_Template {
 				$_page = $page['childrens'];
 			}
 
-			$this->_pages_structure_select($page['childrens'], $parent_page);
+			if($page['childrens'])
+			{
+				$this->_pages_structure_select($page['childrens'], $parent_page);
+			}
+			else
+			{
+				$_page = $pages_arr;
+			}
 		}
 
 		return ($_page) ? $_page : NULL;
