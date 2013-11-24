@@ -73,7 +73,7 @@
 					</li>
 					<li>
 						<?php echo HTML::anchor(
-							Route::url('admin', array('controller' => 'banner', 'action' => 'delete', 'id' => $page['id'])),
+							Route::url('admin', array('controller' => 'page', 'action' => 'delete', 'id' => $page['id'])),
 							'<i class="icon-trash"></i> Удалить',
 							array('onclick'=>"return window.confirm('Уверены в этом?')")
 						);?>
