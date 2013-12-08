@@ -85,10 +85,7 @@
 	<div class="control-group">
 		<div class="controls">
 			<?php echo Html::anchor(
-				Route::url('admin', array(
-					'controller' => 'user',
-					'action' => 'list',
-				)),
+				$cancel_link,
 				__('Отмена'),
 				array('class' => 'btn', 'title' => __('Отмена')));?>
 			<?php echo Form::button(

@@ -62,7 +62,9 @@ class Controller_Admin_User extends Controller_Admin_Template {
 			$post = $this->_add_edit($post_data);
 		}
 
+		$referer = Session::instance()->get('url', Route::url('admin', array('controller' => $this->request->controller(), 'action' => 'list')));
 		$this->template->content = View::factory('backend/form/user/new')
+			->bind('cancel_link', $referer)
 			->bind('post', $post)
 			->bind('roles', $roles)
 			->bind('statuses', $statuses)
@@ -127,10 +129,10 @@ class Controller_Admin_User extends Controller_Admin_Template {
 	/**
 	 * Deleting user
 	 *
-	 * @param integer $id
 	 */
-	public function action_delete ($id)
+	public function action_delete ()
 	{
+		$id = $this->request->param('id');
 		$user = Jelly::query('user', (int) $id)->select();
 
 		$user->user_data->delete();
@@ -177,9 +179,8 @@ class Controller_Admin_User extends Controller_Admin_Template {
 				if($user->has_role('admin') AND $action == 'create')
 					$this->_send_email($user, $user_info['password']);
 
-				HTTP::redirect(
-					Route::url('admin', array('controller' => 'user', 'action' => 'list'))
-				);
+				$referer = Session::instance()->get_once('url', Route::url('admin', array('controller' => 'user', 'action' => 'list')));
+				HTTP::redirect($referer);
 			}
 			catch (Jelly_Validation_Exception $e)
 			{
