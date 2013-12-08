@@ -62,7 +62,7 @@ class Controller_Admin_User extends Controller_Admin_Template {
 			$post = $this->_add_edit($post_data);
 		}
 
-		$referer = Session::instance()->get('url', Route::url('admin', array('controller' => $this->request->controller(), 'action' => 'list')));
+		$referer = Session::instance()->get('url', Route::url('admin', array('controller' => strtolower($this->request->controller()), 'action' => 'list')));
 		$this->template->content = View::factory('backend/form/user/new')
 			->bind('cancel_link', $referer)
 			->bind('post', $post)
@@ -119,7 +119,7 @@ class Controller_Admin_User extends Controller_Admin_Template {
 		}
 
 		$this->template->page_title = 'Правка данных пользователя ' . $user->name;
-		$referer = Session::instance()->get('url', Route::url('admin', array('controller' => $this->request->controller(), 'action' => 'list')));
+		$referer = Session::instance()->get('url', Route::url('admin', array('controller' => strtolower($this->request->controller()), 'action' => 'list')));
 		$this->template->content = View::factory('backend/form/user/new')
 			->set('cancel_link', $referer)
 			->set('roles', $roles)
@@ -181,7 +181,7 @@ class Controller_Admin_User extends Controller_Admin_Template {
 				if($user->has_role('admin') AND $action == 'create')
 					$this->_send_email($user, $user_info['password']);
 
-				$referer = Session::instance()->get_once('url', Route::url('admin', array('controller' => 'user', 'action' => 'list')));
+				$referer = Session::instance()->get_once('url', Route::url('admin', array('controller' => strtolower($this->request->controller()), 'action' => 'list')));
 				HTTP::redirect($referer);
 			}
 			catch (Jelly_Validation_Exception $e)
