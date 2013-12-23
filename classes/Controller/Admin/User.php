@@ -18,14 +18,23 @@ class Controller_Admin_User extends Controller_Admin_Template {
 		$this->template->page_title = 'Список пользователей';
 
 		$role_users = Jelly::query('roles_users')
-			->where(':role.name', '=', 'admin')
-			->select()
+			->where(':role.name', '=', 'login')
 		;
+
+		$count      =  $role_users->count();
+		$pagination = Pagination::factory(array(
+			'total_items'    => $count,
+			'items_per_page' => 10,
+		));
+
+		$role_users = $role_users->limit($pagination->items_per_page)->offset($pagination->offset)->select();
+		$pagination = $pagination->render('pagination/floating');
 
 		$users_meta = Jelly::meta('user');
 
 		$this->template->content = View::factory('backend/content/user/list')
 			->bind('users', $role_users)
+			->bind('pagination', $pagination)
 			->bind('meta', $users_meta);
 	}
 

@@ -3,6 +3,7 @@
 	Route::url('admin', array('controller' => 'user', 'action' => 'add')),
 	'<i class="icon-plus"></i> Добавить пользователя',
 	array('class' => 'btn btn-primary pull-right', 'id' => 'addBtn'))?>
+<?php echo $pagination?>
 <table class="table table-striped table-bordered table-hover">
 	<thead>
 	<tr>
@@ -51,3 +52,4 @@
 	</tr>
 <?php endforeach;?>
 </table>
+<?php echo $pagination?>
