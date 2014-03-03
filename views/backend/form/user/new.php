@@ -2,7 +2,7 @@
 <?php if($errors):?>
 <div class="alert alert-error">
 	<?php foreach($errors as $block => $_errors): foreach($_errors as $error):?>
-	<div><?php echo $error?></div>
+		<div><?php echo (is_array($error)) ? implode(', ', $error) : $error?></div>
 	<?php endforeach;endforeach;?>
 </div>
 <?php endif;?>

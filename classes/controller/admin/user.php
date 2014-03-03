@@ -146,12 +146,13 @@ class Controller_Admin_User extends Controller_Admin_Template {
 	 *
 	 * @param integer $id
 	 */
-	public function action_delete ($id)
+	public function action_delete ()
 	{
-		$user = Jelly::query('user', (int) $id)->select();
+		$user_id = intval($this->request->param('id'));
+		$user = Jelly::query('user', (int) $user_id)->select();
 
-		$user->user_data->delete();
-
+//		$user->user_data->delete();
+		$user->delete();
 		$this->request->redirect($this->request->referrer());
 	}
 
@@ -195,6 +196,8 @@ class Controller_Admin_User extends Controller_Admin_Template {
 		{
 			$user_info['user_data'] = $user_data->id;
 			$user_info['name'] = $user_data->last_name.' '.$user_data->first_name;
+			$user_info['roles'] = Arr::flatten($user_info['roles']);
+
 			try
 			{
 				if($user->loaded())
