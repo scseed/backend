@@ -18,15 +18,41 @@
 				<?php if (count($item['childrens'])): ?>
 					<ul class="dropdown-menu">
 						<?php foreach($item['childrens'] as $sub_item): if($sub_item['is_visible']):?>
-							<li>
+							<?php if (count($sub_item['childrens'])): ?>
+							<li class="dropdown-submenu">
 								<?php
 								echo HTML::anchor(
-									$sub_item['href'],
+									'#',
 									$sub_item['title'],
-									array('title' => $sub_item['title'])
+									array('title' => $sub_item['title'], 'tabindex' => -1)
 								);
 								?>
+								<ul class="dropdown-menu">
+									<?php foreach($sub_item['childrens'] as $sub_sub_item): if($sub_sub_item['is_visible']):?>
+										<li>
+											<?php
+											echo HTML::anchor(
+												$sub_sub_item['href'],
+												$sub_sub_item['title'],
+												array('title' => $sub_sub_item['title'])
+											);
+											?>
+										</li>
+									<?php endif; endforeach ?>
+								</ul>
 							</li>
+							<?php else: ?>
+								<li>
+									<?php
+									echo HTML::anchor(
+										$sub_item['href'],
+										$sub_item['title'],
+										array('title' => $sub_item['title'])
+									);
+									?>
+								</li>
+							<?php endif ?>
+
 						<?php endif; endforeach ?>
 					</ul>
 				<?php endif ?>
