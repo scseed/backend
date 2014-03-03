@@ -151,8 +151,8 @@ class Controller_Admin_User extends Controller_Admin_Template {
 		$user_id = intval($this->request->param('id'));
 		$user = Jelly::query('user', (int) $user_id)->select();
 
-//		$user->user_data->delete();
-		$user->delete();
+		$user->user_data->delete();
+//		$user->delete();
 		$this->request->redirect($this->request->referrer());
 	}
 

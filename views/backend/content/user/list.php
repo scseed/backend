@@ -26,8 +26,8 @@ switch($field)
 		echo date('d.m.Y', $role_user->user->{$field->name});
 		break;
 	case $field instanceof Jelly_Field_ManyToMany:
-//		echo implode($role_user->user->{$field->name}->as_array('id', 'description'), ', ');
-			echo $role_user->role->description;
+		echo implode($role_user->user->{$field->name}->as_array('id', 'description'), ', ');
+//			echo $role_user->role->description;
 		break;
 	default:
 		echo $role_user->user->{$field->name};
