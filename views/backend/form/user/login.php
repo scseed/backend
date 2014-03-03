@@ -7,7 +7,7 @@
 			<legend><?php echo __('Авторизуйтесь');?></legend>
 			<?php if (!empty($errors)): ?>
 				<div class="alert alert-error">
-					<?php echo $errors ?>
+					<div><?php echo (is_array($errors)) ? implode(', ', $errors) : $errors?></div>
 				</div>
 			<?php endif ?>
 			<div class="control-group">
