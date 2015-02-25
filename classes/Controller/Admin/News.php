@@ -65,7 +65,7 @@ class Controller_Admin_News extends Controller_Admin_Template {
 				$errors = $e->errors('validate');
 			}
 
-		    $post = Arr::merge($post_data, $post);
+		    $post = Arr::merge($post, $post_data);
 		}
 
 		$this->template->page_title = 'Новая новость';
